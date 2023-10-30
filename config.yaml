@@ -1,0 +1,33 @@
+
+#Las credenciales de los usuarios se almacenan en un archivo de configuración YAML.
+#El archivo de configuración se encuentra en el directorio raíz del proyecto y se llama config.yaml.
+#El archivo de configuración contiene las siguientes propiedades:
+#users: una lista de usuarios que pueden iniciar sesión en la aplicación.
+#cookie: la configuración de la cookie de sesión.
+#preauthorized: una lista de usuarios que pueden acceder a la aplicación sin iniciar sesión.
+# Los usuarios tienen las siguientes propiedades:
+# username: el nombre de usuario del usuario.
+# email: la dirección de correo electrónico del usuario.
+# name: el nombre del usuario.
+# password: la contraseña del usuario, almacenada como un hash bcrypt.
+#La cookie tiene las siguientes propiedades:
+# expiry_days: el número de días que la cookie de sesión debe permanecer activa.
+# key: la clave utilizada para firmar la cookie de sesión.
+# name: el nombre de la cookie de sesión.
+credentials:
+  usernames:
+    admin:
+      email: jsmith@gmail.com
+      name: admin
+      password: $2b$12$uvxrnsgTTSZdhCf8bFmO0efoa6PR8Vh0612f5Hc8.lvGMg0vfr3Yi
+    rbriggs:
+      email: rbriggs@gmail.com
+      name: Rebecca Briggs
+      password: $2b$12$uvxrnsgTTSZdhCf8bFmO0efoa6PR8Vh0612f5Hc8.lvGMg0vfr3Yi
+cookie:
+  expiry_days: 30
+  key: some_signature_key # Must be string
+  name: some_cookie_name
+preauthorized:
+  emails:
+  - melsby@gmail.com
