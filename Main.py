@@ -5,11 +5,11 @@ from yaml.loader import SafeLoader
 from streamlit_extras.switch_page_button import switch_page
 import streamlit_antd_components as sac
 
-
+#Configuracion de la pagina
 st.set_page_config(page_title="Login", page_icon=":unlock:", layout="wide", initial_sidebar_state="collapsed")
 
 
-
+#Estilos de la pagina
 st.markdown('''
 <style>
 body {
@@ -63,20 +63,23 @@ background-color: #e5e5f7;
 
 
 
-
+# Mensaje de bienvenida
 sac.alert(message='Bienvenido al Sistema de Gestion y Analisis CECYTEM',
 description='Si no tienes usuario y contraseña, contacta con el administrador.', banner=True, icon=True, closable=True, height=100)
 
 cols1 = st.columns([.5,.5])
 
+# Banner principal de la pagina
 with cols1[0]:
+    '### Colegio de Estudios Científicos y Tecnológicos del Estado de México'
     st.image("rsc/back1.jpg",use_column_width=True)
 
-
+# Formulario de inicio de sesion
 with cols1[1]:
+  #Cargamos el archivo de configuracion
     with open('config.yaml') as file:
         config = yaml.load(file, Loader=SafeLoader)
-
+  # Creamos el objeto de autenticacion
     authenticator = stauth.Authenticate(
         config['credentials'],
         config['cookie']['name'],
@@ -84,7 +87,9 @@ with cols1[1]:
         config['cookie']['expiry_days'],
         config['preauthorized']
     )
+  # Creamos el formulario de inicio de sesion
     authenticator.login('Login', 'main')
+  # Si el usuario se ha autenticado correctamente, mostramos un mensaje de bienvenida y cambiamos de pagina a Home
     if st.session_state["authentication_status"]:
         authenticator.logout('Logout', 'main', key='unique_key')
         st.toast(f'Bienvenido {st.session_state["name"]}',icon='🔓')
@@ -96,7 +101,7 @@ with cols1[1]:
         st.warning('Por favor, introduce tu usuario y contraseña')
 
 
-
+# Pie de pagina
 i = sac.tags([
     sac.Tag(label='Contacto', icon='person-lines-fill', color='cyan', link='https://ant.design/components/tag'),
 

@@ -5,6 +5,8 @@ from yaml.loader import SafeLoader
 from streamlit_extras.switch_page_button import switch_page
 import streamlit_antd_components as sac
 from streamlit_elements import elements, mui, html
+from streamlit_elements import elements, sync, event
+
 
 
 
@@ -20,58 +22,62 @@ from modules import Dashboard,Editor, Card, DataGrid, Radar, Pie, Player
 #from .modules.elements import Dashboard, Editor, Card, DataGrid, Radar, Pie, Player
 
 
-st.set_page_config(page_title="Login", page_icon=":unlock:", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Login", page_icon=":unlock:", layout="wide")
 
+#st.markdown('<style>' + open('./rsc/css/sidebar/style.css').read() + '</style>', unsafe_allow_html=True)
 
+if "authentication_status" not in st.session_state:
+    switch_page('Main')
+else:
 # el usuario debe estar autenticado para acceder a esta página
-if st.session_state["authentication_status"]:
-        with open('config.yaml') as file:
-            config = yaml.load(file, Loader=SafeLoader)
+    if st.session_state["authentication_status"]:
+            with open('config.yaml') as file:
+                config = yaml.load(file, Loader=SafeLoader)
 
-        authenticator = stauth.Authenticate(
-            config['credentials'],
-            config['cookie']['name'],
-            config['cookie']['key'],
-            config['cookie']['expiry_days'],
-            config['preauthorized']
-        )
-        authenticator.logout('Logout', 'main', key='unique_key')
-        if not  st.session_state["authentication_status"]:
-            switch_page('Main')
-
-        st.toast(f'Bienvenido {st.session_state["name"]}',icon='🔓')
-        st.title('Some content')
-
-        if "w" not in state:
-            board = Dashboard()
-            w = SimpleNamespace(
-                dashboard=board,
-                editor=Editor(board, 0, 0, 6, 11,),
-                player=Player(board, 7, 0, 4, 10, minH=5),
-                pie=Pie(board, 6, 0, 6, 7, minW=3, minH=4),
-                radar=Radar(board, 12, 7, 3, 7, minW=2, minH=4),
-                card=Card(board, 6, 7, 3, 7, minW=2, minH=4),
-                data_grid=DataGrid(board, 6, 13, 6, 7, minH=4),
+            authenticator = stauth.Authenticate(
+                config['credentials'],
+                config['cookie']['name'],
+                config['cookie']['key'],
+                config['cookie']['expiry_days'],
+                config['preauthorized']
             )
-            state.w = w
+            authenticator.logout('Logout', 'main', key='unique_key')
+            if not  st.session_state["authentication_status"]:
+                switch_page('Main')
 
-            w.editor.add_tab("Card content", Card.DEFAULT_CONTENT, "plaintext")
-            w.editor.add_tab("Data grid", json.dumps(DataGrid.DEFAULT_ROWS, indent=2), "json")
-            w.editor.add_tab("Radar chart", json.dumps(Radar.DEFAULT_DATA, indent=2), "json")
-            w.editor.add_tab("Pie chart", json.dumps(Pie.DEFAULT_DATA, indent=2), "json")
-        else:
-            w = state.w
+            st.toast(f'Bienvenido {st.session_state["name"]}',icon='🔓')
+            st.title('Some content')
 
-        with elements("demo"):
-            event.Hotkey("ctrl+s", sync(), bindInputs=True, overrideDefault=True)
+            if "w" not in state:
+                board = Dashboard()
+                w = SimpleNamespace(
+                    dashboard=board,
+                    editor=Editor(board, 0, 0, 6, 11,),
+                    player=Player(board, 7, 0, 4, 10, minH=5),
+                    pie=Pie(board, 6, 0, 6, 7, minW=3, minH=4),
+                    radar=Radar(board, 12, 7, 3, 7, minW=2, minH=4),
+                    card=Card(board, 6, 7, 3, 7, minW=2, minH=4),
+                    data_grid=DataGrid(board, 6, 13, 6, 7, minH=4),
+                )
+                state.w = w
 
-            with w.dashboard(rowHeight=57):
-                w.editor()
-                w.player()
-                w.pie(w.editor.get_content("Pie chart"))
-                w.radar(w.editor.get_content("Radar chart"))
-                w.card(w.editor.get_content("Card content"))
-                w.data_grid(w.editor.get_content("Data grid"))
+                w.editor.add_tab("Card content", Card.DEFAULT_CONTENT, "plaintext")
+                w.editor.add_tab("Data grid", json.dumps(DataGrid.DEFAULT_ROWS, indent=2), "json")
+                w.editor.add_tab("Radar chart", json.dumps(Radar.DEFAULT_DATA, indent=2), "json")
+                w.editor.add_tab("Pie chart", json.dumps(Pie.DEFAULT_DATA, indent=2), "json")
+            else:
+                w = state.w
+
+            with elements("demo"):
+                event.Hotkey("ctrl+s", sync(), bindInputs=True, overrideDefault=True)
+
+                with w.dashboard(rowHeight=57):
+                    w.editor()
+                    w.player()
+                    w.pie(w.editor.get_content("Pie chart"))
+                    w.radar(w.editor.get_content("Radar chart"))
+                    w.card(w.editor.get_content("Card content"))
+                    w.data_grid(w.editor.get_content("Data grid"))
 
 
 
