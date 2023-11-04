@@ -4,7 +4,6 @@ import yaml
 from yaml.loader import SafeLoader
 from streamlit_extras.switch_page_button import switch_page
 import streamlit_antd_components as sac
-import pandas_profiling
 #Configuracion de la pagina
 st.set_page_config(page_title="Login", page_icon=":unlock:", layout="wide", initial_sidebar_state="collapsed")
 
