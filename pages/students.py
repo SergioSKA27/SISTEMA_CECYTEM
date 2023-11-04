@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-from streamlit_pandas_profiling import st_profile_report
+
 
 if 'filters' not in st.session_state:
     st.session_state['filters'] = []
@@ -70,7 +70,3 @@ if tipo == 'Barra':
 
 
 
-st.subheader('Reporte de Perfilamiento')
-pr = data.profile_report()
-
-st_profile_report(pr)
