@@ -21,8 +21,12 @@ from types import SimpleNamespace
 from modules import Dashboard,Editor, Card, DataGrid, Radar, Pie, Player
 #from .modules.elements import Dashboard, Editor, Card, DataGrid, Radar, Pie, Player
 
+
+
+
 #Pagina de inicio visible para todos los usuarios con anuncios y noticias
-st.set_page_config(page_title="Login", page_icon=":unlock:", layout="wide")
+st.set_page_config(page_title="Inicio", page_icon=":house:", layout="wide", initial_sidebar_state="collapsed")
+
 
 #st.markdown('<style>' + open('./rsc/css/sidebar/style.css').read() + '</style>', unsafe_allow_html=True)
 

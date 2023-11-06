@@ -13,3 +13,4 @@ streamlit-wordcloud==0.1.0
 streamlit-antd-components==0.2.1
 streamlit-on-Hover-tabs==1.0.1
 streamlit-pandas-profiling==0.1.3
+mitosheet==0.1.524

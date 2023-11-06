@@ -40,9 +40,9 @@ pcols = st.multiselect('Selecciona los campos a agrupar',posible_grouping(data),
 if len(pcols) > 0:
     for d in data.groupby(pcols):
         st.write('Grupo: ' + str(d[0]))
-        st.write(d[1])
+        st.dataframe(d[1],use_container_width=True)
 
-st.write(len(data.groupby('school_name')))
+
 if st.checkbox('Editar'):
     if len(fillter) == 0:
         st.data_editor(data,use_container_width=True)
@@ -63,9 +63,13 @@ tipo = st.selectbox('Tipo de grafica',['Barra','Linea','Area','Dispersión','Tor
 
 if tipo == 'Barra':
     colum = st.multiselect('Columnas a graficar',list(data.columns)[2:],placeholder='Selecciona una columna',max_selections=2)
-    with st.spinner('Generando grafica...',cache=True):
-        if len(colum) > 1:
-            fig = px.bar(data, x=colum[0],y=colum[1])
+    col = st.selectbox('Columna a agrupar',list(data.columns),placeholder='Selecciona una columna')
+    with st.spinner('Generando graficar...',cache=True):
+        if len(colum) >= 1:
+            if len(colum) == 1:
+                fig = px.bar(data.sort_values(by=colum), x=colum[0],color=col)
+            else:
+                fig = px.bar(data.sort_values(by=colum), x=colum[0],y=colum[1],color=col)
             st.plotly_chart(fig, use_container_width=True)
 
 
