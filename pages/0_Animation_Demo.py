@@ -1,84 +1,124 @@
-# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022)
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-from typing import Any
-
-import numpy as np
-
 import streamlit as st
-from streamlit.hello.utils import show_code
+import numpy as np
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+#write despliega texto,tablas y gráficas
+st.write('Hello, :blue[world]! :sunglasses:')
+
+df = pd.DataFrame(np.random.randn(10, 2), columns=('col1', 'col2'))
 
 
-def animation_demo() -> None:
+if 'nom' not in st.session_state:
+    st.session_state['nom'] = 0
+else:
+    st.session_state['nom'] = st.session_state['nom'] +1
 
-    # Interactive Streamlit elements, like these sliders, return their value.
-    # This gives you an extremely simple interaction model.
-    iterations = st.sidebar.slider("Level of detail", 2, 20, 10, 1)
-    separation = st.sidebar.slider("Separation", 0.7, 2.0, 0.7885)
+def cuadrado(x):
+    return x**2
 
-    # Non-interactive elements return a placeholder to their location
-    # in the app. Here we're storing progress_bar to update it later.
-    progress_bar = st.sidebar.progress(0)
+nom = st.number_input('Ingrese un número', value=st.session_state['nom'], max_value=10, min_value=0, step=1)
+st.session_state['nom'] = nom
+st.write(cuadrado(nom))
+st.session_state
+st.write(df)
 
-    # These two elements will be filled in later, so we create a placeholder
-    # for them using st.empty()
-    frame_text = st.sidebar.empty()
-    image = st.empty()
+'HOLA'
 
-    m, n, s = 960, 640, 400
-    x = np.linspace(-m / s, m / s, num=m).reshape((1, m))
-    y = np.linspace(-n / s, n / s, num=n).reshape((n, 1))
-
-    for frame_num, a in enumerate(np.linspace(0.0, 4 * np.pi, 100)):
-        # Here were setting value for these two elements.
-        progress_bar.progress(frame_num)
-        frame_text.text("Frame %i/100" % (frame_num + 1))
-
-        # Performing some fractal wizardry.
-        c = separation * np.exp(1j * a)
-        Z = np.tile(x, (n, 1)) + 1j * np.tile(y, (1, m))
-        C = np.full((n, m), c)
-        M: Any = np.full((n, m), True, dtype=bool)
-        N = np.zeros((n, m))
-
-        for i in range(iterations):
-            Z[M] = Z[M] * Z[M] + C[M]
-            M[np.abs(Z) > 2] = False
-            N[M] = i
-
-        # Update the image placeholder by calling the image() function on it.
-        image.image(1.0 - (N / N.max()), use_column_width=True)
-
-    # We clear elements by calling empty on them.
-    progress_bar.empty()
-    frame_text.empty()
-
-    # Streamlit widgets automatically run the script from top to bottom. Since
-    # this button is not connected to any other logic, it just causes a plain
-    # rerun.
-    st.button("Re-run")
+# Markdown despliega texto y html
+st.markdown('**Hello, world!** :sunglasses:')
 
 
-st.set_page_config(page_title="Animation Demo", page_icon="📹")
-st.markdown("# Animation Demo")
-st.sidebar.header("Animation Demo")
-st.write(
-    """This app shows how you can use Streamlit to build cool animations.
-It displays an animated fractal based on the the Julia Set. Use the slider
-to tune different parameters."""
-)
+st.title('Titulo')
+st.header('Header')
+st.subheader('Subheader')
+st.caption('Caption')
+st.code('print("Hello, world!")')
+st.write('Hola $f(x) = x^2$')
+st.latex(r'''Hola e^{i\pi} + 1 = 0 ''')
+st.divider()
 
-animation_demo()
 
-show_code(animation_demo)
+st.dataframe(df)
+
+st.data_editor(df)
+
+st.table(df)
+
+st.metric(label="Metric", value="Value", delta="Delta")
+
+
+my_dic = {'one': [1, 2, 3], 'two': [4, 5, 6]}
+
+st.json(my_dic)
+
+
+st.area_chart(df)
+st.bar_chart(df)
+st.line_chart(df)
+st.scatter_chart(df)
+
+fig = go.Figure(data=go.Bar(y=[2, 3, 1]))
+
+st.plotly_chart(fig)
+
+
+if st.button('Say hello'):
+    st.write('Why hello there')
+
+
+b1 = st.button('Say hi')
+
+if b1 == True:
+    st.write('Why hello there')
+
+st.download_button(label='Download data', data=df.to_csv(), file_name='data.csv', mime='text/csv')
+st.link_button(label='Link to Streamlit', url='https://streamlit.io/')
+
+check = st.checkbox('I am a checkbox')
+
+if check == True:
+    st.write('I am a checkbox')
+
+
+tog = st.toggle('I am a toogle')
+
+if tog == True:
+    st.write('I am a toogle')
+
+
+
+lista = st.radio('Pick one', ['one', 'two', 'three'])
+
+st.write(lista)
+
+
+selct = st.selectbox('Pick one', ['one', 'two', 'three'])
+st.write(selct)
+
+multisel = st.multiselect('Pick several', ['one', 'two', 'three'])
+
+st.write(multisel)
+
+sl = st.slider('Pick a number', min_value=0, max_value=10, value=5, step=1)
+st.write(sl)
+
+sll = st.slider('Pick a range of numbers', min_value=0.0, max_value=10.0, value=(2.0, 5.0), step=0.1)
+
+st.write(sll)
+
+
+name = st.text_input('Tell me your name', value='Name...')
+st.write(name)
+
+
+num = st.number_input('Tell me your number', value=1,max_value=10, min_value=0, step=1)
+st.write(num)
+
+
+ar =st.text_area('Text to analyze', height=200)
+st.write(ar)
+
+
+date = st.date_input('Date input',min_value=2000)
+st.write(date)

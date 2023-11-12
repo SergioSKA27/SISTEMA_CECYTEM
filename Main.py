@@ -101,7 +101,10 @@ with cols1[1]:
 
 
 # Pie de pagina
-i = sac.tags([
+sac.tags([
     sac.Tag(label='Contacto', icon='person-lines-fill', color='cyan', link='https://ant.design/components/tag'),
+    sac.Tag(label='Página Oficial CECYTEM', icon='mortarboard-fill', color='blue', link='https://cecytem.edomex.gob.mx/'),
+    sac.Tag(label='Facebook', icon='facebook', color='geekblue', link='https://www.facebook.com/cecytem.edomex'),
 
 ], format_func='title', align='center',)
+
