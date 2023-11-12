@@ -132,7 +132,7 @@ with cols1[1]:
     if st.session_state["authentication_status"]:
         authenticator.logout('Logout', 'main', key='unique_key')
         st.toast(f'Bienvenido {st.session_state["name"]}',icon='🔓')
-        switch_page('Home')
+        switch_page('Inicio')
         st.title('Some content')
     elif st.session_state["authentication_status"] is False:
         st.error('Username/password is incorrect')
