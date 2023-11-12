@@ -10,7 +10,7 @@ import base64
 
 #Configuracion de la pagina
 st.set_page_config(page_title="Login", page_icon=":lock:", layout="wide", initial_sidebar_state="collapsed")
-xata = XataClient(api_key='xau_FT9FcVgwPqMemnUzaDaXKvgXSiPgkWgu3',db_url='https://Sergio-Lopez-Martinez-s-workspace-l2j1g2.us-east-1.xata.sh/db/sistema-cecytem')
+xata = XataClient(api_key=st.secrets['apikey'],db_url=st.secrets['dburl'])
 
 st.title('Registro de usuario')
 
@@ -57,7 +57,7 @@ with st.form(key='Registro de usuario',clear_on_submit=True):
                 "email": email.strip(),
                 "password": stauth.Hasher([password.strip()]).generate()[0],
                 "avatar": {
-                    "base64Content": avatar,
+                    "base64Content":f"SGVsbG8gV29ybGQ={avatar}",
                     "enablePublicUrl": False,
                     "mediaType": "application/octet-stream",
                     "name": f"{usern.strip()}_avatar.jpg",
