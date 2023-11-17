@@ -20,8 +20,8 @@ if uploaded_file is not None:
     dataframe = pd.read_csv(uploaded_file)
     st.write(dataframe)
 
-with open("flower.png", "rb") as file:
-    btn = st.download_button(
+
+btn = st.download_button(
             label="Download image",
             data=file,
             file_name="https://www.google.com/imgres?imgurl=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fen%2Fthumb%2Fe%2Fe2%2FIMG_Academy_Logo.svg%2F640px-IMG_Academy_Logo.svg.png&tbnid=pdSATE7nqfTDiM&vet=12ahUKEwj-xJ-e_smCAxV1NN4AHes7BUgQMygBegQIARBs..i&imgrefurl=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FIMG_Academy&docid=r6Vx2lLW0GRdzM&w=640&h=640&q=img&ved=2ahUKEwj-xJ-e_smCAxV1NN4AHes7BUgQMygBegQIARBs",
