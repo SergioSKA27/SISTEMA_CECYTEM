@@ -17,3 +17,4 @@ mitosheet==0.1.524
 xata
 streamlit-keplergl
 extra-streamlit-components
+streamlit-option-menu
