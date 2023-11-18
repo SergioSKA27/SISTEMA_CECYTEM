@@ -5,11 +5,16 @@ from yaml.loader import SafeLoader
 from streamlit_extras.switch_page_button import switch_page
 import streamlit_antd_components as sac
 from xata.client import XataClient
+import extra_streamlit_components as stx
+import datetime
 #Configuracion de la pagina
 st.set_page_config(page_title="Login", page_icon=":lock:", layout="wide", initial_sidebar_state="collapsed")
+
+
+
 #--------------------------------------------------
 #Funciones
-@st.cache_data
+@st.cache_resource
 def get_credentials():
   """
   The function `get_credentials` retrieves credentials data from a database using an API key and database URL.
@@ -27,7 +32,7 @@ def get_credentials():
         "role"
     ],
   })
-  return data
+  return data,xata
 
 @st.cache_data
 def credentials_formating(credentials):
@@ -45,6 +50,11 @@ def credentials_formating(credentials):
     c[credential['username']] = {'password': credential['password'], 'email': credential['email'],'name': credential['name']}
 
   return c
+
+def get_manager():
+    return stx.CookieManager(key='MyCookieManager')
+
+
 #--------------------------------------------------
 #Estilos de la pagina
 st.markdown('''
@@ -98,13 +108,14 @@ background-color: #e5e5f7;
 ''',unsafe_allow_html=True)
 #--------------------------------------------------
 #credenciales de la base de datos
-data = get_credentials()
+data,xta = get_credentials()
 credentials = credentials_formating(data['records'])
 #--------------------------------------------------
 # Mensaje de bienvenida
 sac.alert(message='Bienvenido al Sistema de Gestion y Analisis CECYTEM',
 description='Si no tienes usuario y contraseña, contacta con el administrador.', banner=True, icon=True, closable=True, height=100)
 
+cookie_manager = get_manager()
 
 #--------------------------------------------------
 # Banner principal de la pagina
@@ -129,11 +140,11 @@ with cols1[1]:
   # Creamos el formulario de inicio de sesion
     authenticator.login('Login', 'main')
   # Si el usuario se ha autenticado correctamente, mostramos un mensaje de bienvenida y cambiamos de pagina a Home
-    if st.session_state["authentication_status"]:
+    if st.session_state["authentication_status"] or cookie_manager.get('username') is not None:
         authenticator.logout('Logout', 'main', key='unique_key')
         st.toast(f'Bienvenido {st.session_state["name"]}',icon='🔓')
+        cookie_manager.set('username', st.session_state['username'])
         switch_page('Inicio')
-        st.title('Some content')
     elif st.session_state["authentication_status"] is False:
         st.error('Username/password is incorrect')
     elif st.session_state["authentication_status"] is None:
