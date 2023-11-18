@@ -15,11 +15,12 @@ data = xata.data().query("Credentials", {
         "id",
         "username",
         "email",
-        "password"
-    ],
-    "page": {
-        "size": 100
-    }
+        "password",
+        "avatar",
+        "name",
+        "role"
+    ]
 })
+data
 if st.button('Registra un usuario'):
     switch_page('user_register')

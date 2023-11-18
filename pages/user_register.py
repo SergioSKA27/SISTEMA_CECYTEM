@@ -10,11 +10,11 @@ import base64
 
 #Configuracion de la pagina
 st.set_page_config(page_title="Login", page_icon=":lock:", layout="wide", initial_sidebar_state="collapsed")
-xata = XataClient(api_key=st.secrets['apikey'],db_url=st.secrets['dburl'])
 
 st.title('Registro de usuario')
 
-with st.form(key='Registro de usuario',clear_on_submit=True):
+with st.form(key='Registro de usuario'):
+    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
     flag = True
     usern = st.text_input('Nombre de usuario',
     help='Este nombre de usuario sera el que se utilizara para iniciar sesion',
@@ -47,7 +47,7 @@ with st.form(key='Registro de usuario',clear_on_submit=True):
         avatar = base64.b64encode(open('rsc/avatars/PG.png','rb').read()).decode()
         st.image(open('rsc/avatars/PG.png','rb').read(),width=200)
 
-
+    rol = st.selectbox('Rol',['basic_user','teacher','sub_admin'], placeholder='Rol del usuario',index=0)
     sub =  st.form_submit_button('Registrar',disabled=False)
 
     if sub:
@@ -63,7 +63,10 @@ with st.form(key='Registro de usuario',clear_on_submit=True):
                     "name": f"{usern.strip()}_avatar.jpg",
                     "signedUrlTimeout": 300
                 },
-                "name": name
+                "name": name,
+                "role": 'basic_user'
+
+
             })
             st.success('Usuario registrado')
 
