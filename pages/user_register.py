@@ -58,7 +58,7 @@ with st.form(key='Registro de usuario'):
                 "email": email.strip(),
                 "password": stauth.Hasher([password.strip()]).generate()[0],
                 "avatar": {
-                    "base64Content":base64.b64encode(open('rsc/avatars/PG.png','rb').read()).decode(),
+                    "base64Content":avatar,
                     "enablePublicUrl": False,
                     "mediaType": "application/octet-stream",
                     "name": f"{usern.strip()}_avatar.jpg",
