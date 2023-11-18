@@ -14,7 +14,7 @@ if 'datareg' not in st.session_state:
     st.session_state.datareg = None
 st.title('Registro de usuario')
 
-with st.form(key='Registro de usuario'):
+with st.form(key='Registro de usuario',clear_on_submit=True):
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
     flag = True
     usern = st.text_input('Nombre de usuario',
@@ -70,6 +70,7 @@ with st.form(key='Registro de usuario'):
 
             })
             st.session_state.datareg = data
-            st.success('Usuario registrado')
 
-st.write(st.session_state.datareg)
+if st.session_state.datareg is not None:
+    st.success('Usuario registrado')
+    st.write(st.session_state.datareg)
