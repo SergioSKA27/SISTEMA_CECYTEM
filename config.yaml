@@ -26,8 +26,8 @@ credentials:
       password: $2b$12$uvxrnsgTTSZdhCf8bFmO0efoa6PR8Vh0612f5Hc8.lvGMg0vfr3Yi
 cookie:
   expiry_days: 30
-  key: some_signature_key # Must be string
-  name: some_cookie_name
+  key: password # Must be string
+  name: credential
 preauthorized:
   emails:
   - melsby@gmail.com

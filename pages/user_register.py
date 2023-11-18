@@ -10,7 +10,8 @@ import base64
 
 #Configuracion de la pagina
 st.set_page_config(page_title="Login", page_icon=":lock:", layout="wide", initial_sidebar_state="collapsed")
-
+if 'datareg' not in st.session_state:
+    st.session_state.datareg = None
 st.title('Registro de usuario')
 
 with st.form(key='Registro de usuario'):
@@ -57,7 +58,7 @@ with st.form(key='Registro de usuario'):
                 "email": email.strip(),
                 "password": stauth.Hasher([password.strip()]).generate()[0],
                 "avatar": {
-                    "base64Content":f"SGVsbG8gV29ybGQ={avatar}",
+                    "base64Content":base64.b64encode(open('rsc/avatars/PG.png','rb').read()).decode(),
                     "enablePublicUrl": False,
                     "mediaType": "application/octet-stream",
                     "name": f"{usern.strip()}_avatar.jpg",
@@ -68,6 +69,7 @@ with st.form(key='Registro de usuario'):
 
 
             })
+            st.session_state.datareg = data
             st.success('Usuario registrado')
 
-
+st.write(st.session_state.datareg)

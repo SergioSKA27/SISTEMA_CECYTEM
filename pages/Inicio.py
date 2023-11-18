@@ -148,7 +148,9 @@ else:
                 config['preauthorized']
             )
             with st.sidebar:
-                authenticator.logout('Logout', 'main', key='unique_key')
+                if authenticator.logout('Logout', 'main', key='unique_key'):
+                  if cookie_manager.get('username') is not None:
+                    cookie_manager.delete('username')
                 st.write(usrdata['username'])
             if not  st.session_state["authentication_status"]:
                 switch_page('Main')
