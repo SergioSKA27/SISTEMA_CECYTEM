@@ -77,6 +77,26 @@ def get_manager():
     return stx.CookieManager(key='MyCookieManager')
 
 
+
+@st.cache_data
+def query_user(usrname):
+    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
+    data = xata.data().query("Credentials", {
+        "columns": [
+            "id",
+            "username",
+            "email",
+            "password",
+            "avatar",
+            "name",
+            "role"
+        ],
+        "filter": {
+            "username": usrname
+        }
+    })
+    return data,xata
+
 #--------------------------------------------------
 #credenciales de la base de datos
 data,xta = get_credentials()
@@ -97,7 +117,7 @@ else:
             # CSS style definitions
             selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores", 'Perfil'],
                 icons=['house', 'cloud-upload', "list-task", 'gear'],
-                menu_icon="cast", default_index=0, orientation="horizontal",
+                menu_icon="cast", default_index=3, orientation="horizontal",
                 styles={
                     "container": {"padding": "0!important", "background-color": "#fafafa"},
                     "icon": {"color": "orange", "font-size": "25px"},
@@ -126,42 +146,20 @@ else:
             #st.write(usrdata['username'])
             if not  st.session_state["authentication_status"]:
                 switch_page('Main')
-            sac.alert(message=f'Bienvenido {st.session_state.name}',
-            description=f'Tu rol actual es {usrdata["role"]} ', banner=True, icon=True, closable=True, height=100)
-            st.toast(f'Bienvenido {st.session_state["name"]}',icon='👋')
-            st.title('Some content')
-            # Herramientas de desarrollador disponibles solo para el administrador
-            if usrdata['role'] == 'admin':
-              if st.checkbox('Developer Tools'):
-
-                st.subheader("All Cookies:")
-                cookies = cookie_manager.get_all()
-                st.write(cookies)
-
-                c1, c2, c3 = st.columns(3)
-
-                with c1:
-                    st.subheader("Get Cookie:")
-                    cookie = st.text_input("Cookie", key="0")
-                    clicked = st.button("Get")
-                    if clicked:
-                        value = cookie_manager.get(cookie=cookie)
-                        st.write(value)
-                with c2:
-                    st.subheader("Set Cookie:")
-                    cookie = st.text_input("Cookie", key="1")
-                    val = st.text_input("Value")
-                    if st.button("Add"):
-                        cookie_manager.set(cookie, val) # Expires in a day by default
-                with c3:
-                    st.subheader("Delete Cookie:")
-                    cookie = st.text_input("Cookie", key="2")
-                    if st.button("Delete"):
-                        cookie_manager.delete(cookie)
-
-                st.subheader("Session State:")
-                st.divider()
-                st.session_state
 
 
+            usrdata = get_current_user_info(cookie_manager.get('username'))
+            #usrdata
+            cols = st.columns([.4,.6])
 
+            with cols[0]:
+                try:
+                    st.image(usrdata['avatar']['url'],width=200)
+                except:
+                    st.image(open('rsc/avatars/PG.png','rb').read(),width=400)
+
+            with cols[1]:
+                st.write(f'**Nombre:** {usrdata["name"]}')
+                st.write(f'**Correo:** {usrdata["email"]}')
+                st.write(f'**Rol:** {usrdata["role"]}')
+            st.divider()

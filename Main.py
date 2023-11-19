@@ -112,6 +112,7 @@ background-color: #e5e5f7;
 #credenciales de la base de datos
 data,xta = get_credentials()
 credentials = credentials_formating(data['records'])
+credentials
 #--------------------------------------------------
 # Mensaje de bienvenida
 sac.alert(message='Bienvenido al Sistema de Gestion y Analisis CECYTEM',
