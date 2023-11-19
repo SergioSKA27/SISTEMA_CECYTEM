@@ -25,7 +25,7 @@ credentials:
       name: Rebecca Briggs
       password: $2b$12$uvxrnsgTTSZdhCf8bFmO0efoa6PR8Vh0612f5Hc8.lvGMg0vfr3Yi
 cookie:
-  expiry_days: 30
+  expiry_days: 1
   key: password # Must be string
   name: credential
 preauthorized:

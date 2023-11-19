@@ -45,7 +45,7 @@ else:
                 config['cookie']['expiry_days'],
                 config['preauthorized']
             )
-            authenticator.logout('Logout', 'main', key='unique_key')
+            authenticator.logout('Cerrar Sesión', 'sidebar', key='unique_key')
             if not  st.session_state["authentication_status"]:
                 switch_page('Main')
 
