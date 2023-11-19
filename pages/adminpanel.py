@@ -9,6 +9,7 @@ from streamlit.components.v1 import iframe
 from streamlit_agraph import agraph, Node, Edge, Config
 import random
 import pandas as pd
+import streamlit_analytics
 #Configuracion de la pagina
 st.set_page_config(page_title="Admin", page_icon=":shield:", layout="wide", initial_sidebar_state="collapsed")
 
@@ -171,3 +172,6 @@ else:
         ''',use_container_width=True)
     else:
         graph_agr()
+
+
+#Para ver estadisticas de la pagin usa '?analytics=on' en la url

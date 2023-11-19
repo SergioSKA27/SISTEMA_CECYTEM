@@ -18,3 +18,5 @@ xata
 streamlit-keplergl
 extra-streamlit-components
 streamlit-option-menu
+streamlit-analytics
+streamlit-agraph

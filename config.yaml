@@ -14,6 +14,7 @@
 # expiry_days: el número de días que la cookie de sesión debe permanecer activa.
 # key: la clave utilizada para firmar la cookie de sesión.
 # name: el nombre de la cookie de sesión.
+#Ejemplo credenciales de usuario las  verdaderas credenciales de usuario se almacenan en la base de datos.
 credentials:
   usernames:
     admin:
@@ -24,6 +25,8 @@ credentials:
       email: rbriggs@gmail.com
       name: Rebecca Briggs
       password: $2b$12$uvxrnsgTTSZdhCf8bFmO0efoa6PR8Vh0612f5Hc8.lvGMg0vfr3Yi
+
+
 cookie:
   expiry_days: 1
   key: password # Must be string
