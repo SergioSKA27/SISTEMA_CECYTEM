@@ -65,7 +65,7 @@ def get_current_user_info(usrname):
     parameter.
     """
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-    ch = xata.data().query("Credentials",{"filter": {"username": st.session_state['username']}})
+    ch = xata.data().query("Credentials",{"filter": {"username": usrname}})
     return ch['records'][0]
 
 
@@ -110,6 +110,7 @@ with c3:
         cookie_manager.delete(cookie)
 
 
+st.session_state
 
 
 #--------------------------------------------------
@@ -117,7 +118,7 @@ if "authentication_status" not in st.session_state  and cookie_manager.get('user
     switch_page('Main')
 else:
 # el usuario debe estar autenticado para acceder a esta página
-    if st.session_state["authentication_status"] or cookie_manager.get('username') is not None:
+    if st.session_state["authentication_status"] and cookie_manager.get('username') is not None:
             # Add on_change callback
             def on_change(key):
                 selection = st.session_state[key]
@@ -148,9 +149,9 @@ else:
                 config['preauthorized']
             )
 
-            if authenticator.logout('Logout', 'main', key='unique_key'):
+            if authenticator.logout('Cerrar Sesión', 'main', key='unique_key'):
               if cookie_manager.get('username') is not None:
-                  cookie_manager.delete('username')
+                cookie_manager.delete('username')
             st.write(usrdata['username'])
             if not  st.session_state["authentication_status"]:
                 switch_page('Main')
