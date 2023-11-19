@@ -117,7 +117,7 @@ if "authentication_status" not in st.session_state  and cookie_manager.get('user
     switch_page('Main')
 else:
 # el usuario debe estar autenticado para acceder a esta página
-    if st.session_state["authentication_status"]:
+    if st.session_state["authentication_status"] or cookie_manager.get('username') is not None:
             # Add on_change callback
             def on_change(key):
                 selection = st.session_state[key]
@@ -147,11 +147,11 @@ else:
                 config['cookie']['expiry_days'],
                 config['preauthorized']
             )
-            with st.sidebar:
-                if authenticator.logout('Logout', 'main', key='unique_key'):
-                  if cookie_manager.get('username') is not None:
-                    cookie_manager.delete('username')
-                st.write(usrdata['username'])
+
+            if authenticator.logout('Logout', 'main', key='unique_key'):
+              if cookie_manager.get('username') is not None:
+                  cookie_manager.delete('username')
+            st.write(usrdata['username'])
             if not  st.session_state["authentication_status"]:
                 switch_page('Main')
             sac.alert(message=f'Bienvenido {st.session_state.name}',

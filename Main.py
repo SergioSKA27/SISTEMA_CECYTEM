@@ -142,11 +142,12 @@ with cols1[1]:
   # Creamos el formulario de inicio de sesion
     authenticator.login('Login', 'main')
   # Si el usuario se ha autenticado correctamente, mostramos un mensaje de bienvenida y cambiamos de pagina a Home
-    if st.session_state["authentication_status"] or cookie_manager.get('some_cookie_name') is not None:
+    if st.session_state["authentication_status"] or cookie_manager.get('username') is not None:
         authenticator.logout('Logout', 'main', key='unique_key')
         st.toast(f'Bienvenido {st.session_state["name"]}',icon='🔓')
-        #cookie_manager.set('username', st.session_state['username'])
+        cookie_manager.set('username', st.session_state['username'], expires_at=datetime.datetime.now() + datetime.timedelta(days=6))
         switch_page('Inicio')
+
         streamlit_analytics.stop_tracking()
     elif st.session_state["authentication_status"] is False:
         st.error('Username/password is incorrect')
