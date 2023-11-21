@@ -68,7 +68,6 @@ def get_current_user_info(usrname):
     ch = xata.data().query("Credentials",{"filter": {"username": usrname}})
     return ch['records'][0]
 
-
 def get_manager():
     """
     The function `get_manager` returns a `CookieManager` object with the key 'MyCookieManager'.
@@ -85,11 +84,15 @@ cookie_manager = get_manager()
 
 #--------------------------------------------------
 #Authentication
-if "authentication_status" not in st.session_state  and cookie_manager.get('username') == None:
+if ("authentication_status" not in st.session_state or st.session_state["authentication_status"] == False) and cookie_manager.get('authentication_status') is None:
     switch_page('Main')
 else:
 # el usuario debe estar autenticado para acceder a esta página
-    if st.session_state["authentication_status"] and cookie_manager.get('username') is not None:
+    if st.session_state["authentication_status"]:
+
+
+
+
             # Add on_change callback
             def on_change(key):
                 selection = st.session_state[key]
@@ -107,8 +110,12 @@ else:
             )
 
 
+            if cookie_manager.get('username') is not None:
+                usrdata = get_current_user_info(cookie_manager.get('username'))
+            if 'username' in  st.session_state and st.session_state['username']  is not  None:
+                usrdata = get_current_user_info(st.session_state['username'])
 
-            usrdata = get_current_user_info(cookie_manager.get('username'))
+            #--------------------------------------------------
             with open('config.yaml') as file:
                 config = yaml.load(file, Loader=SafeLoader)
 
@@ -120,12 +127,7 @@ else:
                 config['preauthorized']
             )
 
-            if authenticator.logout('Cerrar Sesión', 'main', key='unique_key'):
-              if cookie_manager.get('username') is not None:
-                cookie_manager.delete('username')
-            #st.write(usrdata['username'])
-            if not  st.session_state["authentication_status"]:
-                switch_page('Main')
+            authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
             sac.alert(message=f'Bienvenido {st.session_state.name}',
             description=f'Tu rol actual es {usrdata["role"]} ', banner=True, icon=True, closable=True, height=100)
             st.toast(f'Bienvenido {st.session_state["name"]}',icon='👋')

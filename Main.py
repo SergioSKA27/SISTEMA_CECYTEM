@@ -54,7 +54,12 @@ def credentials_formating(credentials):
   return c
 
 def get_manager():
+    """
+    The function `get_manager` returns a `CookieManager` object with the key 'MyCookieManager'.
+    :return: an instance of the `CookieManager` class with the key set to 'MyCookieManager'.
+    """
     return stx.CookieManager(key='MyCookieManager')
+
 
 
 #--------------------------------------------------
@@ -74,7 +79,7 @@ background-color: #e5e5f7;
 
 .bg {
   animation:slide 20s ease-in-out infinite alternate;
-  background-image: linear-gradient(315deg, #aee1f9 0%, #f6ebe6 74%);
+  background-image: linear-gradient(315deg, #085C83 0%, #FAD5C4 74%);
   bottom:0;
   left:-50%;
   opacity:.5;
@@ -108,17 +113,44 @@ background-color: #e5e5f7;
 <div class="bg bg2"></div>
 <div class="bg bg3"></div>
 ''',unsafe_allow_html=True)
+
+
+
+
+
+
+
+
 #--------------------------------------------------
 #credenciales de la base de datos
 data,xta = get_credentials()
 credentials = credentials_formating(data['records'])
 credentials
+st.session_state
+
+
+
+#--------------------------------------------------
+# Cookie manager
+
+cookie_manager = get_manager()
+
+
+
+if cookie_manager.get(cookie='username') is not None and cookie_manager.get(cookie='authentication_status') is not None and cookie_manager.get(cookie='authentication_status') == 'True':
+	st.session_state['username'] = cookie_manager.get('username')
+	st.session_state['authentication_status'] = True
+	st.session_state['name'] = credentials[st.session_state['username']]['name']
+	st.session_state['logout'] = None
+	switch_page('Inicio')
+
+
 #--------------------------------------------------
 # Mensaje de bienvenida
 sac.alert(message='Bienvenido al Sistema de Gestion y Analisis CECYTEM',
 description='Si no tienes usuario y contraseña, contacta con el administrador.', banner=True, icon=True, closable=True, height=100)
 
-cookie_manager = get_manager()
+
 
 #--------------------------------------------------
 # Banner principal de la pagina
@@ -126,6 +158,8 @@ cols1 = st.columns([.5,.5])
 with cols1[0]:
     '### Colegio de Estudios Científicos y Tecnológicos del Estado de México'
     st.image("rsc/back1.jpg",use_column_width=True)
+
+
 #--------------------------------------------------
 # Formulario de inicio de sesion
 with cols1[1]:
@@ -144,14 +178,35 @@ with cols1[1]:
     authenticator.login('Login', 'main')
   # Si el usuario se ha autenticado correctamente, mostramos un mensaje de bienvenida y cambiamos de pagina a Home
     if st.session_state["authentication_status"]:
-        cookie_manager.set('username', st.session_state['username'])
+		#set_cookie(cookie_manager)
         switch_page('Inicio')
+        cookie_manager.set('username', st.session_state['username'],key='username')
+        cookie_manager.set('authentication_status', 'True',key='authentication_status')
+
 
 
     elif st.session_state["authentication_status"] is False:
         st.error('Username/password is incorrect')
     elif st.session_state["authentication_status"] is None:
         st.warning('Por favor, introduce tu usuario y contraseña')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #--------------------------------------------------
 # Pie de pagina
