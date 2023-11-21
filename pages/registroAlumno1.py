@@ -28,6 +28,7 @@ with st.form("Registro de Alumno",clear_on_submit=True):
   carrera = st.text_input("Carrera*",placeholder="Programación",help="Ingrese la carrera del alumno")
 
   if st.form_submit_button("Registrar"):
+
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
 
     datat = xata.records().insert("TutorAlumno", {
@@ -57,10 +58,13 @@ with st.form("Registro de Alumno",clear_on_submit=True):
     "curp": data1['id'],
     "idcontrol": uuid.uuid4().hex[:8],
     })
+
     flag = True
     st.write(data1)
     st.write(datat)
     st.write(data)
+    st.session_state.last_registered = data['id']
+    st.session_state.last_registered_curp = curp.upper()
     st.success("Alumno registrado con éxito")
 
 if flag:
@@ -82,8 +86,8 @@ if flag:
 
         ], format_func='title',index=1)
 
-    if st.button("Siguiente"):
-        switch_page("registroAlumno2")
+    time.sleep(5)
+    switch_page("registroAlumno2")
 
 
 
@@ -103,3 +107,5 @@ else:
         sac.StepsItem(title='Paso4',),
 
         ], format_func='title',index=0)
+
+
