@@ -31,10 +31,10 @@ with st.form("Registro de Alumno",clear_on_submit=True):
 
   with cols1[0]:
     #control_number = st.text_input("Numero de Control",placeholder=uuid.uuid4().hex[:8],max_chars=8,help="Ingrese el numero de control del alumno")
-    st.write("Número de Control :",st.session_state.last_registered)
+    st.write("Número de Control :",st.session_state.last_registered["idcontrol"]['id'])
   with cols1[1]:
     #curp = st.text_input("CURP*",placeholder="CURP",max_chars=18,help="Ingrese el CURP del alumno")
-    st.write("CURP :",st.session_state.last_registered_curp)
+    st.write("CURP :",st.session_state.last_registered["curp"])
 
   nombre = st.text_input("Nombre(s)*",placeholder="Nombre(s)",help="Ingrese el nombre del alumno")
 
@@ -102,11 +102,15 @@ with st.form("Registro de Alumno",clear_on_submit=True):
 
   if st.form_submit_button("Registrar"):
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-    data = xata.records().update("DataAlumno", st.session_state.last_registered, {
+    data = xata.records().update("DataAlumno", st.session_state.last_registered["id"], {
     "nombre": nombre,
     "apellidoPaterno": apellidop,
     "apellidoMaterno": apellidom,
-    "fechaNacimiento": datetime.datetime(fecha_nacimiento.year,fecha_nacimiento.month,fecha_nacimiento.day,0,0,0,0).isoformat("T")+'Z',
+    "fechaNacimiento": datetime.datetime(
+    fecha_nacimiento.year,
+    fecha_nacimiento.month,
+    fecha_nacimiento.day,
+    0,0,0,3).strftime("%Y-%m-%dT%H:%M:%SZ"),
     "estadoNacimiento": estado_nacimiento,
     "sexo": sexo,
     "nacionalidad": nacionalidad,

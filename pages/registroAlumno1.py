@@ -31,6 +31,7 @@ with st.form("Registro de Alumno",clear_on_submit=True):
 
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
 
+    #Creamos todos los registros necesarios con campos por defecto
     datat = xata.records().insert("TutorAlumno", {
     "id_tutorAlumno": uuid.uuid4().hex[:8]
     })
@@ -63,8 +64,8 @@ with st.form("Registro de Alumno",clear_on_submit=True):
     st.write(data1)
     st.write(datat)
     st.write(data)
-    st.session_state.last_registered = data['id']
-    st.session_state.last_registered_curp = curp.upper()
+
+    st.session_state.last_registered = {"curp":curp.upper(),"id":data1['id'], "id_tutorAlumno": datat['id'], "idcontrol": data}
     st.success("Alumno registrado con éxito")
 
 if flag:

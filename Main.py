@@ -53,6 +53,7 @@ def credentials_formating(credentials):
 
   return c
 
+
 def get_manager():
     """
     The function `get_manager` returns a `CookieManager` object with the key 'MyCookieManager'.
