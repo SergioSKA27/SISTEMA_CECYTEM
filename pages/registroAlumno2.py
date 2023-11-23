@@ -17,9 +17,10 @@ if "last_registered_curp" not in st.session_state:
   st.session_state.last_registered_curp = None
 
 
-if st.session_state.last_registered is None and st.session_state.last_registered_curp is None:
+if st.session_state.last_registered is None:
   switch_page("registroAlumno1")
 
+flag = False
 
 with st.form("Registro de Alumno",clear_on_submit=True):
   st.subheader("Datos Generales del Alumno")
@@ -46,7 +47,7 @@ with st.form("Registro de Alumno",clear_on_submit=True):
     apellidom = st.text_input("Apellido Materno*",placeholder="Apellido Materno",help="Ingrese el apellido materno del alumno")
 
   fecha_nacimiento = st.date_input("Fecha de Nacimiento*",help="Ingrese la fecha de nacimiento del alumno",min_value=datetime.date(1900, 1, 1))
-  st.write(type(datetime.datetime.combine(fecha_nacimiento, datetime.datetime.min.time())))
+  #st.write(type(datetime.datetime.combine(fecha_nacimiento, datetime.datetime.min.time())))
 
   estado_nacimiento = st.selectbox("Estado de Nacimiento*",
   ["Aguascalientes",
@@ -119,6 +120,50 @@ with st.form("Registro de Alumno",clear_on_submit=True):
     st.write(data)
 
     st.success("Alumno registrado con exito")
+    flag = True
+
+
+
+if flag:
+
+    sac.steps(
+
+    items=[
+
+        sac.StepsItem(title='Paso 1',
+        subtitle='Registro Básico',
+        description='Registra los datos básicos del alumno',
+        disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso 2',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso 3'),
+
+        sac.StepsItem(title='Paso4'),
+
+        ], format_func='title',index=2)
+
+    #time.sleep(5)
+    #switch_page("registroAlumno2")
+
+
+
+else:
+    sac.steps(
+
+    items=[
+
+        sac.StepsItem(title='Paso 1',
+        subtitle='Registro Básico',
+        description='Registra los datos básicos del alumno',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso 2'),
+
+        sac.StepsItem(title='Paso 3'),
+
+        sac.StepsItem(title='Paso4',),
+
+        ], format_func='title',index=1)
 
 
 
