@@ -17,7 +17,6 @@ import datetime
 st.set_page_config(page_title="Inicio", page_icon=":house:", layout="wide", initial_sidebar_state="collapsed")
 #--------------------------------------------------
 #Funciones
-@st.cache_resource
 def get_credentials():
   """
   The function `get_credentials` retrieves credentials data from a database using an API key and database URL.
@@ -79,6 +78,7 @@ def get_manager():
 #--------------------------------------------------
 #credenciales de la base de datos
 data,xta = get_credentials()
+data
 credentials = credentials_formating(data['records'])
 cookie_manager = get_manager()
 
@@ -109,12 +109,13 @@ else:
                 },on_change=on_change,key='menu'
             )
 
-
+            st.session_state['username']
             if cookie_manager.get('username') is not None:
                 usrdata = get_current_user_info(cookie_manager.get('username'))
             if 'username' in  st.session_state and st.session_state['username']  is not  None:
                 usrdata = get_current_user_info(st.session_state['username'])
 
+            usrdata
             #--------------------------------------------------
             with open('config.yaml') as file:
                 config = yaml.load(file, Loader=SafeLoader)

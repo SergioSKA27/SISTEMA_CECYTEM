@@ -18,7 +18,7 @@ with st.form(key='Registro de usuario',clear_on_submit=False):
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
     flag = True
     usern = st.text_input('Nombre de usuario',
-    help='Este nombre de usuario sera el que se utilizara para iniciar sesion',
+    help='Este nombre de usuario sera el que se utilizara para iniciar sesion, usa minuculas y no uses espacios',
     placeholder='Ejemplo: usuario123')
 
     ch = xata.data().query("Credentials",{"filter": {"username": usern}})
@@ -48,13 +48,13 @@ with st.form(key='Registro de usuario',clear_on_submit=False):
         avatar = base64.b64encode(open('rsc/avatars/PG.png','rb').read()).decode()
         st.image(open('rsc/avatars/PG.png','rb').read(),width=200)
 
-    rol = st.selectbox('Rol',['basic_user','teacher','sub_admin'], placeholder='Rol del usuario',index=0)
+    rol = st.selectbox('Rol',['basic_user','teacher','sub_admin','admin'], placeholder='Rol del usuario',index=0)
     sub =  st.form_submit_button('Registrar',disabled=False)
 
     if sub:
         if flag and usern != '' and email != '' and name != '' and password != '':
             data = xata.records().insert("Credentials", {
-                "username": usern.strip(),
+                "username": usern.strip().lower(),
                 "email": email.strip(),
                 "password": stauth.Hasher([password.strip()]).generate()[0],
                 "avatar": {
@@ -65,11 +65,13 @@ with st.form(key='Registro de usuario',clear_on_submit=False):
                     "signedUrlTimeout": 300
                 },
                 "name": name,
-                "role": 'basic_user'
+                "role": rol
 
 
             })
             st.session_state.datareg = data
+        else:
+            st.error('Por favor, llena todos los campos')
 
 if st.session_state.datareg is not None:
     st.success('Usuario registrado')

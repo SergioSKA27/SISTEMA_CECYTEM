@@ -112,6 +112,11 @@ dtaAlumno = query_dataAlumno(query['curp']['id'])
 
 dtaAlumno
 
+
+#--------------------------------------------------
+
+st.title('Perfil del Alumno')
+
 st.divider()
 cols0 = st.columns([0.5,0.5])
 

@@ -16,7 +16,7 @@ st.set_page_config(page_title="Login", page_icon=":lock:", layout="wide", initia
 
 #--------------------------------------------------
 #Funciones
-@st.cache_resource
+
 def get_credentials():
   """
   The function `get_credentials` retrieves credentials data from a database using an API key and database URL.
@@ -34,7 +34,7 @@ def get_credentials():
         "role"
     ],
   })
-  return data,xata
+  return data
 
 @st.cache_data
 def credentials_formating(credentials):
@@ -124,7 +124,7 @@ background-color: #e5e5f7;
 
 #--------------------------------------------------
 #credenciales de la base de datos
-data,xta = get_credentials()
+data = get_credentials()
 credentials = credentials_formating(data['records'])
 credentials
 st.session_state
@@ -183,6 +183,7 @@ with cols1[1]:
         switch_page('Inicio')
         cookie_manager.set('username', st.session_state['username'],key='username')
         cookie_manager.set('authentication_status', 'True',key='authentication_status')
+        cookie_manager.set('name', credentials[st.session_state['username']]['name'],key='name')
 
 
 
