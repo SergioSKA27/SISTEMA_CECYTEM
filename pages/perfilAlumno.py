@@ -106,11 +106,10 @@ def query_dataAlumno(record):
 query = query_Alumno()
 
 
-query
+
 
 dtaAlumno = query_dataAlumno(query['curp']['id'])
 
-dtaAlumno
 
 
 #--------------------------------------------------
@@ -118,6 +117,8 @@ dtaAlumno
 st.title('Perfil del Alumno')
 
 st.divider()
+
+st.subheader("Datos de Control")
 cols0 = st.columns([0.5,0.5])
 
 with cols0[0]:
@@ -157,3 +158,9 @@ st.write("**Telefono:** ",dtaAlumno['telefono'])
 st.write("**Celular:** ",dtaAlumno['celular'])
 st.write("**Correo Personal:** ",dtaAlumno['correoe_p'])
 st.write("**Correo Institucional:** ",dtaAlumno['correoe_i'])
+
+
+
+if st.checkbox("raw data"):
+    st.write(query)
+    st.write(dtaAlumno)

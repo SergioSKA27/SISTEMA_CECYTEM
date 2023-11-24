@@ -14,7 +14,7 @@ with st.form("Registro de Alumno",clear_on_submit=True):
   st.subheader("Datos Generales del Alumno")
 
 
-
+  autog = st.checkbox("Generar numero de control automaticamente",help="Si se activa esta opción, el numero de control se generará aleatoriamente")
   cols1 = st.columns([0.4,0.6])
 
 
@@ -28,6 +28,10 @@ with st.form("Registro de Alumno",clear_on_submit=True):
   carrera = st.text_input("Carrera*",placeholder="Programación",help="Ingrese la carrera del alumno")
 
   if st.form_submit_button("Registrar"):
+
+    if autog:
+        control_number = uuid.uuid4().hex[:8]
+
 
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
 
@@ -57,7 +61,7 @@ with st.form("Registro de Alumno",clear_on_submit=True):
     "carreraAlumno": carrera,
     "plantelAlumno": plantel,
     "curp": data1['id'],
-    "idcontrol": uuid.uuid4().hex[:8],
+    "idcontrol": control_number,
     })
 
     flag = True
