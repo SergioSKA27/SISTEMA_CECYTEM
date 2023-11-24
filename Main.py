@@ -126,8 +126,8 @@ background-color: #e5e5f7;
 #credenciales de la base de datos
 data = get_credentials()
 credentials = credentials_formating(data['records'])
-credentials
-st.session_state
+#credentials
+#st.session_state
 
 
 
@@ -138,12 +138,7 @@ cookie_manager = get_manager()
 
 
 
-if cookie_manager.get(cookie='username') is not None and cookie_manager.get(cookie='authentication_status') is not None and cookie_manager.get(cookie='authentication_status') == 'True':
-	st.session_state['username'] = cookie_manager.get('username')
-	st.session_state['authentication_status'] = True
-	st.session_state['name'] = credentials[st.session_state['username']]['name']
-	st.session_state['logout'] = None
-	switch_page('Inicio')
+
 
 
 #--------------------------------------------------
@@ -180,10 +175,10 @@ with cols1[1]:
   # Si el usuario se ha autenticado correctamente, mostramos un mensaje de bienvenida y cambiamos de pagina a Home
     if st.session_state["authentication_status"]:
 		#set_cookie(cookie_manager)
+        #cookie_manager.set('username', st.session_state['username'],key='username')
+        #cookie_manager.set('authentication_status', 'True',key='authentication_status')
+        #cookie_manager.set('name', credentials[st.session_state['username']]['name'],key='name')
         switch_page('Inicio')
-        cookie_manager.set('username', st.session_state['username'],key='username')
-        cookie_manager.set('authentication_status', 'True',key='authentication_status')
-        cookie_manager.set('name', credentials[st.session_state['username']]['name'],key='name')
 
 
 

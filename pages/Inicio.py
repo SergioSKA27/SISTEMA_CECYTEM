@@ -78,13 +78,17 @@ def get_manager():
 #--------------------------------------------------
 #credenciales de la base de datos
 data,xta = get_credentials()
-data
+#data
 credentials = credentials_formating(data['records'])
 cookie_manager = get_manager()
 
+
+st.session_state
+
+
 #--------------------------------------------------
 #Authentication
-if ("authentication_status" not in st.session_state or st.session_state["authentication_status"] == False) and cookie_manager.get('authentication_status') is None:
+if "authentication_status" not in st.session_state  :
     switch_page('Main')
 else:
 # el usuario debe estar autenticado para acceder a esta página
@@ -109,13 +113,10 @@ else:
                 },on_change=on_change,key='menu'
             )
 
-            st.session_state['username']
-            if cookie_manager.get('username') is not None:
-                usrdata = get_current_user_info(cookie_manager.get('username'))
-            if 'username' in  st.session_state and st.session_state['username']  is not  None:
-                usrdata = get_current_user_info(st.session_state['username'])
 
-            usrdata
+            usrdata = get_current_user_info(st.session_state['username'])
+
+            #usrdata
             #--------------------------------------------------
             with open('config.yaml') as file:
                 config = yaml.load(file, Loader=SafeLoader)
@@ -134,37 +135,37 @@ else:
             st.toast(f'Bienvenido {st.session_state["name"]}',icon='👋')
             st.title('Some content')
             # Herramientas de desarrollador disponibles solo para el administrador
-            if usrdata['role'] == 'admin':
-              if st.checkbox('Developer Tools'):
+            #if usrdata['role'] == 'admin':
+            #  if st.checkbox('Developer Tools'):
 
-                st.subheader("All Cookies:")
-                cookies = cookie_manager.get_all()
-                st.write(cookies)
+            #    st.subheader("All Cookies:")
+            #    cookies = cookie_manager.get_all()
+            #    st.write(cookies)
 
-                c1, c2, c3 = st.columns(3)
+            #    c1, c2, c3 = st.columns(3)
 
-                with c1:
-                    st.subheader("Get Cookie:")
-                    cookie = st.text_input("Cookie", key="0")
-                    clicked = st.button("Get")
-                    if clicked:
-                        value = cookie_manager.get(cookie=cookie)
-                        st.write(value)
-                with c2:
-                    st.subheader("Set Cookie:")
-                    cookie = st.text_input("Cookie", key="1")
-                    val = st.text_input("Value")
-                    if st.button("Add"):
-                        cookie_manager.set(cookie, val) # Expires in a day by default
-                with c3:
-                    st.subheader("Delete Cookie:")
-                    cookie = st.text_input("Cookie", key="2")
-                    if st.button("Delete"):
-                        cookie_manager.delete(cookie)
+            #    with c1:
+            #        st.subheader("Get Cookie:")
+            #        cookie = st.text_input("Cookie", key="0")
+            #        clicked = st.button("Get")
+            #        if clicked:
+            #            value = cookie_manager.get(cookie=cookie)
+            #            st.write(value)
+            #    with c2:
+            #        st.subheader("Set Cookie:")
+            #        cookie = st.text_input("Cookie", key="1")
+            #        val = st.text_input("Value")
+            #        if st.button("Add"):
+            #            cookie_manager.set(cookie, val) # Expires in a day by default
+            #    with c3:
+            #        st.subheader("Delete Cookie:")
+            #        cookie = st.text_input("Cookie", key="2")
+            #        if st.button("Delete"):
+            #            cookie_manager.delete(cookie)
 
-                st.subheader("Session State:")
-                st.divider()
-                st.session_state
+            #    st.subheader("Session State:")
+            #    st.divider()
+            #    st.session_state
 
 
 
