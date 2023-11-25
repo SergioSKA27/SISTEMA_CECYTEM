@@ -10,6 +10,8 @@ from streamlit_agraph import agraph, Node, Edge, Config
 import random
 import pandas as pd
 import streamlit_analytics
+from streamlit_option_menu import option_menu
+
 #Configuracion de la pagina
 st.set_page_config(page_title="Admin", page_icon=":shield:", layout="wide", initial_sidebar_state="collapsed")
 
@@ -17,8 +19,7 @@ st.set_page_config(page_title="Admin", page_icon=":shield:", layout="wide", init
 
 #--------------------------------------------------
 #Funciones
-@st.cache_resource
-def get_credentials():
+def get_credentials()->dict:
   """
   The function `get_credentials` retrieves credentials data from a database using an API key and database URL.
   :return: The function `get_credentials` returns the data retrieved from the XataClient API.
@@ -35,10 +36,22 @@ def get_credentials():
         "role"
     ],
   })
-  return data,xata
+  return data
 
-@st.cache_data
-def query_users():
+def get_current_user_info(usrname: str)->dict:
+    """
+    The function `get_current_user_info` retrieves the information of the current user based on their username from a
+    database.
+
+    :param usrname: The `usrname` parameter is the username of the user whose information you want to retrieve
+    :return: The function `get_current_user_info` returns the information of the current user specified by the `usrname`
+    parameter.
+    """
+    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
+    ch = xata.data().query("Credentials",{"filter": {"username": usrname}})
+    return ch['records'][0]
+
+def query_users()->dict:
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
     data = xata.data().query("Credentials", {
         "columns": [
@@ -51,12 +64,11 @@ def query_users():
             "role"
         ]
     })
-    return data,xata
+    return data['records']
+
 def random_color():
     # trunk-ignore(bandit/B311)
     return "#{:02x}{:02x}{:02x}".format(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-
-
 
 def graph_agr():
     nodes = [
@@ -98,80 +110,169 @@ def graph_agr():
     return_value = agraph(nodes=nodes, edges=edges, config=config)
     return return_value
 
+# Add on_change callback
+def on_change(key):
+    selection = st.session_state[key]
+    st.write(f"Selection changed to {selection}")
 
-if "authentication_status" not in st.session_state:
+
+@st.cache_data
+def credentials_formating(credentials: list)->dict:
+  """
+  The function `credentials_formating` takes a list of dictionaries representing credentials and returns a formatted
+  dictionary with usernames as keys and corresponding password, email, and name as values.
+
+  :param credentials: The parameter "credentials" is a list of dictionaries. Each dictionary represents a set of
+  credentials and has the following keys: 'username', 'password', 'email', and 'name'
+  :return: a dictionary where the keys are the usernames from the input credentials list, and the values are dictionaries
+  containing the password, email, and name for each username.
+  """
+  c = {}
+  for credential in credentials:
+    c[credential['username']] = {'password': credential['password'], 'email': credential['email'],'name': credential['name']}
+
+  return c
+
+
+
+
+
+#--------------------------------------------------
+#Credenciales de la base de datos
+
+data = get_credentials()
+credentials = credentials_formating(data['records'])
+
+
+
+
+
+#--------------------------------------------------
+#Cuerpo de la pagina
+#Authentication
+if "authentication_status" not in st.session_state  :
     switch_page('Main')
 else:
 # el usuario debe estar autenticado para acceder a esta página
     if st.session_state["authentication_status"]:
-            with open('config.yaml') as file:
-                config = yaml.load(file, Loader=SafeLoader)
+        usrdata = get_current_user_info(st.session_state['username'])
 
-            authenticator = stauth.Authenticate(
-                config['credentials'],
+
+
+
+            # Menu de navegacion
+        selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores", 'Perfil'],
+            icons=['house', 'cloud-upload', "list-task", 'gear'],
+                menu_icon="cast", default_index=0, orientation="horizontal",
+                styles={
+                    "container": {"padding": "0!important", "background-color": "#fafafa"},
+                    "icon": {"color": "orange", "font-size": "25px"},
+                    "nav-link": {"font-size": "25px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
+                    "nav-link-selected": {"background-color": "green"},
+                },on_change=on_change,key='menu'
+            )
+
+
+
+
+            #usrdata
+        #--------------------------------------------------
+        with open('config.yaml') as file:
+            config = yaml.load(file, Loader=SafeLoader)
+
+        authenticator = stauth.Authenticate(
+                {'usernames':credentials},
                 config['cookie']['name'],
                 config['cookie']['key'],
                 config['cookie']['expiry_days'],
                 config['preauthorized']
             )
-            authenticator.logout('Cerrar Sesión', 'sidebar', key='unique_key')
-            if not  st.session_state["authentication_status"]:
-                switch_page('Main')
 
-    #--------------------------------------------------
-    #querys
-    data,xta = query_users()
-    #--------------------------------------------------
-    #Cuerpo de la pagina
-    st.title('Panel de Administrador')
-    st.divider()
-    #--------------------------------------------------
-    #Administrar Usuarios
-    st.header('Administrar Usuarios')
-    st.dataframe(pd.DataFrame(data['records']))
-    if st.button('Registra un usuario'):
-        switch_page('user_register')
-    #--------------------------------------------------
-    #Diagrama de la base de datos
-    st.header('Diagrama de la base de datos')
-    #Para Los desarrolladores y administradores en
-    st.markdown(r"""<iframe width="1000" height="315" src='https://dbdiagram.io/e/65597c3c3be149578745fdcf/6559b1063be1495787470237'> </iframe>""",unsafe_allow_html=True)
-    if not st.checkbox('Grafo Interactivo'):
-        st.graphviz_chart('''
-        digraph G {
-          // Definición de las tablas
-          Alumno [label="Alumno\n(id_controlAlumno, carreraAlumno, plantelAlumno)", shape=box];
-          DataAlumno [label="DataAlumno\n(curp, nombre, apellidoPaterno, ...)", shape=box];
-          TutorAlumno [label="TutorAlumno\n(id_TutorAlumno, curp, nombre, ...)", shape=box];
-          SaludAlumno [label="SaludAlumno\n(id_SaludAlumno, enfermedad_estatus, ...)", shape=box];
-          DomicilioAlumno [label="DomicilioAlumno\n(id_DomicilioAlumno, calle, num_exterior, ...)", shape=box];
-          ProcedenciaAlumno [label="ProcedenciaAlumno\n(id_ProcedenciaAlumno, clave_ceneval, ...)", shape=box];
-          DocumentacionAlumno [label="DocumentacionAlumno\n(id_DocumentacionAlumno, Acta_nacimiento, ...)", shape=box];
-          EstatusAlumno [label="EstatusAlumno\n(id_EstatusAlumno, actual_estatus, ...)", shape=box];
-          PromedioAlumno [label="PromedioAlumno\n(id_PromedioAlumno, promedio_general, ...)", shape=box];
-          SeguroAlumno [label="SeguroAlumno\n(id_SeguroAlumno, asegurado_por, tipo_seguro, ...)", shape=box];
-          BecaAlumno [label="BecaAlumno\n(id_BecaAlumno, id_controlAlumno)", shape=box];
-          ArchivosAlumno [label="ArchivosAlumno\n(id_archivo, id_controlAlumno, archivo, ...)", shape=box];
+        authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
 
-          // Definición de las relaciones
-          Alumno -> DataAlumno [label="curpAlumno"];
-          Alumno -> EstatusAlumno [label="id_EstatusAlumno"];
-          Alumno -> PromedioAlumno [label="id_PromedioAlumno"];
-          Alumno -> SeguroAlumno [label="id_SeguroAlumno"];
+        if usrdata['role'] == 'admin':
+            data = query_users()
+            #data
+            #--------------------------------------------------
+            #Opciones de Administrador
+            st.divider()
+            st.subheader('Opciones de Administrador')
+            colsop = st.columns(5)
+            with colsop[0]:
+                if st.button('Registra un usuario'):
+                    switch_page('user_register')
 
-          DataAlumno -> TutorAlumno [label="id_TutorAlumno"];
-          DataAlumno -> SaludAlumno [label="id_SaludAlumno"];
-          DataAlumno -> DomicilioAlumno [label="id_DomicilioAlumno"];
-          DataAlumno -> ProcedenciaAlumno [label="id_ProcedenciaAlumno"];
-          DataAlumno -> DocumentacionAlumno [label="id_DocumentacionAlumno"];
+            with colsop[1]:
+                if st.button('Elimina un usuario'):
+                    pass
 
-          BecaAlumno -> Alumno [label="id_controlAlumno"];
-          ArchivosAlumno -> Alumno [label="id_controlAlumno"];
-        }
+            with colsop[2]:
+                if st.button('Edita un usuario'):
+                    pass
 
-        ''',use_container_width=True)
-    else:
-        graph_agr()
+            with colsop[3]:
+                if st.button('Genera reporte'):
+                    pass
+            with colsop[4]:
+                if st.button('Opciones de la pagina'):
+                    pass
+            st.divider()
+        #Cuerpo de la pagina
+            st.title('Panel de Administrador')
+            st.divider()
+            #--------------------------------------------------
+            #Administrar Usuarios
+            st.header('Administrar Usuarios')
+            st.dataframe(pd.DataFrame(data))
+
+
+            #--------------------------------------------------
+            #Diagrama de la base de datos
+            st.header('Diagrama de la base de datos')
+            #Para Los desarrolladores y administradores en
+            st.markdown(r"""<iframe width="1000" height="315" src='https://dbdiagram.io/e/65597c3c3be149578745fdcf/6559b1063be1495787470237'> </iframe>""",unsafe_allow_html=True)
+            if not st.checkbox('Grafo Interactivo'):
+                st.graphviz_chart('''
+                digraph G {
+                  // Definición de las tablas
+                  Alumno [label="Alumno\n(id_controlAlumno, carreraAlumno, plantelAlumno)", shape=box];
+                  DataAlumno [label="DataAlumno\n(curp, nombre, apellidoPaterno, ...)", shape=box];
+                  TutorAlumno [label="TutorAlumno\n(id_TutorAlumno, curp, nombre, ...)", shape=box];
+                  SaludAlumno [label="SaludAlumno\n(id_SaludAlumno, enfermedad_estatus, ...)", shape=box];
+                  DomicilioAlumno [label="DomicilioAlumno\n(id_DomicilioAlumno, calle, num_exterior, ...)", shape=box];
+                  ProcedenciaAlumno [label="ProcedenciaAlumno\n(id_ProcedenciaAlumno, clave_ceneval, ...)", shape=box];
+                  DocumentacionAlumno [label="DocumentacionAlumno\n(id_DocumentacionAlumno, Acta_nacimiento, ...)", shape=box];
+                  EstatusAlumno [label="EstatusAlumno\n(id_EstatusAlumno, actual_estatus, ...)", shape=box];
+                  PromedioAlumno [label="PromedioAlumno\n(id_PromedioAlumno, promedio_general, ...)", shape=box];
+                  SeguroAlumno [label="SeguroAlumno\n(id_SeguroAlumno, asegurado_por, tipo_seguro, ...)", shape=box];
+                  BecaAlumno [label="BecaAlumno\n(id_BecaAlumno, id_controlAlumno)", shape=box];
+                  ArchivosAlumno [label="ArchivosAlumno\n(id_archivo, id_controlAlumno, archivo, ...)", shape=box];
+
+                  // Definición de las relaciones
+                  Alumno -> DataAlumno [label="curpAlumno"];
+                  Alumno -> EstatusAlumno [label="id_EstatusAlumno"];
+                  Alumno -> PromedioAlumno [label="id_PromedioAlumno"];
+                  Alumno -> SeguroAlumno [label="id_SeguroAlumno"];
+
+                  DataAlumno -> TutorAlumno [label="id_TutorAlumno"];
+                  DataAlumno -> SaludAlumno [label="id_SaludAlumno"];
+                  DataAlumno -> DomicilioAlumno [label="id_DomicilioAlumno"];
+                  DataAlumno -> ProcedenciaAlumno [label="id_ProcedenciaAlumno"];
+                  DataAlumno -> DocumentacionAlumno [label="id_DocumentacionAlumno"];
+
+                  BecaAlumno -> Alumno [label="id_controlAlumno"];
+                  ArchivosAlumno -> Alumno [label="id_controlAlumno"];
+                }
+
+            ''',use_container_width=True)
+            else:
+                graph_agr()
 
 
 #Para ver estadisticas de la pagin usa '?analytics=on' en la url
+
+
+
+
+
+

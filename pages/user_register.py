@@ -93,23 +93,15 @@ def validar_nombre_usuario(nombre_usuario: str)->bool:
         return False
 
 @st.cache_data
-def verify_contraseña(con1: str,repcon1: str)->bool:
-    """
-    The function `verify_contraseña` verifies that the password entered by the user is valid.
-
-    :param con1: The `con1` parameter is the password entered by the user.
-    :param repcon1: The `repcon1` parameter is the password entered by the user again to verify that it is correct.
-    :return: The function `verify_contraseña` returns a boolean value. If the passwords match, it returns `True`,
-    indicating that the password is valid. Otherwise, it returns `False`, indicating that the password is invalid.
-    """
-
-    if con1 == repcon1 and  con1 >= 8:
-        return True
-    else:
-        return False
-
-@st.cache_data
 def verifydata(data: dict)->bool:
+    """
+    The function `verifydata` checks if the given data dictionary contains valid values for username, password, email, and
+    if the username is available.
+
+    :param data: The `data` parameter is a dictionary that contains the following keys:
+    :type data: dict
+    :return: a boolean value.
+    """
     flag = True
     if data['username'] == '' or data['password'] == '':
         flag = False
@@ -410,7 +402,8 @@ placeholder='Ejemplo: usuario123',value=st.session_state.usrname)
                     st.error('Por favor, llena todos los campos')
                 else:
                     if verifydata(d):
-                        reg = register_user(d)
+                        with st.spinner('Registrando usuario...'):
+                            reg = register_user(d)
                         st.subheader('Informacion del registro')
                         st.json(reg)
                         if reg[0]:
