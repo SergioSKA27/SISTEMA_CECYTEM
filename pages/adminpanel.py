@@ -268,6 +268,13 @@ else:
             else:
                 graph_agr()
 
+        else:
+            st.title('Panel de Administrador')
+            st.divider()
+            st.header('No tienes permisos para ver esta pagina')
+            st.subheader('Contacta al administrador para obtener permisos')
+            st.image('https://media.giphy.com/media/3o7aDczQq9MJ0R2MlO/giphy.gif',use_column_width=True)
+            st.balloons()
 
 #Para ver estadisticas de la pagin usa '?analytics=on' en la url
 
