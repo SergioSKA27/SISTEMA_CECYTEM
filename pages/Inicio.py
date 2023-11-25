@@ -53,7 +53,7 @@ def credentials_formating(credentials):
 
   return c
 
-@st.cache_data
+
 def get_current_user_info(usrname):
     """
     The function `get_current_user_info` retrieves the information of the current user based on their username from a

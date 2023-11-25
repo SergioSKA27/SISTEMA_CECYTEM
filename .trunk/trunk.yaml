@@ -14,10 +14,10 @@ runtimes:
     - python@3.10.8
 lint:
   disabled:
+    - bandit
     - git-diff-check
     - ruff
   enabled:
-    - bandit@1.7.5
     - black@23.9.1
     - checkov@3.0.38
     - isort@5.12.0

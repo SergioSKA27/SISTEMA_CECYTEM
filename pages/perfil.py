@@ -130,6 +130,7 @@ else:
 
 
             usrdata = get_current_user_info(st.session_state["username"])
+            usrdata
             with open('config.yaml') as file:
                 config = yaml.load(file, Loader=SafeLoader)
 
@@ -155,7 +156,7 @@ else:
                 try:
                     st.image(usrdata['avatar']['url'],width=200)
                 except:
-                    st.image(open('rsc/avatars/PG.png','rb').read(),width=400)
+                    st.image('https://us-east-1.xata.sh/file/01m34qhhcspcvkhlrcpn6ho9k5rllmsr4684epaf4qhu0isltg9eqlvs20ojac1n6csjicpk68sj0dhk60spm7l0pcq32gb3nuv5jk7rsinfhtal4982p9ss6cou06hb45qmnrcvm6aninblpkdqv2rja9g01tah')
 
             with cols[1]:
                 st.write(f'**Nombre:** {usrdata["name"]}')
