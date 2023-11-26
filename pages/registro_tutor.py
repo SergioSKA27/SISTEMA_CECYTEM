@@ -117,7 +117,7 @@ def reg_tutor(data,curpAlumno):
     "nombre": data['nombre'],
     "apellidoPaterno": data['apellidoPaterno'],
     "apellidoMaterno": data['apellidoMaterno'],
-    "id_tutorAlumno": data['id_tutorAlumno'],
+    "id_tutorAlumno": iid['records'][0]['id_tutorAlumno']['id'],
     "curp": data['curp'],
     })
 
@@ -164,10 +164,9 @@ if st.button("Registrar"):
         "nombre": nombre_completo,
         "apellidoPaterno": apellidop,
         "apellidoMaterno": apellidom,
-        "curp": crp,
-        "telefono": telefono,
-        "celular": celular,
-        "id_tutorAlumno": str(uuid.uuid4())
+        "curp": crp.upper().strip(),
+        "telefono": telefono.strip(),
+        "celular": celular.strip(),
     }
     data = reg_tutor(data,st.session_state.last_registered['curp'])
 

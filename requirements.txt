@@ -21,3 +21,5 @@ streamlit-option-menu
 streamlit-analytics
 streamlit-agraph
 streamlit-lottie
+geopy
+keplergl
