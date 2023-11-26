@@ -81,6 +81,8 @@ def on_change(key):
     selection = st.session_state[key]
     st.write(f"Selection changed to {selection}")
 
+    if key == 'Alumnos':
+        switch_page('AlumnosHome')
 #--------------------------------------------------
 #credenciales de la base de datos
 data,xta = get_credentials()
@@ -101,19 +103,16 @@ else:
     if st.session_state["authentication_status"]:
 
             # CSS style definitions
-            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación","Perfil"],
-                icons=['house', 'cloud-upload', "list-task", 'link', 'info-circle', 'gear'],
-                menu_icon="cast", default_index=0, orientation="horizontal",
+            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores", 'Perfil'],
+                icons=['house', 'cloud-upload', "list-task", 'gear'],
+                menu_icon="cast", default_index=1, orientation="horizontal",
                 styles={
                     "container": {"padding": "0!important", "background-color": "#fafafa"},
-                    "icon": {"color": "orange", "font-size": "15px"},
-                    "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
+                    "icon": {"color": "orange", "font-size": "25px"},
+                    "nav-link": {"font-size": "25px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
                     "nav-link-selected": {"background-color": "green"},
                 },on_change=on_change,key='menu'
             )
-            selected3
-            if selected3 == 'Alumnos':
-                switch_page('AlumnosHome')
 
 
             usrdata = get_current_user_info(st.session_state['username'])
@@ -133,44 +132,9 @@ else:
             logcols = st.columns([0.8,0.2])
             with logcols[-1]:
                 authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
-            sac.alert(message=f'Bienvenido {st.session_state.name}',
-            description=f'Tu rol actual es {usrdata["role"]} ', banner=True, icon=True, closable=True, height=100)
-            st.toast(f'Bienvenido {st.session_state["name"]}',icon='👋')
-            st.title('Sistema de Administración Escolar CECYTEM')
-            st_lottie('https://lottie.host/204fe26b-ee80-4dfe-b95c-e1bcabbcf8ef/11JlAAyTKa.json',key='mainbanner')
-
-            # Herramientas de desarrollador disponibles solo para el administrador
-            #if usrdata['role'] == 'admin':
-            #  if st.checkbox('Developer Tools'):
-
-            #    st.subheader("All Cookies:")
-            #    cookies = cookie_manager.get_all()
-            #    st.write(cookies)
-
-            #    c1, c2, c3 = st.columns(3)
-
-            #    with c1:
-            #        st.subheader("Get Cookie:")
-            #        cookie = st.text_input("Cookie", key="0")
-            #        clicked = st.button("Get")
-            #        if clicked:
-            #            value = cookie_manager.get(cookie=cookie)
-            #            st.write(value)
-            #    with c2:
-            #        st.subheader("Set Cookie:")
-            #        cookie = st.text_input("Cookie", key="1")
-            #        val = st.text_input("Value")
-            #        if st.button("Add"):
-            #            cookie_manager.set(cookie, val) # Expires in a day by default
-            #    with c3:
-            #        st.subheader("Delete Cookie:")
-            #        cookie = st.text_input("Cookie", key="2")
-            #        if st.button("Delete"):
-            #            cookie_manager.delete(cookie)
-
-            #    st.subheader("Session State:")
-            #    st.divider()
-            #    st.session_state
 
 
 
+            #--------------------------------------------------
+            #st_lottie("https://lottie.host/56df3f3a-2207-40b9-83d7-2dc769216b43/Rb0WjRsDZD.json",loop=False) se ve chido pero me recuerda a mi ex :(
+            st_lottie("https://lottie.host/59e895fa-6b44-40c5-acad-e60a94996c1d/1Rzu0KTCkH.json",width=300,height=300,loop=True)

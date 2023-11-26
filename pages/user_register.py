@@ -381,7 +381,7 @@ placeholder='Ejemplo: usuario123',value=st.session_state.usrname)
 
 
             #Rol
-            rol = st.selectbox('Rol',['basic_user','teacher','sub_admin','admin'], placeholder='Rol del usuario',index=0)
+            rol = st.selectbox('Rol',['basic_user','vinculacion','maestro','direccion','admin'], placeholder='Rol del usuario',index=0)
 
             st.session_state.rol = rol
 
