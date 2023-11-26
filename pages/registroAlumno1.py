@@ -76,6 +76,7 @@ def get_current_user_info(usrname: str) -> dict:
     :return: The function `get_current_user_info` returns the information of the current user specified by the `usrname`
     parameter.
     """
+
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
     ch = xata.data().query("Credentials",{"filter": {"username": usrname}})
     return ch['records'][0]
@@ -93,7 +94,7 @@ def register_Alumno(reg_data:dict)->tuple[bool,dict]:
     indicates whether the registration was successful or not. The dictionary contains the data of the registered student.
     """
 
-    xata = XataClient()
+    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
 
     idtutor = uuid.uuid4().hex
     iddomicilio = uuid.uuid4().hex
@@ -214,7 +215,7 @@ def register_Alumno(reg_data:dict)->tuple[bool,dict]:
         "calle_ref1": "---",
         "calle_ref2": "---",
         "opcional_ref": "---",
-        "id_domicilioAlumno": "---"
+        "id_domicilioAlumno": iddomicilio
     })
 
     dataTutor = xata.records().insert("TutorAlumno", {
@@ -253,20 +254,33 @@ def register_Alumno(reg_data:dict)->tuple[bool,dict]:
         "curp": dataAlumno['id']
 	  })
 
-    verf = xata.records().query("Alumno",{"filter": {"id": data['id']}})
 
-    if verf['records'] == []:
-        return False, {}
-    else:
-        return True, data
+    return True, data
 
 
 
 
 #--------------------------------------------------
+#Variables de Sesión
+
+if "control_number" not in st.session_state:
+  st.session_state.control_number = ""
+
+if "curp" not in st.session_state:
+  st.session_state.curp = ""
+
+if "plantel" not in st.session_state:
+  st.session_state.plantel = ""
+
+if "carrera" not in st.session_state:
+  st.session_state.carrera = ""
+
+if "last_registered" not in st.session_state:
+  st.session_state.last_registered = {}
 
 
-
+#--------------------------------------------------
+#Contenido de la página
 st.title('Registro de Alumno')
 
 
@@ -281,22 +295,29 @@ cols1 = st.columns([0.4,0.6])
 
 with cols1[0]:
   if autog:
-      st.write("Numero de control: ",uuid.uuid4().hex[:8])
+    control_number = uuid.uuid4().hex[:8]
+    st.write("Numero de control: ",control_number)
+    st.session_state.control_number = control_number
   else:
-    control_number = st.text_input("Numero de Control",placeholder=uuid.uuid4().hex[:8],max_chars=8,help="Ingrese el numero de control del alumno")
+    control_number = st.text_input("Numero de Control",placeholder=uuid.uuid4().hex[:8],max_chars=8,help="Ingrese el numero de control del alumno",value=st.session_state.control_number)
+    if control_number != st.session_state.control_number:
+      st.session_state.control_number = control_number
 
 with cols1[1]:
-  curp = st.text_input("CURP*",placeholder="CURP",max_chars=18,help="Ingrese el CURP del alumno")
-
+  curp = st.text_input("CURP*",placeholder="CURP",max_chars=18,help="Ingrese el CURP del alumno",value=st.session_state.curp)
+  if curp != st.session_state.curp:
+    st.session_state.curp = curp
 
 cols2 = st.columns([0.4,0.6])
 
 with cols2[0]:
-  plantel = st.text_input("Plantel*",placeholder="Plantel",help="Ingrese el plantel del alumno")
-
+  plantel = st.text_input("Plantel*",placeholder="Plantel",help="Ingrese el plantel del alumno",value=st.session_state.plantel)
+  if plantel != st.session_state.plantel:
+    st.session_state.plantel = plantel
 with cols2[1]:
-  carrera = st.text_input("Carrera*",placeholder="Programación",help="Ingrese la carrera del alumno")
-
+  carrera = st.text_input("Carrera*",placeholder="Programación",help="Ingrese la carrera del alumno",value=st.session_state.carrera)
+  if carrera != st.session_state.carrera:
+    st.session_state.carrera = carrera
 flag = False
 
 if st.button("Registrar"):
@@ -305,15 +326,22 @@ if st.button("Registrar"):
               "curp": curp.upper(),
               "idcontrol": control_number}
 
-  flag, data = register_Alumno(reg_data)
+  with st.spinner("Registrando Alumno..."):
+    f, data = register_Alumno(reg_data)
 
-  if flag:
+  if f:
     st.session_state.last_registered = {"curp":curp.upper(),"id":data['id'],"idcontrol":control_number}
     st.success("Alumno registrado con éxito")
-    switch_page("registroAlumno2")
+    st.json(data)
+
+    st.session_state.control_number = ""
+    st.session_state.curp = ""
+    st.session_state.plantel = ""
+    st.session_state.carrera = ""
+    flag = True
   else:
     st.error("Error al registrar al alumno")
-
+    st.json(data)
 
 
 
@@ -326,7 +354,7 @@ if flag:
         sac.StepsItem(title='Paso 1',
         subtitle='Registro Básico',
         description='Registra los datos básicos del alumno',
-        disabled=True),
+        disabled=True,icon='check2-square'),
 
         sac.StepsItem(title='Paso 2'),
 
@@ -334,7 +362,7 @@ if flag:
 
         sac.StepsItem(title='Paso4'),
 
-        ], format_func='title',index=1,return_index=True)
+        ], format_func='title',index=0,return_index=True)
 
 
     if stps == 1:
@@ -342,8 +370,6 @@ if flag:
 
     if st.button("Siguiente"):
       switch_page("registroAlumno2")
-
-
 
 else:
     sac.steps(
