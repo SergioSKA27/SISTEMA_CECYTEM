@@ -239,7 +239,6 @@ if st.button("Registrar"):
     st.error("Error al registrar los datos básicos del alumno")
   else:
     st.success("Datos básicos del alumno registrados con éxito")
-    st.session_state.last_registered = r
     flag = True
 
 
@@ -265,7 +264,7 @@ if flag:
         ], format_func='title',index=2)
 
     #time.sleep(5)
-    #switch_page("registroAlumno2")
+    switch_page("registro_tutor")
 
 
 
