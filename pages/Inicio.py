@@ -9,6 +9,7 @@ import yaml
 from yaml.loader import SafeLoader
 from streamlit_option_menu import option_menu
 import extra_streamlit_components as stx
+from streamlit_lottie import st_lottie
 import datetime
 #Esta es la pagina de inicio, donde se muestra el contenido de la pagina visible para todos los usuarios
 
@@ -133,7 +134,9 @@ else:
             sac.alert(message=f'Bienvenido {st.session_state.name}',
             description=f'Tu rol actual es {usrdata["role"]} ', banner=True, icon=True, closable=True, height=100)
             st.toast(f'Bienvenido {st.session_state["name"]}',icon='👋')
-            st.title('Some content')
+            st.title('Sistema de Administración Escolar CECYTEM')
+            st_lottie('https://lottie.host/204fe26b-ee80-4dfe-b95c-e1bcabbcf8ef/11JlAAyTKa.json')
+
             # Herramientas de desarrollador disponibles solo para el administrador
             #if usrdata['role'] == 'admin':
             #  if st.checkbox('Developer Tools'):
