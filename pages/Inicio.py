@@ -135,7 +135,7 @@ else:
             description=f'Tu rol actual es {usrdata["role"]} ', banner=True, icon=True, closable=True, height=100)
             st.toast(f'Bienvenido {st.session_state["name"]}',icon='👋')
             st.title('Sistema de Administración Escolar CECYTEM')
-            st_lottie('https://lottie.host/204fe26b-ee80-4dfe-b95c-e1bcabbcf8ef/11JlAAyTKa.json')
+            st_lottie('https://lottie.host/204fe26b-ee80-4dfe-b95c-e1bcabbcf8ef/11JlAAyTKa.json',key='mainbanner')
 
             # Herramientas de desarrollador disponibles solo para el administrador
             #if usrdata['role'] == 'admin':
