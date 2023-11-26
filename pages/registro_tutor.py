@@ -168,7 +168,8 @@ if st.button("Registrar"):
         "telefono": telefono.strip(),
         "celular": celular.strip(),
     }
-    data = reg_tutor(data,st.session_state.last_registered['curp'])
+    with st.spinner('Registrando tutor...'):
+      data = reg_tutor(data,st.session_state.last_registered['curp'])
 
     if 'message' in data:
         st.error('Error al registrar el tutor')

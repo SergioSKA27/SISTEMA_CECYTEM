@@ -215,11 +215,12 @@ try:
             "latitude": location.latitude,
             "longitude": location.longitude,
             "pitch": 0,
-            "zoom": 16,
-        }
+            "zoom": len(location.address.split(","))*5.5,
+        },
+
     },
 }
-    map_1 = KeplerGl()
+    map_1 = KeplerGl(theme="light")
     map_1.config = config
 
     keplergl_static(map_1)
