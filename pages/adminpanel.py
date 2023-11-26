@@ -52,6 +52,12 @@ def get_current_user_info(usrname: str)->dict:
     return ch['records'][0]
 
 def query_users()->dict:
+    """
+    The function `query_users` queries a database to retrieve user information and returns it as a dictionary.
+    :return: The function `query_users` returns a dictionary containing the records of users queried from the "Credentials"
+    table in the database. The dictionary contains the following columns for each user: "id", "username", "email",
+    "password", "avatar.url", "name", and "role".
+    """
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
     data = xata.data().query("Credentials", {
         "columns": [
@@ -66,11 +72,19 @@ def query_users()->dict:
     })
     return data['records']
 
-def random_color():
+def random_color()->str:
+    """
+    The function `random_color` generates a random hexadecimal color code.
+    :return: The function `random_color()` returns a randomly generated color in the format of a hexadecimal string.
+    """
     # trunk-ignore(bandit/B311)
     return "#{:02x}{:02x}{:02x}".format(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
 def graph_agr():
+    """
+    The function `graph_agr` generates a graph visualization of a data structure in Python using the `agraph` library.
+    :return: The function `graph_agr()` returns a graph visualization of a data structure.
+    """
     nodes = [
         Node(id="Alumno", label="Alumno\n(id_controlAlumno, carreraAlumno, plantelAlumno)", shape="box", color="#3498db", size=20),
         Node(id="DataAlumno", label="DataAlumno\n(curp, nombre, apellidoPaterno, ...)", shape="box", color="#e74c3c", size=20),

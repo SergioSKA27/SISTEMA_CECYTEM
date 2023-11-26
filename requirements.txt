@@ -20,3 +20,4 @@ extra-streamlit-components
 streamlit-option-menu
 streamlit-analytics
 streamlit-agraph
+streamlit-lottie

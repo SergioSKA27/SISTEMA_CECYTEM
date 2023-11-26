@@ -9,6 +9,7 @@ import yaml
 from yaml.loader import SafeLoader
 from streamlit_option_menu import option_menu
 import extra_streamlit_components as stx
+from streamlit_lottie import st_lottie
 import datetime
 #Esta es la pagina de inicio, donde se muestra el contenido de la pagina visible para todos los usuarios
 
@@ -123,41 +124,62 @@ cols0 = st.columns([0.5,0.5])
 
 with cols0[0]:
     st.write("**Numero de Control:** ",query['idcontrol'])
+    st.write("**Plantel:** ",query['plantelAlumno'])
 
 with cols0[1]:
     st.write("**CURP:** ",dtaAlumno['curp'])
+    st.write("**Carrera:** ",query['carreraAlumno'])
 
 
-st.write("**Plantel:** ",query['plantelAlumno'])
-st.write("**Carrera:** ",query['carreraAlumno'])
+
+
 
 st.divider()
 
 st.subheader("Datos Generales del Alumno")
 
-st.write("**Nombre:** ",dtaAlumno['nombre'])
-st.write("**Apellido Paterno:** ",dtaAlumno['apellidoPaterno'])
-st.write("**Apellido Materno:** ",dtaAlumno['apellidoMaterno'])
+colssH = st.columns([0.5,0.5])
+
+with colssH[0]:
+    if dtaAlumno['sexo'] == 'Masculino':
+        st_lottie('https://lottie.host/9938284c-32ae-42f7-8fdd-adaddffcc181/ZHy4Apg1Cy.json')
+    else:
+        st_lottie('https://lottie.host/daf2c1f3-9914-46aa-b31f-cb9dc068eb4a/q2WitBc7Ux.json')
+
+with colssH[1]:
+    st.write("**Nombre:** ",dtaAlumno['nombre'])
+    st.write("**Apellido Paterno:** ",dtaAlumno['apellidoPaterno'])
+    st.write("**Apellido Materno:** ",dtaAlumno['apellidoMaterno'])
+    st.write("**Sexo:** ",dtaAlumno['sexo'])
+    st.write("**Fecha de Nacimiento:** ",dtaAlumno['fechaNacimiento'][:10])
 
 cols1 = st.columns([0.5,0.5])
 with cols1[0]:
-    st.write("**Fecha de Nacimiento:** ",dtaAlumno['fechaNacimiento'][:10])
-with cols1[1]:
     st.write("**Estado de Nacimiento:** ",dtaAlumno['estadoNacimiento'])
+with cols1[1]:
+    st.write("**Nacionalidad:** ",dtaAlumno['nacionalidad'])
 
+
+st.write("**Estado Civil:** ",dtaAlumno['estadoCivil'])
 cols2 = st.columns([0.5,0.5])
 
 with cols2[0]:
-    st.write("**Sexo:** ",dtaAlumno['sexo'])
+    st.write("**Telefono:** ",dtaAlumno['telefono'])
 
 with cols2[1]:
-    st.write("**Nacionalidad:** ",dtaAlumno['nacionalidad'])
+    st.write("**Celular:** ",dtaAlumno['celular'])
 
-st.write("**Estado Civil:** ",dtaAlumno['estadoCivil'])
-st.write("**Telefono:** ",dtaAlumno['telefono'])
-st.write("**Celular:** ",dtaAlumno['celular'])
-st.write("**Correo Personal:** ",dtaAlumno['correoe_p'])
-st.write("**Correo Institucional:** ",dtaAlumno['correoe_i'])
+
+
+
+
+cols3 = st.columns([0.5,0.5])
+
+with cols3[0]:
+    st.write("**Correo Personal:** ",dtaAlumno['correoe_p'])
+
+with cols3[1]:
+    st.write("**Correo Institucional:** ",dtaAlumno['correoe_i'])
 
 
 
