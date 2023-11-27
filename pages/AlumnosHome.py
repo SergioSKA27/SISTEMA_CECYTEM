@@ -81,8 +81,6 @@ def on_change(key):
     selection = st.session_state[key]
     st.write(f"Selection changed to {selection}")
 
-    if key == 'Alumnos':
-        switch_page('AlumnosHome')
 #--------------------------------------------------
 #credenciales de la base de datos
 data,xta = get_credentials()

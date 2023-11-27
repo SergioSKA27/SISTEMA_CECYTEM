@@ -11,6 +11,8 @@ from streamlit_option_menu import option_menu
 import extra_streamlit_components as stx
 from streamlit_lottie import st_lottie
 import datetime
+from mitosheet.streamlit.v1 import spreadsheet
+
 #Esta es la pagina de inicio, donde se muestra el contenido de la pagina visible para todos los usuarios
 
 
@@ -103,7 +105,7 @@ else:
             # CSS style definitions
             selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación","Perfil"],
                 icons=['house', 'cloud-upload', "list-task", 'link', 'info-circle', 'gear'],
-                menu_icon="cast", default_index=0, orientation="horizontal",
+                menu_icon="cast", default_index=0, orientation="vertical",
                 styles={
                     "container": {"padding": "0!important", "background-color": "#fafafa"},
                     "icon": {"color": "orange", "font-size": "15px"},
