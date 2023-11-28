@@ -158,6 +158,7 @@ data_reg = {'claveCeneval': claveCeneval,
 'intentosAceptacion': intentosAceptacion}
 
 
+flag = False
 
 if st.button("Registrar"):
   with st.spinner("Registrando datos de procedencia del alumno..."):
@@ -168,4 +169,66 @@ if st.button("Registrar"):
       st.error(dr['message'])
     else:
         st.success('Datos de procedencia del alumno registrados con éxito')
+        flag = True
         st.json(dr)
+        time.sleep(5)
+        switch_page("registro_tutor")
+
+
+
+if flag:
+
+    sac.steps(
+
+    items=[
+
+        sac.StepsItem(title='Paso 1',
+        subtitle='Datos Básicos',
+        disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso 2',subtitle='Datos Personales',
+        description='Registra los datos personales del alumno',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso 3',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso4',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso5',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso6',disabled=True,icon='person-bounding-box'),
+
+        sac.StepsItem(title='Paso7',disabled=True,icon='file-earmark-text'),
+
+        ], format_func='title',index=5)
+
+
+
+else:
+    sac.steps(
+
+    items=[
+
+        sac.StepsItem(title='Paso 1',
+        description='Registro Básico',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso 2',description='Datos Personales',disabled=True,icon='check2-square'),
+
+       sac.StepsItem(title='Paso 3',disabled=True,icon='check2-square',
+       description='Domicilio'),
+
+        sac.StepsItem(title='Paso4',disabled=True,icon='check2-square',description='Salud'),
+
+        sac.StepsItem(title='Paso5',disabled=False,icon='layer-backward',subtitle='Procedencia',
+        description='Registra los datos de procedencia del alumno'),
+
+        sac.StepsItem(title='Paso6',disabled=True,icon='person-bounding-box'),
+
+        sac.StepsItem(title='Paso7',disabled=True,icon='file-earmark-text'),
+
+        ], format_func='title',index=4)
+
+
+
+
+
+

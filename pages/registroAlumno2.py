@@ -264,20 +264,23 @@ if flag:
     items=[
 
         sac.StepsItem(title='Paso 1',
-        subtitle='Registro Básico',
-        description='Registra los datos básicos del alumno',
+        subtitle='Datos Básicos',
         disabled=True,icon='check2-square'),
 
-        sac.StepsItem(title='Paso 2',disabled=True,icon='check2-square'),
+        sac.StepsItem(title='Paso 2',subtitle='Datos Personales',
+        description='Registra los datos personales del alumno',disabled=True,icon='check2-square'),
 
-        sac.StepsItem(title='Paso 3'),
+        sac.StepsItem(title='Paso 3',disabled=True,icon='pin-map'),
 
-        sac.StepsItem(title='Paso4'),
+        sac.StepsItem(title='Paso4',disabled=True,icon='lungs'),
+
+        sac.StepsItem(title='Paso5',disabled=True,icon='layer-backward'),
+
+        sac.StepsItem(title='Paso6',disabled=True,icon='person-bounding-box'),
+
+        sac.StepsItem(title='Paso7',disabled=True,icon='file-earmark-text'),
 
         ], format_func='title',index=2)
-
-    #time.sleep(5)
-    switch_page("registro_tutor")
 
 
 
@@ -287,14 +290,20 @@ else:
     items=[
 
         sac.StepsItem(title='Paso 1',
-        subtitle='Registro Básico',
-        description='Registra los datos básicos del alumno',disabled=True,icon='check2-square'),
+        description='Datos Básicos',disabled=True,icon='check2-square'),
 
-        sac.StepsItem(title='Paso 2'),
+        sac.StepsItem(title='Paso 2',subtitle='Datos Personales',
+        description='Registra los datos personales del alumno',disabled=False,icon='person-lines-fill'),
 
-        sac.StepsItem(title='Paso 3'),
+       sac.StepsItem(title='Paso 3',disabled=True,icon='pin-map'),
 
-        sac.StepsItem(title='Paso4',),
+        sac.StepsItem(title='Paso4',disabled=True,icon='lungs'),
+
+        sac.StepsItem(title='Paso5',disabled=True,icon='layer-backward'),
+
+        sac.StepsItem(title='Paso6',disabled=True,icon='person-bounding-box'),
+
+        sac.StepsItem(title='Paso7',disabled=True,icon='file-earmark-text'),
 
         ], format_func='title',index=1)
 

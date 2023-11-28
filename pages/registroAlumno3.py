@@ -244,6 +244,8 @@ calleref2 = st.text_input("Calle de Referencia 2",help="Ingrese el nombre de la 
 referecia_ad = st.text_area("Referencia Adicional",help="Ingrese una referencia adicional",placeholder="Ej. Entre las calles 20 de Noviembre y 5 de Mayo")
 
 
+flag = False
+
 
 if st.button('Registrar'):
     datareg = {
@@ -265,7 +267,64 @@ if st.button('Registrar'):
       st.error("No se pudo registrar el domicilio")
       st.error(dat["message"])
     else:
-      st.json(dat)
       st.success("Domicilio registrado con éxito")
+      flag = True
+      st.json(dat)
+      time.sleep(5)
+      switch_page("registroAlumno4")
+
+
+if flag:
+
+    sac.steps(
+
+    items=[
+
+        sac.StepsItem(title='Paso 1',
+        subtitle='Datos Básicos',
+        disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso 2',subtitle='Datos Personales',
+        description='Registra los datos personales del alumno',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso 3',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso4',disabled=True,icon='lungs'),
+
+        sac.StepsItem(title='Paso5',disabled=True,icon='layer-backward'),
+
+        sac.StepsItem(title='Paso6',disabled=True,icon='person-bounding-box'),
+
+        sac.StepsItem(title='Paso7',disabled=True,icon='file-earmark-text'),
+
+        ], format_func='title',index=3)
+
+
+
+else:
+    sac.steps(
+
+    items=[
+
+        sac.StepsItem(title='Paso 1',
+        description='Registro Básico',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso 2',description='Datos Personales',disabled=True,icon='check2-square'),
+
+       sac.StepsItem(title='Paso 3',disabled=False,icon='pin-map',
+       subtitle='Domicilio',description='Registra el domicilio del alumno'),
+
+        sac.StepsItem(title='Paso4',disabled=True,icon='lungs'),
+
+        sac.StepsItem(title='Paso5',disabled=True,icon='layer-backward'),
+
+        sac.StepsItem(title='Paso6',disabled=True,icon='person-bounding-box'),
+
+        sac.StepsItem(title='Paso7',disabled=True,icon='file-earmark-text'),
+
+        ], format_func='title',index=2)
+
+
+
 
 
