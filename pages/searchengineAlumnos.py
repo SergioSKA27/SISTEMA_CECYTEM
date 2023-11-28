@@ -166,8 +166,12 @@ def search_student(search: str)-> list[any]:
             }
     })
     #st.write(data)
+    d = []
 
-    return data['records'] if search else []
+    for i in data['records']:
+        d.append(','.join([i['idcontrol'],i['curp']['curp'],i['curp']['nombre'],i['curp']['apellidoPaterno'],i['curp']['apellidoMaterno']]))
+
+    return d if search else []
 
 
 # Add on_change callback
