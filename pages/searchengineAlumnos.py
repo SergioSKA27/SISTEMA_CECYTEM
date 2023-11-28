@@ -188,7 +188,8 @@ credentials = credentials_formating(data['records'])
 cookie_manager = get_manager()
 
 
-
+if "Alumnos_search" not in st.session_state:
+    st.session_state['Alumnos_search'] = None
 
 #--------------------------------------------------
 #Authentication
@@ -244,9 +245,15 @@ else:
 
             r = st_searchbox(search_function=search_student,
             placeholder="Buscar Alumno(Nombre, Apellido, CURP, ID Control)",
-            key='searchbox',)
+            key='searchbox',clear_on_submit=True)
             r
-            search_student('KJLKJDLKJDLKJKJHKJ')
+            if r != None:
+                data = r.split(',')
+                st.session_state['Alumnos_Search'] = data[0]
+                if st.button('Ver Perfil'):
+                    switch_page('perfilAlumno')
+
+
             if "w" not in state:
                 board = Dashboard()
                 args = {}

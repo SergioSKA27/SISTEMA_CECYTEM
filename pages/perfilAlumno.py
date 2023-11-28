@@ -11,6 +11,9 @@ from streamlit_option_menu import option_menu
 import extra_streamlit_components as stx
 from streamlit_lottie import st_lottie
 import datetime
+from geopy.geocoders import Nominatim,Bing
+from streamlit_keplergl import keplergl_static
+from keplergl import KeplerGl
 #Esta es la pagina de inicio, donde se muestra el contenido de la pagina visible para todos los usuarios
 
 
@@ -87,32 +90,65 @@ def query_Alumno(record='NULL'):
     :return: The function `query_Alumnos` returns the information of all the students.
     """
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-    ch = xata.records().get("Alumno",'rec_clfinfmsc66ps4cfg2bg')
+    data = xata.data().query("Alumno", {
+            "columns": [
+                "id",
+                "carreraAlumno",
+                "plantelAlumno",
+                "idcontrol",
+                "curp.*"
+            ],
+            "filter": {
+                "idcontrol": record
+            }
+    })
 
-    return ch
+    return data
 
-def query_dataAlumno(record):
-    """
-    The function `query_Alumnos` retrieves the information of all the students from a database.
-    :return: The function `query_Alumnos` returns the information of all the students.
-    """
+def query_domicilioAlumno(record):
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-    ch = xata.records().get("DataAlumno",record)
+    data = xata.records().get("DomicilioAlumno", record)
+    return data
 
-    return ch
+def query_SaludAlumno(record):
+    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
+    data = xata.records().get("SaludAlumno", record)
+    return data
+
+def query_procedenciaAlumno(record):
+    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
+    data = xata.records().get("ProcedenciaAlumno", record)
+    return data
+
+def query_tutorAlumno(record):
+    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
+    data = xata.records().get("TutorAlumno", record)
+    return data
 #-------
 
 
+st.session_state['Alumnos_Search']
 
-query = query_Alumno()
+query = query_Alumno(record=st.session_state['Alumnos_Search'])
 
+query = query['records'][0]
 
+query
+#dtaAlumno = query_dataAlumno(query['curp']['id'])
 
+dtaAlumno = query['curp']
 
-dtaAlumno = query_dataAlumno(query['curp']['id'])
+domicilio = query_domicilioAlumno(dtaAlumno['id_domicilioAlumno']['id'])
+domicilio
 
+salud = query_SaludAlumno(dtaAlumno['id_saludAlumno']['id'])
+salud
 
+procencia = query_procedenciaAlumno(dtaAlumno['id_procedenciaAlumno']['id'])
+procencia
 
+tutor = query_tutorAlumno(dtaAlumno['id_tutorAlumno']['id'])
+tutor
 #--------------------------------------------------
 
 st.title('Perfil del Alumno')
@@ -141,7 +177,7 @@ st.subheader("Datos Generales del Alumno")
 colssH = st.columns([0.5,0.5])
 
 with colssH[0]:
-    if dtaAlumno['sexo'] == 'Masculino':
+    if dtaAlumno['sexo'] == 'MASCULINO':
         st_lottie('https://lottie.host/9938284c-32ae-42f7-8fdd-adaddffcc181/ZHy4Apg1Cy.json')
     else:
         st_lottie('https://lottie.host/daf2c1f3-9914-46aa-b31f-cb9dc068eb4a/q2WitBc7Ux.json')
@@ -181,7 +217,96 @@ with cols3[0]:
 with cols3[1]:
     st.write("**Correo Institucional:** ",dtaAlumno['correoe_i'])
 
+st.divider()
 
+st.subheader("Datos de Domicilio")
+
+colsdom = st.columns([0.5,0.5])
+
+with colsdom[0]:
+    st.write("**Calle:** ",domicilio['calle'])
+    st.write("**Numero Exterior:** ",domicilio['num_ext'])
+    st.write("**Numero Interior:** ",domicilio['num_int'])
+    st.write("**Colonia:** ",domicilio['colonia'])
+    st.write("**Localidad:** ",domicilio['localidad'])
+    st.write("**Municipio:** ",domicilio['municipio'])
+    st.write("**Estado:** ",domicilio['estado'])
+    st.write("**Codigo Postal:** ",domicilio['codigoP'])
+    st.write("**Referencia 1:** ",domicilio['calle_ref1'])
+    st.write("**Referencia 2:** ",domicilio['calle_ref2'])
+    st.write("**Descripcion:** ",domicilio['opcional_ref'])
+
+
+
+direccion = domicilio['calle'] +" " + domicilio['localidad']  + " " + domicilio['codigoP'] + " " + domicilio['municipio'] + " " + domicilio['estado']
+
+with colsdom[1]:
+    try:
+        #geolocator = Nominatim(user_agent="RegistroAlumno")
+        geolocator = Bing(api_key=st.secrets['db']['bing'])
+        location = geolocator.geocode(direccion,include_neighborhood=True)
+        st.write(location.address)
+        #st.write((location.latitude, location.longitude))
+
+        config = {
+            "version": "v1",
+            "config": {
+                "mapState": {
+                    "bearing": 0,
+                    "latitude": location.latitude,
+                    "longitude": location.longitude,
+                    "pitch": 0,
+                    "zoom": len(location.address.split(","))*5.5,
+                },
+
+            },
+        }
+        map_1 = KeplerGl(theme="light")
+        map_1.config = config
+
+        keplergl_static(map_1)
+    except:
+        st.write("No se pudo obtener la ubicación")
+#--------------------------------------------------
+st.divider()
+st.subheader("Datos de Salud")
+
+if salud['salud_status']:
+    st.write("**Padece alguna enfermedad:**  SI")
+    st.write("**Descripción de la enfermedad:** ",salud['salud_desc'])
+    st.write("**Padecimientos:** ",",".join(salud['padecimientos']))
+    st.write("**Medicamentos:** ",",".join(salud['medicamentos']))
+    st.write("**Impedimentos:** ",",".join(salud['impedimentos']))
+else:
+    st.write("**Padece alguna enfermedad:**  NO")
+
+st.write("**Tipo de Sangre:** ",salud['tipo_sangre'])
+
+st.write("**Notas adicionales:** ",salud['opcional_desc'])
+#--------------------------------------------------
+st.divider()
+st.subheader("Datos de Procedencia")
+
+colsproc = st.columns([0.5,0.5])
+with colsproc[0]:
+    st.write("**Clave CENEVAL:** ",procencia['claveCeneval'])
+    st.write("**Secundaria de Procedencia:** ",procencia['secundariaProcedencia'])
+    st.write("**Promedio de Secundaria:** ",procencia['promedioSecundaria'])
+
+with colsproc[1]:
+    st.write("**Estancia en Secundaria(Años):** ",procencia['estanciaSecundaria_years'])
+    st.write("**Intentos de Aceptación:** ",procencia['intentosAceptacion'])
+    st.write("**Puntaje de Ingreso:** ",procencia['puntajeIngreso'])
+
+#--------------------------------------------------
+st.divider()
+
+st.subheader("Datos del Tutor")
+
+st.write("**Nombre:** ",tutor['nombre'])
+st.write("**Apellido Paterno:** ",tutor['apellidoPaterno'])
+st.write("**Apellido Materno:** ",tutor['apellidoMaterno'])
+st.write("**CURP:** ",tutor['curp'])
 
 if st.checkbox("raw data"):
     st.write(query)
