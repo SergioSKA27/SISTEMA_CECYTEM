@@ -77,18 +77,7 @@ def get_current_user_info(usrname: str) -> dict:
     ch = xata.data().query("Credentials",{"filter": {"username": usrname}})
     return ch['records'][0]
 
-def reg_saludAlumno(reg_data,curpAlumno):
-    """
-    The function `reg_saludAlumno` updates the health information of a student in a database using their CURP (Unique
-    Population Registry Code).
-
-    :param reg_data: The `reg_data` parameter is a dictionary that contains the updated health information of the student.
-    It includes the following keys:
-    :param curpAlumno: The curpAlumno parameter is the CURP (Clave Única de Registro de Población) of the student. It is a
-    unique identifier for individuals in Mexico
-    :return: the updated data of the "SaludAlumno" record.
-    """
-
+def reg_procedenciaAlumno(reg_data,curpAlumno):
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
     iid  = xata.data().query("DataAlumno", {
         "columns": [
@@ -105,20 +94,19 @@ def reg_saludAlumno(reg_data,curpAlumno):
         }
     })
 
-    data = xata.records().update("SaludAlumno",iid['records'][0]['id_saludAlumno']['id'] ,
+
+    data = xata.records().update("ProcedenciaAlumno",iid['records'][0]['id_procedenciaAlumno']['id'] ,
     {
-        "salud_status": reg_data['salud_status'],
-        "enfermedad_desc": reg_data['enfermedad_desc'],
-        "padecimientos": reg_data['padecimientos'],
-        "medicamentos": reg_data['medicamentos'],
-        "tipo_sangre": reg_data['tipo_sangre'],
-        "opcional_desc": reg_data['opcional_desc'],
-        "id_saludAlumno": iid['records'][0]['id_saludAlumno']['id'],
-        "impedimentos": reg_data['impedimentos'],
+    "claveCeneval": reg_data['claveCeneval'],
+    "puntajeIngreso": reg_data['puntajeIngreso'],
+    "secundariaProcedencia": reg_data['secundariaProcedencia'],
+    "estanciaSecundaria_years": reg_data['estanciaSecundaria_years'],
+    "promedioSecundaria": reg_data['promedioSecundaria'],
+    "intentosAceptacion": reg_data['intentosAceptacion'],
+    "id_procedenciaAlumno": iid['records'][0]['id_procedenciaAlumno']['id']
     })
 
     return data
-
 
 
 
@@ -135,7 +123,7 @@ if "last_registered" not in st.session_state or "idcontrol" not in st.session_st
 #Contenido de la página
 st.title('Registro de Alumno')
 st.divider()
-st.subheader('Registro Salud del Alumno')
+st.subheader('Registro Procedencia del Alumno')
 cols = st.columns([0.4,0.6])
 
 with cols[0]:
@@ -148,56 +136,36 @@ st.divider()
 
 
 
-salud_status = st.selectbox("¿El alumno tiene alguna enfermedad?",("Si","No"),index=1,help="Selecciona una opción")
 
-if salud_status == 'Si':
-    enfermedad_desc = st.text_area("Descripción de la enfermedad",help="Escribe la descripción de la enfermedad")
+claveCeneval = st.text_input("Clave Ceneval",help="Ingrese la clave Ceneval del alumno", placeholder="ej. 123456789")
 
-    padecimientos = st.text_area("Padecimientos",help="Escribe los padecimientos del alumno separados por comas")
+puntajeIngreso = st.number_input("Puntaje de Ingreso",help="Ingrese el puntaje de ingreso del alumno", placeholder="ej. 100",min_value=0,max_value=200)
 
-    medicamentos = st.text_area("Medicamentos",help="Escribe los medicamentos del alumno separados por comas")
+secundariaProcedencia = st.text_input("Secundaria de Procedencia",help="Ingrese la secundaria de procedencia del alumno", placeholder="ej. Secundaria 1")
 
-    impedimentos = st.text_area("Impedimentos",help="Escribe los impedimentos del alumno separados por comas")
+estaciaSecundaria_years = st.number_input("Años de Estancia en Secundaria",help="Ingrese los años de estancia en secundaria del alumno", placeholder="ej. 3",min_value=0,max_value=10)
 
-else:
-    enfermedad_desc = 'NONE'
-    padecimientos = 'NONE'
-    medicamentos = 'NONE'
-    impedimentos = 'NONE'
-
-tipo_sangre = st.selectbox("Tipo de sangre",("A+","A-","B+","B-","AB+","AB-","O+","O-"),index=0,help="Selecciona el tipo de sangre del alumno")
+promedioSecundaria = st.number_input("Promedio de Secundaria",help="Ingrese el promedio de secundaria del alumno", placeholder="ej. 9.5",min_value=5.0,max_value=10.0)
 
 
+intentosAceptacion = st.number_input("Intentos de Aceptación",help="Ingrese los intentos de aceptación del alumno", placeholder="ej. 1",min_value=0,max_value=10)
 
-opcional_desc = st.text_area("Descripción opcional",help="Escribe una descripción opcional")
-
-
-
-if salud_status == 'No':
-    sttatus = False
-    st.write("No se requiere información adicional")
-else:
-    sttatus = True
-
-data_reg = {
-'salud_status': sttatus,
-'enfermedad_desc': enfermedad_desc,
-'padecimientos': padecimientos.strip().split(','),
-'medicamentos': medicamentos.strip().split(','),
-'impedimentos': impedimentos.split(','),
-'tipo_sangre': tipo_sangre,
-'opcional_desc': opcional_desc
-}
+data_reg = {'claveCeneval': claveCeneval,
+'puntajeIngreso': puntajeIngreso,
+'secundariaProcedencia': secundariaProcedencia,
+'estanciaSecundaria_years': estaciaSecundaria_years,
+'promedioSecundaria': promedioSecundaria,
+'intentosAceptacion': intentosAceptacion}
 
 
 
 if st.button("Registrar"):
-    with st.spinner("Registrando datos de salud del alumno..."):
-        dr = reg_saludAlumno(data_reg,st.session_state.last_registered['curp'])
+  with st.spinner("Registrando datos de procedencia del alumno..."):
+    dr = reg_procedenciaAlumno(data_reg,st.session_state.last_registered['curp'])
 
-    if "message" in dr:
-        st.error("Error al registrar los datos de salud del alumno")
-        st.error(dr['message'])
+    if 'message' in dr:
+      st.error('Error al registrar los datos de procedencia del alumno')
+      st.error(dr['message'])
     else:
-        st.success("Datos de salud del alumno registrados exitosamente")
+        st.success('Datos de procedencia del alumno registrados con éxito')
         st.json(dr)
