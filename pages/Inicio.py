@@ -19,15 +19,32 @@ from mitosheet.streamlit.v1 import spreadsheet
 #Configuracion de la pagina
 st.set_page_config(page_title="Inicio", page_icon=":house:", layout="wide", initial_sidebar_state="collapsed")
 
+
 st.markdown("""
 <style>
     #MainMenu, header, footer {visibility: hidden;}
     [data-testid="collapsedControl"] {
         display: none
     }
+    .st-emotion-cache-1t2qdok {
+    width: 1189px;
+    position: relative;
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: column;
+    gap: 0rem;
+    }
+
+    .st-emotion-cache-z5fcl4 {
+    width: 100%;
+    padding: 0rem 0rem 0rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    min-width: auto;
+    max-width: initial;
+    }
 </style>
 """,unsafe_allow_html=True)
-
 #--------------------------------------------------
 #Funciones
 def get_credentials():
@@ -173,7 +190,7 @@ else:
             #--------------------------------------------------
             #Contenido de la pagina
             sac.alert(message=f'Bienvenido {st.session_state.name}',
-            description=f'Tu rol actual es {usrdata["role"]} ', banner=True, icon=True, closable=True, height=100)
+            description=f'Tu rol actual es {usrdata["role"]} ', banner=True, icon=True, closable=True, height=100,type='success')
             st.toast(f'Bienvenido {st.session_state["name"]}',icon='👋')
             st.title('Sistema de Administración Escolar CECYTEM')
             st_lottie('https://lottie.host/204fe26b-ee80-4dfe-b95c-e1bcabbcf8ef/11JlAAyTKa.json',key='mainbanner')

@@ -37,8 +37,8 @@ st.markdown("""
     .st-emotion-cache-z5fcl4 {
     width: 100%;
     padding: 0rem 0rem 0rem;
-    padding-right: 0rem;
-    padding-left: 0rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
     min-width: auto;
     max-width: initial;
     }
@@ -203,7 +203,7 @@ else:
                 },on_change=on_change,key='options'
             )
 
-            if options == "Registrar Alumno":
+            if options == "Registrar Alumno" and usrdata['role'] in ['orientacion','admin']:
                 switch_page('registroAlumno1')
 
             metriccols = st.columns(3)
