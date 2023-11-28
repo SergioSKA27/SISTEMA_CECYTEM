@@ -18,6 +18,16 @@ from mitosheet.streamlit.v1 import spreadsheet
 
 #Configuracion de la pagina
 st.set_page_config(page_title="Inicio", page_icon=":house:", layout="wide", initial_sidebar_state="collapsed")
+
+st.markdown("""
+<style>
+    #MainMenu, header, footer {visibility: hidden;}
+    [data-testid="collapsedControl"] {
+        display: none
+    }
+</style>
+""",unsafe_allow_html=True)
+
 #--------------------------------------------------
 #Funciones
 def get_credentials():
@@ -143,7 +153,7 @@ else:
 
 
 
-             #--------------------------------------------------
+            #--------------------------------------------------
             #Navbar
             # CSS style definitions
             selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación","Perfil"],
@@ -156,9 +166,10 @@ else:
                     "nav-link-selected": {"background-color": "#FBC5C5"},
                 },on_change=on_change,key='menu'
             )
-            selected3
             if selected3 == 'Alumnos':
                 switch_page('AlumnosHome')
+            elif selected3 == 'Perfil':
+                switch_page('Perfil')
             #--------------------------------------------------
             #Contenido de la pagina
             sac.alert(message=f'Bienvenido {st.session_state.name}',

@@ -11,11 +11,39 @@ from streamlit_option_menu import option_menu
 import extra_streamlit_components as stx
 from streamlit_lottie import st_lottie
 import datetime
+import pandas as pd
+import numpy as np
 #Esta es la pagina de inicio, donde se muestra el contenido de la pagina visible para todos los usuarios
 
 
 #Configuracion de la pagina
 st.set_page_config(page_title="Inicio", page_icon=":house:", layout="wide", initial_sidebar_state="collapsed")
+
+st.markdown("""
+<style>
+    #MainMenu, header, footer {visibility: hidden;}
+    [data-testid="collapsedControl"] {
+        display: none
+    }
+    .st-emotion-cache-1t2qdok {
+    width: 1189px;
+    position: relative;
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: column;
+    gap: 0rem;
+    }
+
+    .st-emotion-cache-z5fcl4 {
+    width: 100%;
+    padding: 0rem 0rem 0rem;
+    padding-right: 0rem;
+    padding-left: 0rem;
+    min-width: auto;
+    max-width: initial;
+    }
+</style>
+""",unsafe_allow_html=True)
 #--------------------------------------------------
 #Funciones
 def get_credentials():
@@ -76,9 +104,32 @@ def get_manager():
     return stx.CookieManager(key='MyCookieManager')
 
 
+def get_all_students():
+    """
+    The function `get_all_students` retrieves all the students from a database.
+    :return: The function `get_all_students` returns a list of dictionaries representing the students in the database.
+    """
+    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
+    data = xata.data().query("Alumno", {
+            "columns": [
+                "id",
+                "carreraAlumno",
+                "plantelAlumno",
+                "idcontrol",
+                "curp.curp"
+            ]
+    })
+    for i in data['records']:
+        i['curp'] = i['curp']['curp']
+    return data
+
+
+
+
 # Add on_change callback
 def on_change(key):
-    selection = st.session_state[key]
+    st.session_state.Alumnos_options = key
+    selection = st.session_state['Alumnos_options']
     st.write(f"Selection changed to {selection}")
 
 #--------------------------------------------------
@@ -90,7 +141,8 @@ cookie_manager = get_manager()
 
 
 #st.session_state
-
+if "Alumnos_options" not in st.session_state or st.session_state.Alumnos_options != None:
+    st.session_state.Alumnos_options = None
 
 #--------------------------------------------------
 #Authentication
@@ -99,19 +151,6 @@ if "authentication_status" not in st.session_state  :
 else:
 # el usuario debe estar autenticado para acceder a esta página
     if st.session_state["authentication_status"]:
-
-            # CSS style definitions
-            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores", 'Perfil'],
-                icons=['house', 'cloud-upload', "list-task", 'gear'],
-                menu_icon="cast", default_index=1, orientation="horizontal",
-                styles={
-                    "container": {"padding": "0!important", "background-color": "#fafafa"},
-                    "icon": {"color": "orange", "font-size": "25px"},
-                    "nav-link": {"font-size": "25px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
-                    "nav-link-selected": {"background-color": "green"},
-                },on_change=on_change,key='menu'
-            )
-
 
             usrdata = get_current_user_info(st.session_state['username'])
 
@@ -130,9 +169,53 @@ else:
             logcols = st.columns([0.8,0.2])
             with logcols[-1]:
                 authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
-
-
-
             #--------------------------------------------------
-            #st_lottie("https://lottie.host/56df3f3a-2207-40b9-83d7-2dc769216b43/Rb0WjRsDZD.json",loop=False) se ve chido pero me recuerda a mi ex :(
-            st_lottie("https://lottie.host/59e895fa-6b44-40c5-acad-e60a94996c1d/1Rzu0KTCkH.json",width=300,height=300,loop=True)
+            #Navbar
+            # CSS style definitions
+            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación","Perfil"],
+                icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart'],
+                menu_icon="cast", default_index=1, orientation="vertical",
+                styles={
+                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
+                    "icon": {"color": "#175947", "font-size": "25px"},
+                    "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#FBA1A1"},
+                    "nav-link-selected": {"background-color": "#FBC5C5"},
+                },key='menu'
+            )
+            if selected3 == 'Inicio':
+                switch_page('Inicio')
+            elif selected3 == 'Perfil':
+                switch_page('Perfil')
+
+
+            #-------------------------------------------------
+            st.title("Alumnos")
+            st.markdown("En esta sección se pueden registrar alumnos, buscarlos y buscar grupos")
+
+            options = option_menu(None, ['',"Registrar Alumno","Buscar Alumno","Buscar grupo","Estadísticas"],
+                icons=['house-gear-fill','person-plus', 'search', "search-plus","graph-up-arrow"],
+                menu_icon="cast", default_index=0, orientation="horizontal",
+                styles={
+                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
+                    "icon": {"color": "#175947", "font-size": "25px"},
+                    "nav-link": {"font-size": "20px", "text-align": "center", "margin":"0px", "--hover-color": "#FBA1A1"},
+                    "nav-link-selected": {"background-color": "#FBC5C5"},
+                },on_change=on_change,key='options'
+            )
+
+            if options == "Registrar Alumno":
+                switch_page('registroAlumno1')
+
+            metriccols = st.columns(3)
+            with metriccols[0]:
+                st.metric(label="Alumnos registrados", value=len(get_all_students()['records']), delta=1)
+            with metriccols[1]:
+                st.metric(label="Alumnos activos", value=0)
+            with metriccols[2]:
+                st.metric(label="Alumnos inactivos", value=0)
+
+            stdudents = get_all_students()['records']
+            df = pd.DataFrame(stdudents)
+            del df['id'], df['xata']
+            st.dataframe(df,use_container_width=True)
+

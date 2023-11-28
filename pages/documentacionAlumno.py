@@ -606,4 +606,4 @@ if st.button("Registrar"):
     st.balloons()
     with st.spinner("Redireccionando a la página de inicio"):
         time.sleep(5)
-        switch_page("Inicio")
+        switch_page("AlumnosHome")

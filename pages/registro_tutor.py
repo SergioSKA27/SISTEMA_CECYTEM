@@ -186,6 +186,9 @@ if st.button("Registrar"):
         st.json(data)
         st.success('Tutor registrado con éxito')
         flag = True
+        with st.spinner('Redireccionando...'):
+          time.sleep(2)
+          switch_page('documentacionAlumno')
 
 if flag:
 

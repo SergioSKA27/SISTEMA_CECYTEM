@@ -111,26 +111,11 @@ if "authentication_status" not in st.session_state:
 else:
 # el usuario debe estar autenticado para acceder a esta página
     if st.session_state["authentication_status"]:
-            # Add on_change callback
-            def on_change(key):
-                selection = st.session_state[key]
-                st.write(f"Selection changed to {selection}")
-            # CSS style definitions
-            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores", 'Perfil'],
-                icons=['house', 'cloud-upload', "list-task", 'gear'],
-                menu_icon="cast", default_index=3, orientation="horizontal",
-                styles={
-                    "container": {"padding": "0!important", "background-color": "#fafafa"},
-                    "icon": {"color": "orange", "font-size": "25px"},
-                    "nav-link": {"font-size": "25px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
-                    "nav-link-selected": {"background-color": "green"},
-                },on_change=on_change,key='menu'
-            )
+            #--------------------------------------------------
+            #credenciales de la base de datos
+            with st.spinner('Cargando datos...'):
+                usrdata = get_current_user_info(st.session_state["username"])
 
-
-
-            usrdata = get_current_user_info(st.session_state["username"])
-            usrdata
             with open('config.yaml') as file:
                 config = yaml.load(file, Loader=SafeLoader)
 
@@ -142,13 +127,27 @@ else:
                 config['preauthorized']
             )
 
-            authenticator.logout('Cerrar Sesión', 'main', key='uniqu_key')
+            logcols = st.columns([0.8,0.2])
+            with logcols[-1]:
+                authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
 
-            #st.write(usrdata['username'])
-            if not  st.session_state["authentication_status"]:
-                switch_page('Main')
-
-
+            #--------------------------------------------------
+            #Navbar
+            # CSS style definitions
+            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación","Perfil"],
+                icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart'],
+                menu_icon="cast", default_index=-1, orientation="vertical",
+                styles={
+                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
+                    "icon": {"color": "#175947", "font-size": "25px"},
+                    "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#FBA1A1"},
+                    "nav-link-selected": {"background-color": "#FBC5C5"},
+                },key='menu'
+            )
+            if selected3 == 'Inicio':
+                switch_page('Inicio')
+            elif selected3 == 'Alumnos':
+                switch_page('AlumnosHome')
             #usrdata
             cols = st.columns([.4,.6])
 
@@ -159,6 +158,7 @@ else:
                     st.image('https://us-east-1.xata.sh/file/01m34qhhcspcvkhlrcpn6ho9k5rllmsr4684epaf4qhu0isltg9eqlvs20ojac1n6csjicpk68sj0dhk60spm7l0pcq32gb3nuv5jk7rsinfhtal4982p9ss6cou06hb45qmnrcvm6aninblpkdqv2rja9g01tah')
 
             with cols[1]:
+                st.title(f'¡Bienvenido {usrdata["username"]}!')
                 st.write(f'**Nombre:** {usrdata["name"]}')
                 st.write(f'**Correo:** {usrdata["email"]}')
                 st.write(f'**Rol:** {usrdata["role"]}')
