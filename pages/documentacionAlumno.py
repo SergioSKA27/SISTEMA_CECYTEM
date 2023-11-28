@@ -96,82 +96,20 @@ def reg_procedenciaAlumno(reg_data,curpAlumno):
     })
 
     data = xata.records().update("DocumentacionAlumno", iid['records'][0]['id_documentosAlumno']['id'],{
-    "acta_nacimientoAlumno": {
-        "base64Content": "SGVsbG8gV29ybGQ=",
-        "enablePublicUrl": False,
-        "mediaType": "application/octet-stream",
-        "name": "upload.txt",
-        "signedUrlTimeout": 300
-    },
-    "certificado_secundariaAlumno": {
-        "base64Content": "SGVsbG8gV29ybGQ=",
-        "enablePublicUrl": False,
-        "mediaType": "application/octet-stream",
-        "name": "upload.txt",
-        "signedUrlTimeout": 300
-    },
-    "comprobante_domAlumno": {
-        "base64Content": "SGVsbG8gV29ybGQ=",
-        "enablePublicUrl": False,
-        "mediaType": "application/octet-stream",
-        "name": "upload.txt",
-        "signedUrlTimeout": 300
-    },
-    "certificado_saludAlumno": {
-        "base64Content": "SGVsbG8gV29ybGQ=",
-        "enablePublicUrl": False,
-        "mediaType": "application/octet-stream",
-        "name": "upload.txt",
-        "signedUrlTimeout": 300
-    },
-    "fotos_Alumno": [
-        {
-            "base64Content": "SGVsbG8gV29ybGQ=",
-            "enablePublicUrl": False,
-            "mediaType": "application/octet-stream",
-            "name": "upload.txt",
-            "signedUrlTimeout": 300
-        }
-    ],
-    "solicitud_inscAlumno": {
-        "base64Content": "SGVsbG8gV29ybGQ=",
-        "enablePublicUrl": False,
-        "mediaType": "application/octet-stream",
-        "name": "upload.txt",
-        "signedUrlTimeout": 300
-    },
-    "recibo_preinscAlumno": {
-        "base64Content": "SGVsbG8gV29ybGQ=",
-        "enablePublicUrl": False,
-        "mediaType": "application/octet-stream",
-        "name": "upload.txt",
-        "signedUrlTimeout": 300
-    },
-    "recibo_inscAlumno": {
-        "base64Content": "SGVsbG8gV29ybGQ=",
-        "enablePublicUrl": False,
-        "mediaType": "application/octet-stream",
-        "name": "upload.txt",
-        "signedUrlTimeout": 300
-    },
-    "ine_tutorAlumno": {
-        "base64Content": "SGVsbG8gV29ybGQ=",
-        "enablePublicUrl": False,
-        "mediaType": "application/octet-stream",
-        "name": "upload.txt",
-        "signedUrlTimeout": 300
-    },
-    "carta_constAlumno": {
-        "base64Content": "SGVsbG8gV29ybGQ=",
-        "enablePublicUrl": False,
-        "mediaType": "application/octet-stream",
-        "name": "upload.txt",
-        "signedUrlTimeout": 300
-    },
-    "id_documentosAlumno": "string"
+    "acta_nacimientoAlumno": reg_data['acta_nacimientoAlumno'],
+    "certificado_secundariaAlumno": reg_data['certificado_secundariaAlumno'],
+    "comprobante_domAlumno": reg_data['comprobante_domAlumno'],
+    "certificado_saludAlumno": reg_data['certificado_saludAlumno'],
+    "fotos_Alumno": reg_data['fotos_Alumno'],
+    "solicitud_inscAlumno": reg_data['solicitud_inscAlumno'],
+    "recibo_preinscAlumno": reg_data['recibo_preinscAlumno'],
+    "recibo_inscAlumno": reg_data['recibo_inscAlumno'],
+    "ine_tutorAlumno": reg_data['ine_tutorAlumno'],
+    "carta_constAlumno": reg_data['carta_constAlumno'],
+    "id_documentosAlumno": iid['records'][0]['id_documentosAlumno']['id']
 })
 
-
+    return data
 
 #--------------------------------------------------
 #Verificación de ultimo registro
@@ -236,7 +174,14 @@ elif acta_nacimiento is not None:
     except Exception as e:
         st.error(e)
         st.error("El archivo no es una imagen o está dañado")
-
+else:
+    datareg['acta_nacimientoAlumno'] = {
+        "base64Content": "SGVsbG8gV29ybGQ=",
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "upload.txt",
+        "signedUrlTimeout": 300
+    }
 
 #--------------------------------------------------
 st.write("#### Ingresa el certificado de secundaria del alumno")
@@ -251,6 +196,13 @@ if formatacertificadoSec == 'pdf' and filecertificado_secundariaAlumno is not No
         pdf_display = f'<iframe  src="{certificado_secundariaAlumno}" width="700" height="600" type="application/pdf"></iframe>'
         st.write('Preview del archivo pdf:')
         st.markdown(pdf_display, unsafe_allow_html=True)
+        datareg['certificado_secundariaAlumno'] = {
+        "base64Content": certificado_secundariaAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "-".join([st.session_state.last_registered['curp'],'certificado_secundariaAlumno'])+".pdf",
+        "signedUrlTimeout": 300
+        }
     except:
         st.error("El archivo no es un pdf o está dañado")
 elif filecertificado_secundariaAlumno is not None:
@@ -259,9 +211,23 @@ elif filecertificado_secundariaAlumno is not None:
         certificado_secundariaAlumno = base64.b64encode(certificado_secundariaAlumno).decode('utf-8')
         certificado_secundariaAlumno = f"data:image/{formatacertificadoSec};base64,{certificado_secundariaAlumno}"
         st.image(certificado_secundariaAlumno)
+        datareg['certificado_secundariaAlumno'] = {
+        "base64Content": certificado_secundariaAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "-".join([st.session_state.last_registered['curp'],'certificado_secundariaAlumno'])+f".{formatacertificadoSec}",
+        "signedUrlTimeout": 300
+        }
     except:
         st.error("El archivo no es una imagen o está dañado")
-
+else:
+    datareg['certificado_secundariaAlumno'] = {
+        "base64Content": "SGVsbG8gV29ybGQ=",
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "upload.txt",
+        "signedUrlTimeout": 300
+    }
 
 #--------------------------------------------------
 st.write("#### Ingresa el comprobante de domicilio del alumno")
@@ -276,6 +242,13 @@ if formatacomprobanteDom == 'pdf' and filecomprobante_domAlumno is not None:
         pdf_display = f'<iframe  src="{comprobante_domAlumno}" width="700" height="600" type="application/pdf"></iframe>'
         st.write('Preview del archivo pdf:')
         st.markdown(pdf_display, unsafe_allow_html=True)
+        datareg['comprobante_domAlumno'] = {
+        "base64Content": comprobante_domAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "-".join([st.session_state.last_registered['curp'],'comprobante_domAlumno'])+".pdf",
+        "signedUrlTimeout": 300
+        }
     except:
         st.error("El archivo no es un pdf o está dañado")
 
@@ -285,8 +258,23 @@ elif filecomprobante_domAlumno is not None:
         comprobante_domAlumno = base64.b64encode(comprobante_domAlumno).decode('utf-8')
         comprobante_domAlumno = f"data:image/{formatacomprobanteDom};base64,{comprobante_domAlumno}"
         st.image(comprobante_domAlumno)
+        datareg['comprobante_domAlumno'] = {
+        "base64Content": comprobante_domAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "-".join([st.session_state.last_registered['curp'],'comprobante_domAlumno'])+f".{formatacomprobanteDom}",
+        "signedUrlTimeout": 300
+    }
     except:
         st.error("El archivo no es una imagen o está dañado")
+else:
+    datareg['comprobante_domAlumno'] = {
+        "base64Content": "SGVsbG8gV29ybGQ=",
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "upload.txt",
+        "signedUrlTimeout": 300
+    }
 
 #--------------------------------------------------
 st.write("#### Ingresa el certificado de salud del alumno")
@@ -301,6 +289,13 @@ if formatacertificadoSalud == 'pdf' and filecertificado_saludAlumno is not None:
         pdf_display = f'<iframe  src="{certificado_saludAlumno}" width="700" height="600" type="application/pdf"></iframe>'
         st.write('Preview del archivo pdf:')
         st.markdown(pdf_display, unsafe_allow_html=True)
+        datareg['certificado_saludAlumno'] = {
+        "base64Content": certificado_saludAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "-".join([st.session_state.last_registered['curp'],'certificado_saludAlumno'])+".pdf",
+        "signedUrlTimeout": 300
+    }
     except:
         st.error("El archivo no es un pdf o está dañado")
 elif filecertificado_saludAlumno is not None:
@@ -309,9 +304,23 @@ elif filecertificado_saludAlumno is not None:
         certificado_saludAlumno = base64.b64encode(certificado_saludAlumno).decode('utf-8')
         certificado_saludAlumno = f"data:image/{formatacertificadoSalud};base64,{certificado_saludAlumno}"
         st.image(certificado_saludAlumno)
+        datareg['certificado_saludAlumno'] = {
+        "base64Content": certificado_saludAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "-".join([st.session_state.last_registered['curp'],'certificado_saludAlumno'])+f".{formatacertificadoSalud}",
+        "signedUrlTimeout": 300
+    }
     except:
         st.error("El archivo no es una imagen o está dañado")
-
+else:
+    datareg['certificado_saludAlumno'] = {
+        "base64Content": "SGVsbG8gV29ybGQ=",
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "upload.txt",
+        "signedUrlTimeout": 300
+    }
 
 #--------------------------------------------------
 st.write("#### Ingresa las fotos del alumno")
@@ -325,13 +334,32 @@ for file in range(len(filesfotos_Alumno)):
             fotos = filesfotos_Alumno[file].read()
             fotos = base64.b64encode(fotos).decode('utf-8')
             fotos = f"data:image/{formatacertificadoSalud};base64,{fotos}"
-            fotos_Alumno.append(fotos)
             st.image(fotos)
+            fotos_Alumno.append({
+        "base64Content": fotos,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "-".join([st.session_state.last_registered['curp'],'fotos_Alumno'])+f".{filesfotos_Alumno[file].type}",
+        "signedUrlTimeout": 300
+    })
         except Exception as e:
             st.error(e)
             st.error("El archivo no es una imagen o está dañado")
 
 
+if len(fotos_Alumno) == 0:
+    fotos_Alumno = [
+        {
+            "base64Content": "SGVsbG8gV29ybGQ=",
+            "enablePublicUrl": False,
+            "mediaType": "application/octet-stream",
+            "name": "upload.txt",
+            "signedUrlTimeout": 300
+        }
+    ]
+
+
+datareg['fotos_Alumno'] = fotos_Alumno
 #--------------------------------------------------
 st.write("#### Ingresa la solicitud de inscripción del alumno")
 formataSolicitudInsc = st.selectbox("Formato de solicitud de inscripción",['pdf','png','jpg','jpeg'],help="Selecciona el formato del archivo")
@@ -345,6 +373,13 @@ if formataSolicitudInsc == 'pdf' and filesolicitud_inscAlumno is not None:
         pdf_display = f'<iframe  src="{solicitud_inscAlumno}" width="700" height="600" type="application/pdf"></iframe>'
         st.write('Preview del archivo pdf:')
         st.markdown(pdf_display, unsafe_allow_html=True)
+        datareg['solicitud_inscAlumno'] = {
+        "base64Content": solicitud_inscAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "-".join([st.session_state.last_registered['curp'],'solicitud_inscAlumno'])+".pdf",
+        "signedUrlTimeout": 300
+    }
     except:
         st.error("El archivo no es un pdf o está dañado")
 elif filesolicitud_inscAlumno is not None:
@@ -353,9 +388,23 @@ elif filesolicitud_inscAlumno is not None:
         solicitud_inscAlumno = base64.b64encode(solicitud_inscAlumno).decode('utf-8')
         solicitud_inscAlumno = f"data:image/{formataSolicitudInsc};base64,{solicitud_inscAlumno}"
         st.image(solicitud_inscAlumno)
+        datareg['solicitud_inscAlumno'] = {
+        "base64Content": solicitud_inscAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "-".join([st.session_state.last_registered['curp'],'solicitud_inscAlumno'])+f".{formataSolicitudInsc}",
+        "signedUrlTimeout": 300
+    }
     except:
         st.error("El archivo no es una imagen o está dañado")
-
+else:
+    datareg['solicitud_inscAlumno'] = {
+        "base64Content": "SGVsbG8gV29ybGQ=",
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "upload.txt",
+        "signedUrlTimeout": 300
+    }
 
 #--------------------------------------------------
 st.write("#### Ingresa el recibo de preinscripción del alumno")
@@ -370,6 +419,13 @@ if formataReciboPreinsc == 'pdf' and filerecibo_preinscAlumno is not None:
         pdf_display = f'<iframe  src="{recibo_preinscAlumno}" width="700" height="600" type="application/pdf"></iframe>'
         st.write('Preview del archivo pdf:')
         st.markdown(pdf_display, unsafe_allow_html=True)
+        datareg['recibo_preinscAlumno'] = {
+        "base64Content": recibo_preinscAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "-".join([st.session_state.last_registered['curp'],'recibo_preinscAlumno'])+".pdf",
+        "signedUrlTimeout": 300
+    }
     except:
         st.error("El archivo no es un pdf o está dañado")
 elif filerecibo_preinscAlumno is not None:
@@ -378,8 +434,23 @@ elif filerecibo_preinscAlumno is not None:
         recibo_preinscAlumno = base64.b64encode(recibo_preinscAlumno).decode('utf-8')
         recibo_preinscAlumno = f"data:image/{formataReciboPreinsc};base64,{recibo_preinscAlumno}"
         st.image(recibo_preinscAlumno)
+        datareg['recibo_preinscAlumno'] = {
+        "base64Content": recibo_preinscAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": '-'.join([st.session_state.last_registered['curp'],'recibo_preinscAlumno'])+f".{formataReciboPreinsc}",
+        "signedUrlTimeout": 300
+    }
     except:
         st.error("El archivo no es una imagen o está dañado")
+else:
+    datareg['recibo_preinscAlumno'] = {
+        "base64Content": "SGVsbG8gV29ybGQ=",
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "upload.txt",
+        "signedUrlTimeout": 300
+    }
 
 #--------------------------------------------------
 st.write("#### Ingresa el recibo de inscripción del alumno")
@@ -394,6 +465,13 @@ if formataReciboInsc == 'pdf' and filerecibo_inscAlumno is not None:
         pdf_display = f'<iframe  src="{recibo_inscAlumno}" width="700" height="600" type="application/pdf"></iframe>'
         st.write('Preview del archivo pdf:')
         st.markdown(pdf_display, unsafe_allow_html=True)
+        datareg['recibo_inscAlumno'] = {
+        "base64Content": recibo_inscAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "-".join([st.session_state.last_registered['curp'],'recibo_inscAlumno'])+".pdf",
+        "signedUrlTimeout": 300
+    }
     except:
         st.error("El archivo no es un pdf o está dañado")
 elif filerecibo_inscAlumno is not None:
@@ -402,9 +480,23 @@ elif filerecibo_inscAlumno is not None:
         recibo_inscAlumno = base64.b64encode(recibo_inscAlumno).decode('utf-8')
         recibo_inscAlumno = f"data:image/{formataReciboInsc};base64,{recibo_inscAlumno}"
         st.image(recibo_inscAlumno)
+        datareg['recibo_inscAlumno'] =  {
+        "base64Content": recibo_inscAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": '-'.join([st.session_state.last_registered['curp'],'recibo_inscAlumno'])+f".{formataReciboInsc}",
+        "signedUrlTimeout": 300
+    }
     except:
         st.error("El archivo no es una imagen o está dañado")
-
+else:
+    datareg['recibo_inscAlumno'] =  {
+        "base64Content": "SGVsbG8gV29ybGQ=",
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "upload.txt",
+        "signedUrlTimeout": 300
+    }
 #--------------------------------------------------
 st.write("#### Ingresa la credencial de elector del tutor del alumno")
 formataIneTutor = st.selectbox("Formato de credencial de elector",['pdf','png','jpg','jpeg'],help="Selecciona el formato del archivo")
@@ -419,6 +511,13 @@ if formataIneTutor == 'pdf' and fileine_tutorAlumno is not None:
         pdf_display = f'<iframe  src="{ine_tutorAlumno}" width="700" height="600" type="application/pdf"></iframe>'
         st.write('Preview del archivo pdf:')
         st.markdown(pdf_display, unsafe_allow_html=True)
+        datareg['ine_tutorAlumno'] = {
+        "base64Content": ine_tutorAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "-".join([st.session_state.last_registered['curp'],'ine_tutorAlumno'])+".pdf",
+        "signedUrlTimeout": 300
+    }
     except:
         st.error("El archivo no es un pdf o está dañado")
 elif fileine_tutorAlumno is not None:
@@ -427,8 +526,84 @@ elif fileine_tutorAlumno is not None:
         ine_tutorAlumno = base64.b64encode(ine_tutorAlumno).decode('utf-8')
         ine_tutorAlumno = f"data:image/{formataIneTutor};base64,{ine_tutorAlumno}"
         st.image(ine_tutorAlumno)
+        datareg['ine_tutorAlumno'] = {
+        "base64Content": ine_tutorAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": '-'.join([st.session_state.last_registered['curp'],'ine_tutorAlumno'])+f".{formataIneTutor}",
+        "signedUrlTimeout": 300
+    }
     except:
         st.error("El archivo no es una imagen o está dañado")
+else:
+    datareg['ine_tutorAlumno'] = {
+        "base64Content": "SGVsbG8gV29ybGQ=",
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "upload.txt",
+        "signedUrlTimeout": 300
+    }
 
 
+st.write("#### Ingresa la carta de constancia del alumno")
+formataCartaConst = st.selectbox("Formato de carta de constancia",['pdf','png','jpg','jpeg'],help="Selecciona el formato del archivo")
+filecarta_constAlumno = st.file_uploader("Carta de Constancia",type=['pdf','png','jpg','jpeg'])
 
+if formataCartaConst == 'pdf' and filecarta_constAlumno is not None:
+    try:
+        carta_constAlumno = filecarta_constAlumno.read()
+        carta_constAlumno = base64.b64encode(carta_constAlumno).decode('utf-8')
+        carta_constAlumno = f"data:application/pdf;base64,{carta_constAlumno}"
+        pdf_display = f'<iframe  src="{carta_constAlumno}" width="700" height="600" type="application/pdf"></iframe>'
+        st.write('Preview del archivo pdf:')
+        st.markdown(pdf_display, unsafe_allow_html=True)
+        datareg['carta_constAlumno'] = {
+        "base64Content": carta_constAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "-".join([st.session_state.last_registered['curp'],'carta_constAlumno'])+".pdf",
+        "signedUrlTimeout": 300
+    }
+    except:
+        st.error("El archivo no es un pdf o está dañado")
+elif filecarta_constAlumno is not None:
+    try:
+        carta_constAlumno = filecarta_constAlumno.read()
+        carta_constAlumno = base64.b64encode(carta_constAlumno).decode('utf-8')
+        carta_constAlumno = f"data:image/{formataCartaConst};base64,{carta_constAlumno}"
+        st.image(carta_constAlumno)
+        datareg['carta_constAlumno'] = {
+        "base64Content": carta_constAlumno,
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": '-'.join([st.session_state.last_registered['curp'],'carta_constAlumno'])+f".{formataCartaConst}",
+        "signedUrlTimeout": 300
+    }
+    except:
+        st.error("El archivo no es una imagen o está dañado")
+else:
+    datareg['carta_constAlumno'] = {
+        "base64Content": "SGVsbG8gV29ybGQ=",
+        "enablePublicUrl": False,
+        "mediaType": "application/octet-stream",
+        "name": "upload.txt",
+        "signedUrlTimeout": 300
+    }
+
+
+st.json(datareg)
+
+
+if st.button("Registrar"):
+    with st.spinner("Registrando Documentación del Alumno"):
+        data = reg_procedenciaAlumno(datareg,st.session_state.last_registered['curp'])
+
+    if "message"  in data:
+        st.error('Error al registrar la documentación del alumno')
+        st.error(data['message'])
+
+    st.success("Se ha registrado toda la documentación del alumno con éxito 🎉")
+    st.balloons()
+    with st.spinner("Redireccionando a la página de inicio"):
+        time.sleep(5)
+        switch_page("Inicio")
