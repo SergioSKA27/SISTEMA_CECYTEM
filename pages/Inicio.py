@@ -105,10 +105,6 @@ def get_manager():
     return stx.CookieManager(key='MyCookieManager')
 
 
-# Add on_change callback
-def on_change(key):
-    selection = st.session_state[key]
-    st.write(f"Selection changed to {selection}")
 
 
 @st.cache_data
@@ -116,7 +112,10 @@ def runballoons():
     """
     The function `runballoons` runs the balloons animation on the page.
     """
-    st.balloons()
+    if datetime.datetime.now().month == 12:
+        st.snow()
+    else:
+        st.balloons()
 #--------------------------------------------------
 #credenciales de la base de datos
 data,xta = get_credentials()
@@ -181,7 +180,7 @@ else:
                     "icon": {"color": "#175947", "font-size": "25px"},
                     "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#FBA1A1"},
                     "nav-link-selected": {"background-color": "#FBC5C5"},
-                },on_change=on_change,key='menu'
+                },key='menu'
             )
             if selected3 == 'Alumnos':
                 switch_page('AlumnosHome')

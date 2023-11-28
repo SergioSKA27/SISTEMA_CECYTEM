@@ -200,7 +200,7 @@ else:
                     "icon": {"color": "#175947", "font-size": "25px"},
                     "nav-link": {"font-size": "20px", "text-align": "center", "margin":"0px", "--hover-color": "#FBA1A1"},
                     "nav-link-selected": {"background-color": "#FBC5C5"},
-                },on_change=on_change,key='options'
+                },key='options'
             )
 
             if options == "Registrar Alumno" and usrdata['role'] in ['orientacion','admin']:
