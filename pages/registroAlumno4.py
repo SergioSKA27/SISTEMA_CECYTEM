@@ -139,9 +139,9 @@ st.subheader('Registro Salud del Alumno')
 cols = st.columns([0.4,0.6])
 
 with cols[0]:
-  st.write("Número de Control :",st.session_state.last_registered['idcontrol'])
+  st.write("**Número de Control** :",st.session_state.last_registered['idcontrol'])
 with cols[1]:
-  st.write("CURP :",st.session_state.last_registered["curp"])
+  st.write("**CURP** :",st.session_state.last_registered["curp"])
 
 
 st.divider()
@@ -181,7 +181,7 @@ else:
 
 data_reg = {
 'salud_status': sttatus,
-'enfermedad_desc': enfermedad_desc,
+'enfermedad_desc': enfermedad_desc.upper(),
 'padecimientos': padecimientos.strip().split(','),
 'medicamentos': medicamentos.strip().split(','),
 'impedimentos': impedimentos.split(','),
@@ -192,7 +192,14 @@ data_reg = {
 
 flag = False
 
-if st.button("Registrar"):
+
+butt = sac.buttons([
+    sac.ButtonsItem(label='REGISTRAR',icon='cloud-haze2'),
+], position='right', format_func='upper', align='center', size='large',
+shape='round', return_index=True,index=1)
+
+
+if butt == 0:
     with st.spinner("Registrando datos de salud del alumno..."):
         dr = reg_saludAlumno(data_reg,st.session_state.last_registered['curp'])
 

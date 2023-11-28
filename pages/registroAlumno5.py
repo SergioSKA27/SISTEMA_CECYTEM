@@ -127,9 +127,9 @@ st.subheader('Registro Procedencia del Alumno')
 cols = st.columns([0.4,0.6])
 
 with cols[0]:
-  st.write("Número de Control :",st.session_state.last_registered['idcontrol'])
+  st.write("**Número de Control** :",st.session_state.last_registered['idcontrol'])
 with cols[1]:
-  st.write("CURP :",st.session_state.last_registered["curp"])
+  st.write("**CURP** :",st.session_state.last_registered["curp"])
 
 
 st.divider()
@@ -152,7 +152,7 @@ intentosAceptacion = st.number_input("Intentos de Aceptación",help="Ingrese los
 
 data_reg = {'claveCeneval': claveCeneval,
 'puntajeIngreso': puntajeIngreso,
-'secundariaProcedencia': secundariaProcedencia,
+'secundariaProcedencia': secundariaProcedencia.upper(),
 'estanciaSecundaria_years': estaciaSecundaria_years,
 'promedioSecundaria': promedioSecundaria,
 'intentosAceptacion': intentosAceptacion}
@@ -160,7 +160,14 @@ data_reg = {'claveCeneval': claveCeneval,
 
 flag = False
 
-if st.button("Registrar"):
+butt = sac.buttons([
+    sac.ButtonsItem(label='REGISTRAR',icon='cloud-haze2'),
+], position='right', format_func='upper', align='center', size='large',
+shape='round', return_index=True,index=1)
+
+
+
+if butt == 0:
   with st.spinner("Registrando datos de procedencia del alumno..."):
     dr = reg_procedenciaAlumno(data_reg,st.session_state.last_registered['curp'])
 

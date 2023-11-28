@@ -148,9 +148,9 @@ st.subheader('Registro Datos Básicos del Alumno')
 cols = st.columns([0.4,0.6])
 
 with cols[0]:
-  st.write("Número de Control :",st.session_state.last_registered['idcontrol'])
+  st.write("**Número de Control** :",st.session_state.last_registered['idcontrol'])
 with cols[1]:
-  st.write("CURP :",st.session_state.last_registered["curp"])
+  st.write("**CURP** :",st.session_state.last_registered["curp"])
 
 
 
@@ -210,9 +210,9 @@ estado_civil = st.selectbox("Estado Civil*",["Soltero(a)","Casado(a)","Divorciad
 
 #enfermedad = st.selectbox("¿Padece alguna enfermedad crónica?",["Si","No"],help="Seleccione si el alumno padece alguna enfermedad crónica",placeholder="Si/No",index=1)
 
-telefono = st.text_input("Telefono*",placeholder="Telefono",help="Ingrese el telefono del tutor del alumno")
+telefono = st.text_input("Telefono*",placeholder="Telefono",help="Ingrese el telefono del tutor del alumno",max_chars=10)
 
-celular = st.text_input("Celular",placeholder="Celular",help="Ingrese el celular del tutor del alumno")
+celular = st.text_input("Celular",placeholder="Celular",help="Ingrese el celular del tutor del alumno",max_chars=10)
 
 correo_personal = st.text_input("Correo Personal*",placeholder="Correo Personal",help="Ingrese el correo personal del alumno")
 
@@ -220,26 +220,33 @@ correo_institucional = st.text_input("Correo Institucional*",placeholder="Correo
 
 
 datar = {
-'nombre': nombre,
-'apellidoPaterno': apellidop,
-'apellidoMaterno': apellidom,
+'nombre': nombre.upper(),
+'apellidoPaterno': apellidop.upper().strip(),
+'apellidoMaterno': apellidom.upper().strip(),
 'fechaNacimiento': datetime.datetime(
     fecha_nacimiento.year,
     fecha_nacimiento.month,
     fecha_nacimiento.day,
     0,0,0,3).strftime("%Y-%m-%dT%H:%M:%SZ"),
-'estadoNacimiento': estado_nacimiento,
-'sexo': sexo,
-'nacionalidad': nacionalidad,
-'estadoCivil': estado_civil,
-'telefono': telefono,
-'celular': celular,
-'correoe_p': correo_personal,
-'correoe_i': correo_institucional
+'estadoNacimiento': estado_nacimiento.upper(),
+'sexo': sexo.upper(),
+'nacionalidad': nacionalidad.upper(),
+'estadoCivil': estado_civil.upper(),
+'telefono': telefono.strip(),
+'celular': celular.strip(),
+'correoe_p': correo_personal.strip(),
+'correoe_i': correo_institucional.strip(),
 }
 flag = False
 
-if st.button("Registrar"):
+butt = sac.buttons([
+    sac.ButtonsItem(label='REGISTRAR',icon='cloud-haze2'),
+], position='right', format_func='upper', align='center', size='large',
+shape='round', return_index=True,index=1)
+
+
+
+if butt == 0:
   with st.spinner("Registrando datos básicos del alumno..."):
     r = reg_basicdata(datar,st.session_state.last_registered["curp"])
 

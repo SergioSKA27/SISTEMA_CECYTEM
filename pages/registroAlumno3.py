@@ -155,9 +155,9 @@ st.subheader('Registro Domicilio del Alumno')
 cols = st.columns([0.4,0.6])
 
 with cols[0]:
-  st.write("Número de Control :",st.session_state.last_registered['idcontrol'])
+  st.write("**Número de Control** :",st.session_state.last_registered['idcontrol'])
 with cols[1]:
-  st.write("CURP :",st.session_state.last_registered["curp"])
+  st.write("**CURP** :",st.session_state.last_registered["curp"])
 
 calle = st.text_input("Calle",help="Ingrese el nombre de la calle",placeholder="Ej. Av. 20 de Noviembre")
 
@@ -246,18 +246,24 @@ referecia_ad = st.text_area("Referencia Adicional",help="Ingrese una referencia 
 
 flag = False
 
+butt = sac.buttons([
+    sac.ButtonsItem(label='REGISTRAR',icon='cloud-haze2'),
+], position='right', format_func='upper', align='center', size='large',
+shape='round', return_index=True,index=1)
 
-if st.button('Registrar'):
+
+
+if butt == 0:
     datareg = {
-    'calle': calle,
+    'calle': calle.upper(),
     'num_ext': num_ext,
-    'colonia': colonia,
-    'codigoP': codigoP,
-    'localidad': localidad,
-    'municipio': mun,
-    'estado': estado,
-    'calle_ref1': calleref1,
-    'calle_ref2': calleref2,
+    'colonia': colonia.upper(),
+    'codigoP': codigoP.strip(),
+    'localidad': localidad.upper(),
+    'municipio': mun.upper(),
+    'estado': estado.upper(),
+    'calle_ref1': calleref1.upper(),
+    'calle_ref2': calleref2.upper(),
     'num_int': num_int,
     'opcional_ref': referecia_ad
     }

@@ -323,10 +323,17 @@ with cols2[1]:
     st.session_state.carrera = carrera
 flag = False
 
-if st.button("Registrar"):
-  reg_data = {"carreraAlumno": carrera,
-              "plantelAlumno": plantel,
-              "curp": curp.upper(),
+
+butt = sac.buttons([
+    sac.ButtonsItem(label='REGISTRAR',icon='cloud-haze2'),
+], position='right', format_func='upper', align='center', size='large',
+shape='round', return_index=True,index=1)
+
+
+if butt == 0:
+  reg_data = {"carreraAlumno": carrera.upper(),
+              "plantelAlumno": plantel.upper(),
+              "curp": curp.upper().strip(),
               "idcontrol": control_number}
 
   with st.spinner("Registrando Alumno..."):

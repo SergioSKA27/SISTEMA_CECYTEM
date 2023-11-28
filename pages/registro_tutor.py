@@ -143,9 +143,9 @@ st.subheader('Registro Datos Básicos del Tutor')
 cols = st.columns([0.4,0.6])
 
 with cols[0]:
-  st.write("Número de Control :",st.session_state.last_registered['idcontrol'])
+  st.write("**Número de Control** :",st.session_state.last_registered['idcontrol'])
 with cols[1]:
-  st.write("CURP :",st.session_state.last_registered["curp"])
+  st.write("**CURP** :",st.session_state.last_registered["curp"])
 
 nombre_completo = st.text_input("Nombre(s)*",placeholder="Nombre(s)",help="Ingrese el nombre(s) del tutor")
 cols2 = st.columns([0.5,0.5])
@@ -158,20 +158,26 @@ with cols2[1]:
 crp = st.text_input("CURP*",placeholder="CURP",help="Ingrese el CURP del tutor",max_chars=18)
 cols3 = st.columns([0.5,0.5])
 with cols3[0]:
-    telefono = st.text_input("Telefono*",placeholder="Telefono",help="Ingrese el telefono del tutor")
+    telefono = st.text_input("Telefono*",placeholder="Telefono",help="Ingrese el telefono del tutor",max_chars=10)
 
 with cols3[1]:
-    celular = st.text_input("Celular",placeholder="Celular",help="Ingrese el celular del tutor")
+    celular = st.text_input("Celular",placeholder="Celular",help="Ingrese el celular del tutor",max_chars=10)
 
 
 flag = False
 
+butt = sac.buttons([
+    sac.ButtonsItem(label='REGISTRAR',icon='cloud-haze2'),
+], position='right', format_func='upper', align='center', size='large',
+shape='round', return_index=True,index=1)
 
-if st.button("Registrar"):
+
+
+if butt == 0:
     data = {
-        "nombre": nombre_completo,
-        "apellidoPaterno": apellidop,
-        "apellidoMaterno": apellidom,
+        "nombre": nombre_completo.upper(),
+        "apellidoPaterno": apellidop.upper().strip(),
+        "apellidoMaterno": apellidom.upper().strip(),
         "curp": crp.upper().strip(),
         "telefono": telefono.strip(),
         "celular": celular.strip(),
