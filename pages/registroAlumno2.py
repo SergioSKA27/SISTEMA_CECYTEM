@@ -132,6 +132,14 @@ def reg_basicdata(reg_data: dict, curp: str)->dict:
   return data
 
 
+
+
+#--------------------------------------------------
+#Verificación de ultimo registro
+if "last_registered" not in st.session_state or "idcontrol" not in st.session_state.last_registered:
+  switch_page("registroAlumno1")
+
+
 #--------------------------------------------------
 #Contenido de la página
 st.title('Registro de Alumno')

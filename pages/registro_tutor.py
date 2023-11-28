@@ -129,6 +129,11 @@ def reg_tutor(data,curpAlumno):
 if 'curp' not in st.session_state:
     st.session_state.curp = ''
 
+#--------------------------------------------------
+#Verificación de ultimo registro
+if "last_registered" not in st.session_state or "idcontrol" not in st.session_state.last_registered:
+  switch_page("registroAlumno1")
+
 
 #--------------------------------------------------
 #Contenido de la página
