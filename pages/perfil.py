@@ -14,7 +14,35 @@ import datetime
 
 
 #Configuracion de la pagina
-st.set_page_config(page_title="Inicio", page_icon=":house:", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Perfil", page_icon=":person-heart:", layout="wide", initial_sidebar_state="collapsed")
+
+st.markdown("""
+<style>
+    #MainMenu, header, footer {visibility: hidden;}
+    [data-testid="collapsedControl"] {
+        display: none
+    }
+    .st-emotion-cache-1t2qdok {
+    width: 1189px;
+    position: relative;
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: column;
+    gap: 0rem;
+    }
+
+    .st-emotion-cache-z5fcl4 {
+    width: 100%;
+    padding: 0rem 0rem 0rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    min-width: auto;
+    max-width: initial;
+    }
+</style>
+""",unsafe_allow_html=True)
+
+
 #--------------------------------------------------
 #Funciones
 @st.cache_resource
@@ -163,3 +191,18 @@ else:
                 st.write(f'**Correo:** {usrdata["email"]}')
                 st.write(f'**Rol:** {usrdata["role"]}')
             st.divider()
+
+
+            if usrdata['role'] == 'admin':
+                if st.button('Panel de Administración'):
+                    switch_page('adminpanel')
+                st.write('**Administrador**')
+                st.write('Como administrador puedes crear, modificar y eliminar usuarios.')
+                st.write('**Alumnos**')
+                st.write('Como administrador puedes crear, modificar y eliminar alumnos.')
+                st.write('**Profesores**')
+                st.write('Como administrador puedes crear, modificar y eliminar profesores.')
+                st.write('**Vinculación**')
+                st.write('Como administrador puedes crear, modificar y eliminar vinculaciones.')
+                st.write('**Orientación**')
+                st.write('Como administrador puedes crear, modificar y eliminar orientaciones.')

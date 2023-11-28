@@ -22,6 +22,33 @@ import datetime
 #Configuracion de la pagina
 st.set_page_config(page_title="Registro de Alumno", page_icon=":clipboard:", layout="wide", initial_sidebar_state="collapsed")
 
+st.markdown("""
+<style>
+    #MainMenu, header, footer {visibility: hidden;}
+    [data-testid="collapsedControl"] {
+        display: none
+    }
+    .st-emotion-cache-1t2qdok {
+    width: 1189px;
+    position: relative;
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: column;
+    gap: 0rem;
+    }
+
+    .st-emotion-cache-z5fcl4 {
+    width: 100%;
+    padding: 0rem 0rem 0rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    min-width: auto;
+    max-width: initial;
+    }
+</style>
+""",unsafe_allow_html=True)
+
+
 
 
 st.markdown("""
@@ -215,7 +242,7 @@ if flag:
 
         sac.StepsItem(title='Paso5',disabled=True,icon='check2-square'),
 
-        sac.StepsItem(title='Paso6',disabled=True,icon='person-bounding-box'),
+        sac.StepsItem(title='Paso6',disabled=True,icon='check2-square'),
 
         sac.StepsItem(title='Paso7',disabled=True,icon='file-earmark-text'),
 
@@ -238,7 +265,7 @@ else:
 
         sac.StepsItem(title='Paso4',disabled=True,icon='check2-square',description='Salud'),
 
-        sac.StepsItem(title='Paso5',disabled=True,icon='layer-backward',description='Procedencia'),
+        sac.StepsItem(title='Paso5',disabled=True,icon='check2-square',description='Procedencia'),
 
         sac.StepsItem(title='Paso6',disabled=True,icon='person-bounding-box',subtitle='Tutor',
         description='Registra los datos del tutor del alumno'),

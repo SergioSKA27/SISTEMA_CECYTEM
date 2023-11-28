@@ -11,6 +11,37 @@ import datetime
 import requests
 
 
+#Configuracion de la pagina
+st.set_page_config(page_title="Registro de Alumno", page_icon=":clipboard:", layout="wide", initial_sidebar_state="collapsed")
+
+#Configuracion de la pagina
+st.markdown("""
+<style>
+    #MainMenu, header, footer {visibility: hidden;}
+    [data-testid="collapsedControl"] {
+        display: none
+    }
+    .st-emotion-cache-1t2qdok {
+    width: 1189px;
+    position: relative;
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: column;
+    gap: 0rem;
+    }
+
+    .st-emotion-cache-z5fcl4 {
+    width: 100%;
+    padding: 0rem 0rem 0rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    min-width: auto;
+    max-width: initial;
+    }
+</style>
+""",unsafe_allow_html=True)
+
+
 
 st.markdown("""
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mosk:wght@400;700&display=swap">

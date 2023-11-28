@@ -29,7 +29,7 @@ from types import SimpleNamespace
 from modules import Dashboard,Editor, Card, DataGrid, Radar, Pie, Player
 
 
-
+st.set_page_config(page_title="Buscador de Alumnos", page_icon=":mag_right:", layout="wide", initial_sidebar_state="collapsed")
 
 st.markdown("""
 <style>
@@ -145,6 +145,7 @@ def search_student(search: str)-> list[any]:
     :return: The function `search_student` returns a list of dictionaries representing the students that match the search
     parameter.
     """
+    search = search.upper()
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
     data = xata.data().query("Alumno", {
             "columns": [
@@ -218,9 +219,9 @@ else:
             with logcols[-1]:
                 authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
             # CSS style definitions
-            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación","Perfil",'Buscar Alumnos'],
-                icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart', 'search'],
-                menu_icon="cast", default_index=6, orientation="vertical",
+            selected3 = option_menu(None, ["Inicio", "Alumnos",'Buscar Alumnos'],
+                icons=['house', 'mortarboard', 'search'],
+                menu_icon="cast", default_index=2, orientation="vertical",
                 styles={
                     "container": {"padding": "0!important", "background-color": "#e6f2f0"},
                     "icon": {"color": "#175947", "font-size": "25px"},
@@ -230,8 +231,6 @@ else:
             )
             if selected3 == 'Inicio':
                 switch_page('Inicio')
-            elif selected3 == 'Perfil':
-                switch_page('Perfil')
             elif selected3 == 'Alumnos':
                 switch_page('AlumnosHome')
 

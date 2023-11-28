@@ -18,7 +18,34 @@ from keplergl import KeplerGl
 
 
 #Configuracion de la pagina
-st.set_page_config(page_title="Inicio", page_icon=":house:", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Perfil Alumno", page_icon="🎓", layout="wide", initial_sidebar_state="collapsed")
+st.markdown("""
+<style>
+    #MainMenu, header, footer {visibility: hidden;}
+    [data-testid="collapsedControl"] {
+        display: none
+    }
+    .st-emotion-cache-1t2qdok {
+    width: 1189px;
+    position: relative;
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: column;
+    gap: 0rem;
+    }
+
+    .st-emotion-cache-z5fcl4 {
+    width: 100%;
+    padding: 0rem 0rem 0rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    min-width: auto;
+    max-width: initial;
+    }
+</style>
+""",unsafe_allow_html=True)
+
+
 #--------------------------------------------------
 #Funciones
 @st.cache_resource
@@ -81,9 +108,6 @@ def get_manager():
     """
     return stx.CookieManager(key='MyCookieManager')
 
-
-
-
 def query_Alumno(record='NULL'):
     """
     The function `query_Alumnos` retrieves the information of all the students from a database.
@@ -125,189 +149,194 @@ def query_tutorAlumno(record):
     data = xata.records().get("TutorAlumno", record)
     return data
 #-------
-
-
-st.session_state['Alumnos_Search']
-
+#--------------------------------------------------
+#credenciales de la base de datos
+data,xta = get_credentials()
+credentials = credentials_formating(data['records'])
+cookie_manager = get_manager()
 query = query_Alumno(record=st.session_state['Alumnos_Search'])
-
 query = query['records'][0]
-
-query
-#dtaAlumno = query_dataAlumno(query['curp']['id'])
-
 dtaAlumno = query['curp']
-
 domicilio = query_domicilioAlumno(dtaAlumno['id_domicilioAlumno']['id'])
-domicilio
-
 salud = query_SaludAlumno(dtaAlumno['id_saludAlumno']['id'])
-salud
-
 procencia = query_procedenciaAlumno(dtaAlumno['id_procedenciaAlumno']['id'])
-procencia
-
 tutor = query_tutorAlumno(dtaAlumno['id_tutorAlumno']['id'])
-tutor
 #--------------------------------------------------
 
-st.title('Perfil del Alumno')
-
-st.divider()
-
-st.subheader("Datos de Control")
-cols0 = st.columns([0.5,0.5])
-
-with cols0[0]:
-    st.write("**Numero de Control:** ",query['idcontrol'])
-    st.write("**Plantel:** ",query['plantelAlumno'])
-
-with cols0[1]:
-    st.write("**CURP:** ",dtaAlumno['curp'])
-    st.write("**Carrera:** ",query['carreraAlumno'])
-
-
-
-
-
-st.divider()
-
-st.subheader("Datos Generales del Alumno")
-
-colssH = st.columns([0.5,0.5])
-
-with colssH[0]:
-    if dtaAlumno['sexo'] == 'MASCULINO':
-        st_lottie('https://lottie.host/9938284c-32ae-42f7-8fdd-adaddffcc181/ZHy4Apg1Cy.json')
-    else:
-        st_lottie('https://lottie.host/daf2c1f3-9914-46aa-b31f-cb9dc068eb4a/q2WitBc7Ux.json')
-
-with colssH[1]:
-    st.write("**Nombre:** ",dtaAlumno['nombre'])
-    st.write("**Apellido Paterno:** ",dtaAlumno['apellidoPaterno'])
-    st.write("**Apellido Materno:** ",dtaAlumno['apellidoMaterno'])
-    st.write("**Sexo:** ",dtaAlumno['sexo'])
-    st.write("**Fecha de Nacimiento:** ",dtaAlumno['fechaNacimiento'][:10])
-
-cols1 = st.columns([0.5,0.5])
-with cols1[0]:
-    st.write("**Estado de Nacimiento:** ",dtaAlumno['estadoNacimiento'])
-with cols1[1]:
-    st.write("**Nacionalidad:** ",dtaAlumno['nacionalidad'])
-
-
-st.write("**Estado Civil:** ",dtaAlumno['estadoCivil'])
-cols2 = st.columns([0.5,0.5])
-
-with cols2[0]:
-    st.write("**Telefono:** ",dtaAlumno['telefono'])
-
-with cols2[1]:
-    st.write("**Celular:** ",dtaAlumno['celular'])
-
-
-
-
-
-cols3 = st.columns([0.5,0.5])
-
-with cols3[0]:
-    st.write("**Correo Personal:** ",dtaAlumno['correoe_p'])
-
-with cols3[1]:
-    st.write("**Correo Institucional:** ",dtaAlumno['correoe_i'])
-
-st.divider()
-
-st.subheader("Datos de Domicilio")
-
-colsdom = st.columns([0.5,0.5])
-
-with colsdom[0]:
-    st.write("**Calle:** ",domicilio['calle'])
-    st.write("**Numero Exterior:** ",domicilio['num_ext'])
-    st.write("**Numero Interior:** ",domicilio['num_int'])
-    st.write("**Colonia:** ",domicilio['colonia'])
-    st.write("**Localidad:** ",domicilio['localidad'])
-    st.write("**Municipio:** ",domicilio['municipio'])
-    st.write("**Estado:** ",domicilio['estado'])
-    st.write("**Codigo Postal:** ",domicilio['codigoP'])
-    st.write("**Referencia 1:** ",domicilio['calle_ref1'])
-    st.write("**Referencia 2:** ",domicilio['calle_ref2'])
-    st.write("**Descripcion:** ",domicilio['opcional_ref'])
-
-
-
-direccion = domicilio['calle'] +" " + domicilio['localidad']  + " " + domicilio['codigoP'] + " " + domicilio['municipio'] + " " + domicilio['estado']
-
-with colsdom[1]:
-    try:
-        #geolocator = Nominatim(user_agent="RegistroAlumno")
-        geolocator = Bing(api_key=st.secrets['db']['bing'])
-        location = geolocator.geocode(direccion,include_neighborhood=True)
-        st.write(location.address)
-        #st.write((location.latitude, location.longitude))
-
-        config = {
-            "version": "v1",
-            "config": {
-                "mapState": {
-                    "bearing": 0,
-                    "latitude": location.latitude,
-                    "longitude": location.longitude,
-                    "pitch": 0,
-                    "zoom": len(location.address.split(","))*5.5,
-                },
-
-            },
-        }
-        map_1 = KeplerGl(theme="light")
-        map_1.config = config
-
-        keplergl_static(map_1)
-    except:
-        st.write("No se pudo obtener la ubicación")
 #--------------------------------------------------
-st.divider()
-st.subheader("Datos de Salud")
-
-if salud['salud_status']:
-    st.write("**Padece alguna enfermedad:**  SI")
-    st.write("**Descripción de la enfermedad:** ",salud['salud_desc'])
-    st.write("**Padecimientos:** ",",".join(salud['padecimientos']))
-    st.write("**Medicamentos:** ",",".join(salud['medicamentos']))
-    st.write("**Impedimentos:** ",",".join(salud['impedimentos']))
+#Authentication
+if "authentication_status" not in st.session_state  :
+    switch_page('Main')
 else:
-    st.write("**Padece alguna enfermedad:**  NO")
+# el usuario debe estar autenticado para acceder a esta página
+    if st.session_state["authentication_status"]:
 
-st.write("**Tipo de Sangre:** ",salud['tipo_sangre'])
+            usrdata = get_current_user_info(st.session_state['username'])
 
-st.write("**Notas adicionales:** ",salud['opcional_desc'])
-#--------------------------------------------------
-st.divider()
-st.subheader("Datos de Procedencia")
+            #usrdata
+            #--------------------------------------------------
+            with open('config.yaml') as file:
+                config = yaml.load(file, Loader=SafeLoader)
 
-colsproc = st.columns([0.5,0.5])
-with colsproc[0]:
-    st.write("**Clave CENEVAL:** ",procencia['claveCeneval'])
-    st.write("**Secundaria de Procedencia:** ",procencia['secundariaProcedencia'])
-    st.write("**Promedio de Secundaria:** ",procencia['promedioSecundaria'])
+            authenticator = stauth.Authenticate(
+                {'usernames':credentials},
+                config['cookie']['name'],
+                config['cookie']['key'],
+                config['cookie']['expiry_days'],
+                config['preauthorized']
+            )
+            logcols = st.columns([0.8,0.2])
+            with logcols[-1]:
+                authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
+            #--------------------------------------------------
+            #Navbar
+            # CSS style definitions
+            selected3 = option_menu(None, ["Inicio", "Alumnos","Perfil Alumno"],
+                icons=['house', 'mortarboard', 'person-fill'],
+                menu_icon="cast", default_index=2, orientation="vertical",
+                styles={
+                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
+                    "icon": {"color": "#175947", "font-size": "25px"},
+                    "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#FBA1A1"},
+                    "nav-link-selected": {"background-color": "#FBC5C5"},
+                },key='menu'
+            )
+            if selected3 == 'Inicio':
+                switch_page('Inicio')
+            elif selected3 == 'Alumnos':
+                switch_page('AlumnosHome')
 
-with colsproc[1]:
-    st.write("**Estancia en Secundaria(Años):** ",procencia['estanciaSecundaria_years'])
-    st.write("**Intentos de Aceptación:** ",procencia['intentosAceptacion'])
-    st.write("**Puntaje de Ingreso:** ",procencia['puntajeIngreso'])
 
-#--------------------------------------------------
-st.divider()
+            if usrdata['role'] in ['vinculacion','maestro','orientacion','admin']:
 
-st.subheader("Datos del Tutor")
+                st.title('Perfil del Alumno')
+                st.divider()
+                st.subheader("Datos de Control")
+                cols0 = st.columns([0.5,0.5])
+                with cols0[0]:
+                    st.write("**Numero de Control:** ",query['idcontrol'])
+                    st.write("**Plantel:** ",query['plantelAlumno'])
+                with cols0[1]:
+                    st.write("**CURP:** ",dtaAlumno['curp'])
+                    st.write("**Carrera:** ",query['carreraAlumno'])
 
-st.write("**Nombre:** ",tutor['nombre'])
-st.write("**Apellido Paterno:** ",tutor['apellidoPaterno'])
-st.write("**Apellido Materno:** ",tutor['apellidoMaterno'])
-st.write("**CURP:** ",tutor['curp'])
 
-if st.checkbox("raw data"):
-    st.write(query)
-    st.write(dtaAlumno)
+
+
+
+                st.divider()
+                st.subheader("Datos Generales del Alumno")
+                colssH = st.columns([0.5,0.5])
+                with colssH[0]:
+                    if dtaAlumno['sexo'] == 'MASCULINO':
+                        st_lottie('https://lottie.host/9938284c-32ae-42f7-8fdd-adaddffcc181/ZHy4Apg1Cy.json')
+                    else:
+                        st_lottie('https://lottie.host/daf2c1f3-9914-46aa-b31f-cb9dc068eb4a/q2WitBc7Ux.json')
+                with colssH[1]:
+                    st.write("**Nombre:** ",dtaAlumno['nombre'])
+                    st.write("**Apellido Paterno:** ",dtaAlumno['apellidoPaterno'])
+                    st.write("**Apellido Materno:** ",dtaAlumno['apellidoMaterno'])
+                    st.write("**Sexo:** ",dtaAlumno['sexo'])
+                    st.write("**Fecha de Nacimiento:** ",dtaAlumno['fechaNacimiento'][:10])
+                cols1 = st.columns([0.5,0.5])
+                with cols1[0]:
+                    st.write("**Estado de Nacimiento:** ",dtaAlumno['estadoNacimiento'])
+                with cols1[1]:
+                    st.write("**Nacionalidad:** ",dtaAlumno['nacionalidad'])
+                st.write("**Estado Civil:** ",dtaAlumno['estadoCivil'])
+                cols2 = st.columns([0.5,0.5])
+                with cols2[0]:
+                    st.write("**Telefono:** ",dtaAlumno['telefono'])
+                with cols2[1]:
+                    st.write("**Celular:** ",dtaAlumno['celular'])
+                cols3 = st.columns([0.5,0.5])
+                with cols3[0]:
+                    st.write("**Correo Personal:** ",dtaAlumno['correoe_p'])
+                with cols3[1]:
+                    st.write("**Correo Institucional:** ",dtaAlumno['correoe_i'])
+
+                st.divider()
+                st.subheader("Datos de Domicilio")
+                colsdom = st.columns([0.5,0.5])
+                with colsdom[0]:
+                    st.write("**Calle:** ",domicilio['calle'])
+                    st.write("**Numero Exterior:** ",domicilio['num_ext'])
+                    st.write("**Numero Interior:** ",domicilio['num_int'])
+                    st.write("**Colonia:** ",domicilio['colonia'])
+                    st.write("**Localidad:** ",domicilio['localidad'])
+                    st.write("**Municipio:** ",domicilio['municipio'])
+                    st.write("**Estado:** ",domicilio['estado'])
+                    st.write("**Codigo Postal:** ",domicilio['codigoP'])
+                    st.write("**Referencia 1:** ",domicilio['calle_ref1'])
+                    st.write("**Referencia 2:** ",domicilio['calle_ref2'])
+                    st.write("**Descripcion:** ",domicilio['opcional_ref'])
+
+
+
+                direccion = domicilio['calle'] +" " + domicilio['localidad']  + " " + domicilio['codigoP'] + " " + domicilio['municipio'] + " " + domicilio['estado']
+
+                with colsdom[1]:
+                    try:
+                        #geolocator = Nominatim(user_agent="RegistroAlumno")
+                        geolocator = Bing(api_key=st.secrets['db']['bing'])
+                        location = geolocator.geocode(direccion,include_neighborhood=True)
+                        st.write(location.address)
+                        #st.write((location.latitude, location.longitude))
+                        config = {
+                            "version": "v1",
+                            "config": {
+                                "mapState": {
+                                    "bearing": 0,
+                                    "latitude": location.latitude,
+                                    "longitude": location.longitude,
+                                    "pitch": 0,
+                                    "zoom": len(location.address.split(","))*5.5,
+                                },
+
+                            },
+                        }
+                        map_1 = KeplerGl(theme="light")
+                        map_1.config = config
+                        keplergl_static(map_1)
+                    except:
+                        st.write("No se pudo obtener la ubicación")
+                #--------------------------------------------------
+                st.divider()
+                st.subheader("Datos de Salud")
+                if salud['salud_status']:
+                    st.write("**Padece alguna enfermedad:**  SI")
+                    st.write("**Descripción de la enfermedad:** ",salud['salud_desc'])
+                    st.write("**Padecimientos:** ",",".join(salud['padecimientos']))
+                    st.write("**Medicamentos:** ",",".join(salud['medicamentos']))
+                    st.write("**Impedimentos:** ",",".join(salud['impedimentos']))
+                else:
+                    st.write("**Padece alguna enfermedad:**  NO")
+                st.write("**Tipo de Sangre:** ",salud['tipo_sangre'])
+                st.write("**Notas adicionales:** ",salud['opcional_desc'])
+                #--------------------------------------------------
+                st.divider()
+                st.subheader("Datos de Procedencia")
+                colsproc = st.columns([0.5,0.5])
+                with colsproc[0]:
+                    st.write("**Clave CENEVAL:** ",procencia['claveCeneval'])
+                    st.write("**Secundaria de Procedencia:** ",procencia['secundariaProcedencia'])
+                    st.write("**Promedio de Secundaria:** ",procencia['promedioSecundaria'])
+                with colsproc[1]:
+                    st.write("**Estancia en Secundaria(Años):** ",procencia['estanciaSecundaria_years'])
+                    st.write("**Intentos de Aceptación:** ",procencia['intentosAceptacion'])
+                    st.write("**Puntaje de Ingreso:** ",procencia['puntajeIngreso'])
+                #--------------------------------------------------
+                st.divider()
+                st.subheader("Datos del Tutor")
+                st.write("**Nombre:** ",tutor['nombre'])
+                st.write("**Apellido Paterno:** ",tutor['apellidoPaterno'])
+                st.write("**Apellido Materno:** ",tutor['apellidoMaterno'])
+                st.write("**CURP:** ",tutor['curp'])
+
+                if st.checkbox("raw data"):
+                    st.write(query)
+                    st.write(dtaAlumno)
+                    st.write(domicilio)
+                    st.write(salud)
+                    st.write(procencia)
+                    st.write(tutor)

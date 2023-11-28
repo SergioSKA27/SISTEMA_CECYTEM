@@ -13,6 +13,38 @@ import base64
 import urllib
 
 
+#Configuracion de la pagina
+st.set_page_config(page_title="Registro de Alumno", page_icon=":clipboard:", layout="wide", initial_sidebar_state="collapsed")
+
+#Configuracion de la pagina
+st.markdown("""
+<style>
+    #MainMenu, header, footer {visibility: hidden;}
+    [data-testid="collapsedControl"] {
+        display: none
+    }
+    .st-emotion-cache-1t2qdok {
+    width: 1189px;
+    position: relative;
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: column;
+    gap: 0rem;
+    }
+
+    .st-emotion-cache-z5fcl4 {
+    width: 100%;
+    padding: 0rem 0rem 0rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    min-width: auto;
+    max-width: initial;
+    }
+</style>
+""",unsafe_allow_html=True)
+
+
+
 st.markdown("""
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mosk:wght@400;700&display=swap">
 <style>
@@ -591,19 +623,79 @@ else:
     }
 
 
-st.json(datareg)
+butt = sac.buttons([
+    sac.ButtonsItem(label='REGISTRAR',icon='cloud-haze2'),
+], position='right', format_func='upper', align='center', size='large',
+shape='round', return_index=True,index=1)
 
 
-if st.button("Registrar"):
+flag = False
+
+if butt == 0:
     with st.spinner("Registrando Documentación del Alumno"):
         data = reg_procedenciaAlumno(datareg,st.session_state.last_registered['curp'])
 
     if "message"  in data:
         st.error('Error al registrar la documentación del alumno')
         st.error(data['message'])
+    else:
+        st.success("Se ha registrado toda la documentación del alumno con éxito 🎉")
+        st.balloons()
+        flag = True
+        with st.spinner("Redireccionando a la página de inicio"):
+            time.sleep(5)
+            switch_page("AlumnosHome")
 
-    st.success("Se ha registrado toda la documentación del alumno con éxito 🎉")
-    st.balloons()
-    with st.spinner("Redireccionando a la página de inicio"):
-        time.sleep(5)
-        switch_page("AlumnosHome")
+
+
+if flag:
+
+    sac.steps(
+
+    items=[
+
+        sac.StepsItem(title='Paso 1',
+        subtitle='Datos Básicos',
+        disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso 2',subtitle='Datos Personales',
+        description='Registra los datos personales del alumno',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso 3',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso4',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso5',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso6',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso7',disabled=True,icon='file-earmark-text'),
+
+        ], format_func='title',index=6)
+
+
+
+else:
+    sac.steps(
+
+    items=[
+
+        sac.StepsItem(title='Paso 1',
+        description='Registro Básico',disabled=True,icon='check2-square'),
+
+        sac.StepsItem(title='Paso 2',description='Datos Personales',disabled=True,icon='check2-square'),
+
+       sac.StepsItem(title='Paso 3',disabled=True,icon='check2-square',
+       description='Domicilio'),
+
+        sac.StepsItem(title='Paso4',disabled=True,icon='check2-square',description='Salud'),
+
+        sac.StepsItem(title='Paso5',disabled=True,icon='check2-square',description='Procedencia'),
+
+        sac.StepsItem(title='Paso6',disabled=True,icon='check2-square',
+        description='Tutor'),
+
+        sac.StepsItem(title='Paso7',disabled=False,icon='file-earmark-text',subtitle='Documentación',
+        description='Registra la documentación del alumno'),
+
+        ], format_func='title',index=5)
