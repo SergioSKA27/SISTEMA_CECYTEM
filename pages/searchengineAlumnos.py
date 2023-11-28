@@ -13,11 +13,23 @@ from streamlit_lottie import st_lottie
 import datetime
 import pandas as pd
 import numpy as np
-#Esta es la pagina de inicio, donde se muestra el contenido de la pagina visible para todos los usuarios
+import json
+from streamlit_searchbox import st_searchbox
+
+from streamlit_elements import elements, mui, html
+from streamlit_elements import elements, sync, event
 
 
-#Configuracion de la pagina
-st.set_page_config(page_title="Inicio", page_icon=":house:", layout="wide", initial_sidebar_state="collapsed")
+from pathlib import Path
+from streamlit import session_state as state
+from streamlit_elements import elements, sync, event
+from types import SimpleNamespace
+
+
+from modules import Dashboard,Editor, Card, DataGrid, Radar, Pie, Player
+
+
+
 
 st.markdown("""
 <style>
@@ -44,6 +56,7 @@ st.markdown("""
     }
 </style>
 """,unsafe_allow_html=True)
+
 #--------------------------------------------------
 #Funciones
 def get_credentials():
@@ -117,13 +130,44 @@ def get_all_students():
                 "plantelAlumno",
                 "idcontrol",
                 "curp.curp"
-            ]
+            ],
     })
     for i in data['records']:
         i['curp'] = i['curp']['curp']
     return data
 
 
+def search_student(search: str)-> list[any]:
+    """
+    The function `search_student` searches for a student in the database based on the search parameter.
+
+    :param search: The `search` parameter is a string that represents the student's name, email, or username.
+    :return: The function `search_student` returns a list of dictionaries representing the students that match the search
+    parameter.
+    """
+    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
+    data = xata.data().query("Alumno", {
+            "columns": [
+                "id",
+                "carreraAlumno",
+                "plantelAlumno",
+                "idcontrol",
+                "curp.*"
+            ],
+            "filter": {
+                    "$any": [
+                    {"curp.curp": {"$contains": search}},
+                    {"idcontrol": {"$contains": search}},
+                    {"curp.nombre": {"$contains": search}},
+                    {"curp.apellidoPaterno": {"$contains": search}},
+                    {"curp.apellidoMaterno": {"$contains": search}},]
+
+
+            }
+    })
+    #st.write(data)
+
+    return data['records'] if search else []
 
 
 # Add on_change callback
@@ -140,9 +184,7 @@ credentials = credentials_formating(data['records'])
 cookie_manager = get_manager()
 
 
-#st.session_state
-if "Alumnos_options" not in st.session_state or st.session_state.Alumnos_options != None:
-    st.session_state.Alumnos_options = None
+
 
 #--------------------------------------------------
 #Authentication
@@ -166,15 +208,14 @@ else:
                 config['cookie']['expiry_days'],
                 config['preauthorized']
             )
+            st_lottie("https://lottie.host/b7ef026c-555f-42ba-8c63-d34ab2c09d34/ZozkKz25so.json",width=300,height=200,speed=1)
             logcols = st.columns([0.8,0.2])
             with logcols[-1]:
                 authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
-            #--------------------------------------------------
-            #Navbar
             # CSS style definitions
-            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación","Perfil"],
-                icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart'],
-                menu_icon="cast", default_index=1, orientation="vertical",
+            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación","Perfil",'Buscar Alumnos'],
+                icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart', 'search'],
+                menu_icon="cast", default_index=6, orientation="vertical",
                 styles={
                     "container": {"padding": "0!important", "background-color": "#e6f2f0"},
                     "icon": {"color": "#175947", "font-size": "25px"},
@@ -186,37 +227,54 @@ else:
                 switch_page('Inicio')
             elif selected3 == 'Perfil':
                 switch_page('Perfil')
+            elif selected3 == 'Alumnos':
+                switch_page('AlumnosHome')
+
+            #--------------------------------------------------
 
 
-            #-------------------------------------------------
-            st.title("Alumnos")
-            st.markdown("En esta sección se pueden registrar alumnos, buscarlos y buscar grupos")
+            st.title('Buscador de Alumnos :mag_right:')
+            st.divider()
 
-            options = option_menu(None, ['',"Registrar Alumno","Buscar Alumno","Buscar grupo","Estadísticas"],
-                icons=['house-gear-fill','person-plus', 'search', "search-plus","graph-up-arrow"],
-                menu_icon="cast", default_index=0, orientation="horizontal",
-                styles={
-                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
-                    "icon": {"color": "#175947", "font-size": "25px"},
-                    "nav-link": {"font-size": "20px", "text-align": "center", "margin":"0px", "--hover-color": "#FBA1A1"},
-                    "nav-link-selected": {"background-color": "#FBC5C5"},
-                },key='options'
-            )
+            #--------------------------------------------------
 
-            if options == "Registrar Alumno" and usrdata['role'] in ['orientacion','admin']:
-                switch_page('registroAlumno1')
-            elif options == "Buscar Alumno" and usrdata['role'] in ['orientacion','admin','vinculacion','profesor']:
-                switch_page('searchengineAlumnos')
-            metriccols = st.columns(3)
-            with metriccols[0]:
-                st.metric(label="Alumnos registrados", value=len(get_all_students()['records']), delta=1)
-            with metriccols[1]:
-                st.metric(label="Alumnos activos", value=0)
-            with metriccols[2]:
-                st.metric(label="Alumnos inactivos", value=0)
+            r = st_searchbox(search_function=search_student,
+            placeholder="Buscar Alumno(Nombre, Apellido, CURP, ID Control)",
+            key='searchbox',)
+            r
+            search_student('KJLKJDLKJDLKJKJHKJ')
+            if "w" not in state:
+                board = Dashboard()
+                args = {}
+                args["board"] = board
+                w = SimpleNamespace(
+                    dashboard=board,
+                    editor=Editor(board, 0, 0, 6, 11,),
+                    player=Player(board, 7, 0, 4, 10, minH=5),
+                    pie=Pie(board, 6, 0, 6, 7, minW=3, minH=4),
+                    radar=Radar(board, 12, 7, 3, 7, minW=2, minH=4),
+                    card=Card(board, 6, 7, 3, 7, minW=2, minH=4),
+                    data_grid=DataGrid(board, 6, 13, 6, 7, minH=4),
+                )
+                state.w = w
 
-            stdudents = get_all_students()['records']
-            df = pd.DataFrame(stdudents)
-            del df['id'], df['xata']
-            st.dataframe(df,use_container_width=True)
+                w.editor.add_tab("Card content", Card.DEFAULT_CONTENT, "plaintext")
+                w.editor.add_tab("Data grid", json.dumps(DataGrid.DEFAULT_ROWS, indent=2), "json")
+                w.editor.add_tab("Radar chart", json.dumps(Radar.DEFAULT_DATA, indent=2), "json")
+                w.editor.add_tab("Pie chart", json.dumps(Pie.DEFAULT_DATA, indent=2), "json")
+            else:
+                w = state.w
+
+            with elements("demo"):
+                event.Hotkey("ctrl+s", sync(), bindInputs=True, overrideDefault=True)
+
+                with w.dashboard(rowHeight=57):
+                    w.editor()
+                    w.player()
+                    w.pie(w.editor.get_content("Pie chart"))
+                    w.radar(w.editor.get_content("Radar chart"))
+                    w.card(w.editor.get_content("Card content"))
+                    w.data_grid(w.editor.get_content("Data grid"))
+
+            #--------------------------------------------------
 
