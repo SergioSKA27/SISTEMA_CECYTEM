@@ -200,7 +200,10 @@ def register_Alumno(reg_data:dict)->tuple[bool,dict]:
         ],
         "tipo_sangre": "---",
         "opcional_desc": "---",
-        "id_saludAlumno": idsalud
+        "id_saludAlumno": idsalud,
+        "impedimentos": [
+        "---"
+        ]
     })
 
     dataDomicilio = xata.records().insert("DomicilioAlumno", {
