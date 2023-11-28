@@ -258,7 +258,7 @@ def register_Alumno(reg_data:dict)->tuple[bool,dict]:
 	  })
 
 
-    return True, data
+    return  data
 
 
 
@@ -330,9 +330,9 @@ if st.button("Registrar"):
               "idcontrol": control_number}
 
   with st.spinner("Registrando Alumno..."):
-    f, data = register_Alumno(reg_data)
+    data = register_Alumno(reg_data)
 
-  if f:
+  if "message" not in data:
     st.session_state.last_registered = {"curp":curp.upper(),"id":data['id'],"idcontrol":control_number}
     st.success("Alumno registrado con éxito")
     st.json(data)
@@ -344,7 +344,7 @@ if st.button("Registrar"):
     flag = True
   else:
     st.error("Error al registrar al alumno")
-    st.json(data)
+    st.error(data['message'])
 
 
 
@@ -368,11 +368,8 @@ if flag:
         ], format_func='title',index=0,return_index=True)
 
 
-    if stps == 1:
-      switch_page("registroAlumno2")
-
-    if st.button("Siguiente"):
-      switch_page("registroAlumno2")
+    time.sleep(5)
+    switch_page("registroAlumno2")
 
 else:
     sac.steps(

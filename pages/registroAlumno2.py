@@ -242,12 +242,17 @@ flag = False
 if st.button("Registrar"):
   with st.spinner("Registrando datos básicos del alumno..."):
     r = reg_basicdata(datar,st.session_state.last_registered["curp"])
-  st.json(r)
+
   if "message" in r:
     st.error("Error al registrar los datos básicos del alumno")
+    st.error(r["message"])
   else:
     st.success("Datos básicos del alumno registrados con éxito")
+    st.json(r)
     flag = True
+
+    time.sleep(5)
+    switch_page("registroAlumno3")
 
 
 
