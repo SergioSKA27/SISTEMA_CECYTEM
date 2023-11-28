@@ -83,15 +83,27 @@ def on_change(key):
     selection = st.session_state[key]
     st.write(f"Selection changed to {selection}")
 
+
+@st.cache_data
+def runballoons():
+    """
+    The function `runballoons` runs the balloons animation on the page.
+    """
+    st.balloons()
 #--------------------------------------------------
 #credenciales de la base de datos
 data,xta = get_credentials()
-#data
+
 credentials = credentials_formating(data['records'])
 cookie_manager = get_manager()
 
+#--------------------------------------------------
+#variables de Session State
+if "ballons" not in st.session_state:
+    st.session_state.ballons = True
 
-#st.session_state
+
+
 
 
 #--------------------------------------------------
@@ -101,27 +113,17 @@ if "authentication_status" not in st.session_state  :
 else:
 # el usuario debe estar autenticado para acceder a esta página
     if st.session_state["authentication_status"]:
-
-            # CSS style definitions
-            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación","Perfil"],
-                icons=['house', 'person-fill', "list-task", 'link', 'info-circle', 'gear'],
-                menu_icon="cast", default_index=0, orientation="vertical",
-                styles={
-                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
-                    "icon": {"color": "#175947", "font-size": "15px"},
-                    "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "#FBA1A1"},
-                    "nav-link-selected": {"background-color": "#FBC5C5"},
-                },on_change=on_change,key='menu'
-            )
-            selected3
-            if selected3 == 'Alumnos':
-                switch_page('AlumnosHome')
-
-
-            usrdata = get_current_user_info(st.session_state['username'])
-
-            #usrdata
             #--------------------------------------------------
+            #Ballons
+            if st.session_state.ballons:
+                runballoons()
+                st.session_state.ballons = False
+
+            #--------------------------------------------------
+            #usrdata
+            usrdata = get_current_user_info(st.session_state['username'])
+            #--------------------------------------------------
+            #Configuracion de Credentials
             with open('config.yaml') as file:
                 config = yaml.load(file, Loader=SafeLoader)
 
@@ -132,47 +134,35 @@ else:
                 config['cookie']['expiry_days'],
                 config['preauthorized']
             )
+
+            #--------------------------------------------------
+            #Log out button
             logcols = st.columns([0.8,0.2])
             with logcols[-1]:
                 authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
+
+
+
+             #--------------------------------------------------
+            #Navbar
+            # CSS style definitions
+            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación","Perfil"],
+                icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart'],
+                menu_icon="cast", default_index=0, orientation="vertical",
+                styles={
+                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
+                    "icon": {"color": "#175947", "font-size": "25px"},
+                    "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#FBA1A1"},
+                    "nav-link-selected": {"background-color": "#FBC5C5"},
+                },on_change=on_change,key='menu'
+            )
+            selected3
+            if selected3 == 'Alumnos':
+                switch_page('AlumnosHome')
+            #--------------------------------------------------
+            #Contenido de la pagina
             sac.alert(message=f'Bienvenido {st.session_state.name}',
             description=f'Tu rol actual es {usrdata["role"]} ', banner=True, icon=True, closable=True, height=100)
             st.toast(f'Bienvenido {st.session_state["name"]}',icon='👋')
             st.title('Sistema de Administración Escolar CECYTEM')
             st_lottie('https://lottie.host/204fe26b-ee80-4dfe-b95c-e1bcabbcf8ef/11JlAAyTKa.json',key='mainbanner')
-
-            # Herramientas de desarrollador disponibles solo para el administrador
-            #if usrdata['role'] == 'admin':
-            #  if st.checkbox('Developer Tools'):
-
-            #    st.subheader("All Cookies:")
-            #    cookies = cookie_manager.get_all()
-            #    st.write(cookies)
-
-            #    c1, c2, c3 = st.columns(3)
-
-            #    with c1:
-            #        st.subheader("Get Cookie:")
-            #        cookie = st.text_input("Cookie", key="0")
-            #        clicked = st.button("Get")
-            #        if clicked:
-            #            value = cookie_manager.get(cookie=cookie)
-            #            st.write(value)
-            #    with c2:
-            #        st.subheader("Set Cookie:")
-            #        cookie = st.text_input("Cookie", key="1")
-            #        val = st.text_input("Value")
-            #        if st.button("Add"):
-            #            cookie_manager.set(cookie, val) # Expires in a day by default
-            #    with c3:
-            #        st.subheader("Delete Cookie:")
-            #        cookie = st.text_input("Cookie", key="2")
-            #        if st.button("Delete"):
-            #            cookie_manager.delete(cookie)
-
-            #    st.subheader("Session State:")
-            #    st.divider()
-            #    st.session_state
-
-
-
