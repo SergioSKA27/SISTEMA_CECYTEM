@@ -36,7 +36,6 @@ def get_credentials():
   })
   return data
 
-@st.cache_data
 def credentials_formating(credentials):
   """
   The function `credentials_formating` takes a list of dictionaries representing credentials and returns a formatted

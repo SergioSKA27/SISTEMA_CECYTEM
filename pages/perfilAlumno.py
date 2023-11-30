@@ -148,7 +148,13 @@ def query_tutorAlumno(record):
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
     data = xata.records().get("TutorAlumno", record)
     return data
-#-------
+#--------------------------------------------------
+
+if "last_registered" not   in st.session_state:
+    st.session_state.last_registered = {}
+else:
+    if "update" in  st.session_state.last_registered:
+        st.session_state.last_registered['update'] = False
 #--------------------------------------------------
 #credenciales de la base de datos
 data,xta = get_credentials()
@@ -185,27 +191,17 @@ else:
                 config['cookie']['expiry_days'],
                 config['preauthorized']
             )
-            logcols = st.columns([0.8,0.2])
+            logcols = st.columns([0.2,0.6,0.2])
+            with logcols[0]:
+                backpp = sac.buttons([
+                    sac.ButtonsItem(label='REGRESAR',icon='skip-backward-btn'),
+                ], position='left', format_func='upper', align='center', size='large',
+                shape='round', return_index=True,index=1)
+
+                if backpp == 0:
+                    switch_page('searchengineAlumnos')
             with logcols[-1]:
                 authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
-            #--------------------------------------------------
-            #Navbar
-            # CSS style definitions
-            selected3 = option_menu(None, ["Inicio", "Alumnos","Perfil Alumno"],
-                icons=['house', 'mortarboard', 'person-fill'],
-                menu_icon="cast", default_index=2, orientation="vertical",
-                styles={
-                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
-                    "icon": {"color": "#175947", "font-size": "25px"},
-                    "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#FBA1A1"},
-                    "nav-link-selected": {"background-color": "#FBC5C5"},
-                },key='menu'
-            )
-            if selected3 == 'Inicio':
-                switch_page('Inicio')
-            elif selected3 == 'Alumnos':
-                switch_page('AlumnosHome')
-
 
             if usrdata['role'] in ['vinculacion','maestro','orientacion','admin']:
 
@@ -230,30 +226,41 @@ else:
                 with colssH[0]:
                     if dtaAlumno['sexo'] == 'MASCULINO':
                         st_lottie('https://lottie.host/9938284c-32ae-42f7-8fdd-adaddffcc181/ZHy4Apg1Cy.json')
-                    else:
+                    elif dtaAlumno['sexo'] == 'FEMENINO':
                         st_lottie('https://lottie.host/daf2c1f3-9914-46aa-b31f-cb9dc068eb4a/q2WitBc7Ux.json')
+                    else:
+                        st_lottie("https://lottie.host/b3da4593-d31b-4d9b-814d-e1986f879001/4ialEEEG8M.json")
                 with colssH[1]:
+
+                    if usrdata['role'] in ['admin','orientacion']:
+                        #Editar Informacion solo con permisos de administrador o orientacion
+                        editar2 = sac.buttons([
+                            sac.ButtonsItem(label='EDITAR',icon='pencil-square'),
+                        ], position='right', format_func='upper', align='right', size='large',
+                        shape='round', return_index=True,index=1)
+
+                        if editar2 == 0:
+                            st.session_state.last_registered['idcontrol'] = query['idcontrol']
+                            st.session_state.last_registered['curp'] = dtaAlumno['curp']
+                            st.session_state.last_registered['id'] = query['id']
+                            st.session_state.last_registered['update'] = True
+                            st.session_state.dataupdate = dtaAlumno
+                            switch_page('registroAlumno2')
+
                     st.write("**Nombre:** ",dtaAlumno['nombre'])
                     st.write("**Apellido Paterno:** ",dtaAlumno['apellidoPaterno'])
                     st.write("**Apellido Materno:** ",dtaAlumno['apellidoMaterno'])
                     st.write("**Sexo:** ",dtaAlumno['sexo'])
                     st.write("**Fecha de Nacimiento:** ",dtaAlumno['fechaNacimiento'][:10])
-                cols1 = st.columns([0.5,0.5])
-                with cols1[0]:
                     st.write("**Estado de Nacimiento:** ",dtaAlumno['estadoNacimiento'])
-                with cols1[1]:
                     st.write("**Nacionalidad:** ",dtaAlumno['nacionalidad'])
-                st.write("**Estado Civil:** ",dtaAlumno['estadoCivil'])
-                cols2 = st.columns([0.5,0.5])
-                with cols2[0]:
+                    st.write("**Estado Civil:** ",dtaAlumno['estadoCivil'])
                     st.write("**Telefono:** ",dtaAlumno['telefono'])
-                with cols2[1]:
                     st.write("**Celular:** ",dtaAlumno['celular'])
-                cols3 = st.columns([0.5,0.5])
-                with cols3[0]:
                     st.write("**Correo Personal:** ",dtaAlumno['correoe_p'])
-                with cols3[1]:
                     st.write("**Correo Institucional:** ",dtaAlumno['correoe_i'])
+
+
 
                 st.divider()
                 st.subheader("Datos de Domicilio")

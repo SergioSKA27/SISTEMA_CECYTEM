@@ -170,7 +170,7 @@ def search_student(search: str)-> list[any]:
     d = []
 
     for i in data['records']:
-        d.append(','.join([i['idcontrol'],i['curp']['curp'],i['curp']['nombre'],i['curp']['apellidoPaterno'],i['curp']['apellidoMaterno']]))
+        d.append(','.join([i['id'],i['idcontrol'],i['curp']['curp'],i['curp']['nombre'],i['curp']['apellidoPaterno'],i['curp']['apellidoMaterno']]))
 
     return d if search else []
 

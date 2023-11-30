@@ -168,6 +168,28 @@ if "last_registered" not in st.session_state or "idcontrol" not in st.session_st
 
 #--------------------------------------------------
 #Contenido de la página
+
+indexb = 1
+backpp = sac.buttons([
+      sac.ButtonsItem(label='DETENER REGISTRO',
+      icon='skip-backward-btn'),
+  ], position='left', format_func='upper', align='center', size='large',
+  shape='round', return_index=True,index=indexb)
+
+if backpp == 0:
+  st.write("Los datos registrados hasta el momento no se perderán, y podrán ser modificados en cualquier momento, en el perfil del alumno.")
+  st.write("¿Desea detener el registro del alumno?")
+  opc = st.radio("Seleccione una opción",["Si","No"],index=1)
+
+  if opc == "Si":
+    switch_page('AlumnosHome')
+  else:
+    indexb = 1
+
+
+
+
+
 st.title('Registro de Alumno')
 st.divider()
 st.subheader('Registro Datos Básicos del Alumno')
@@ -179,21 +201,36 @@ with cols[1]:
   st.write("**CURP** :",st.session_state.last_registered["curp"])
 
 
-
-nombre = st.text_input("Nombre(s)*",placeholder="Nombre(s)",help="Ingrese el nombre del alumno")
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  nombre = st.text_input("Nombre(s)*",placeholder="Nombre(s)",help="Ingrese el nombre del alumno",value=st.session_state.dataupdate['nombre'])
+else:
+  nombre = st.text_input("Nombre(s)*",placeholder="Nombre(s)",help="Ingrese el nombre del alumno")
 
 cols2 = st.columns([0.5,0.5])
 
 with cols2[0]:
-  apellidop = st.text_input("Apellido Paterno*",placeholder="Apellido Paterno",help="Ingrese el apellido paterno del alumno")
-with cols2[1]:
-  apellidom = st.text_input("Apellido Materno*",placeholder="Apellido Materno",help="Ingrese el apellido materno del alumno")
+  if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
 
-fecha_nacimiento = st.date_input("Fecha de Nacimiento*",help="Ingrese la fecha de nacimiento del alumno",min_value=datetime.date(1900, 1, 1))
+    apellidop = st.text_input("Apellido Paterno*",placeholder="Apellido Paterno",help="Ingrese el apellido paterno del alumno",value=st.session_state.dataupdate['apellidoPaterno'])
+  else:
+    apellidop = st.text_input("Apellido Paterno*",placeholder="Apellido Paterno",help="Ingrese el apellido paterno del alumno")
+
+with cols2[1]:
+  if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+
+    apellidom = st.text_input("Apellido Materno*",placeholder="Apellido Materno",help="Ingrese el apellido materno del alumno",value=st.session_state.dataupdate['apellidoMaterno'])
+  else:
+    apellidom = st.text_input("Apellido Materno*",placeholder="Apellido Materno",help="Ingrese el apellido materno del alumno")
+
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  fecha_nacimiento = datetime.datetime.strptime(st.session_state.dataupdate['fechaNacimiento'],"%Y-%m-%dT%H:%M:%SZ").date()
+  st.write("**Fecha de Nacimiento** :",fecha_nacimiento)
+else:
+  fecha_nacimiento = st.date_input("Fecha de Nacimiento*",help="Ingrese la fecha de nacimiento del alumno",min_value=datetime.date(1900, 1, 1))
   #st.write(type(datetime.datetime.combine(fecha_nacimiento, datetime.datetime.min.time())))
 
-estado_nacimiento = st.selectbox("Estado de Nacimiento*",
-  ["Aguascalientes",
+
+estados =  ["Aguascalientes",
   "Baja California",
   "Baja California Sur",
   "Campeche","Chiapas",
@@ -225,25 +262,54 @@ estado_nacimiento = st.selectbox("Estado de Nacimiento*",
   "Yucatán",
   "Zacatecas",
   "Otro"]
-  ,help="Seleccione el estado de nacimiento del alumno",placeholder="Estado de México",index=10)
 
-nacionalidad = st.selectbox("Nacionalidad*",["Mexicana","Extranjera"],help="Seleccione la nacionalidad del alumno",placeholder="Mexicana/Extranjera")
+estados = list(map(lambda x: x.upper(),estados))
 
-sexo = st.selectbox("Sexo*",["Masculino","Femenino"],help="Seleccione el sexo del alumno")
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  estado_nacimiento = st.selectbox("Estado de Nacimiento*",estados,help="Seleccione el estado de nacimiento del alumno",placeholder="Estado de México",index=estados.index(st.session_state.dataupdate['estadoNacimiento']) )
+else:
+  estado_nacimiento = st.selectbox("Estado de Nacimiento*",estados,help="Seleccione el estado de nacimiento del alumno",placeholder="Estado de México")
 
-estado_civil = st.selectbox("Estado Civil*",["Soltero(a)","Casado(a)","Divorciado(a)","Viudo(a)","Unión Libre"],help="Seleccione el estado civil del alumno")
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  nacionalidad = st.selectbox("Nacionalidad*",["MEXICANA","EXTRANJERA"],help="Seleccione la nacionalidad del alumno",placeholder="Mexicana/Extranjera",index=["MEXICANA","EXTRANJERA"].index(st.session_state.dataupdate['nacionalidad']))
+else:
+  nacionalidad = st.selectbox("Nacionalidad*",["MEXICANA","EXTRANJERA"],help="Seleccione la nacionalidad del alumno",placeholder="Mexicana/Extranjera")
+
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  sexo = st.selectbox("Sexo*",["MASCULINO","FEMENINO"],help="Seleccione el sexo del alumno",placeholder="Masculino/Femenino",index=["MASCULINO","FEMENINO"].index(st.session_state.dataupdate['sexo']))
+else:
+  sexo = st.selectbox("Sexo*",["Masculino","Femenino"],help="Seleccione el sexo del alumno")
+
+
+
+
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  estado_civil = st.selectbox("Estado Civil*",["SOLTERO(A)","CASADO(A)","DIVORCIADO(A)","VIUDO(A)","UNIÓN LIBRE"],help="Seleccione el estado civil del alumno",placeholder="Soltero(a)/Casado(a)/Divorciado(a)/Viudo(a)/Unión Libre",index=["SOLTERO(A)","CASADO(A)","DIVORCIADO(A)","VIUDO(A)","UNIÓN LIBRE"].index(st.session_state.dataupdate['estadoCivil']))
+else:
+  estado_civil = st.selectbox("Estado Civil*",["SOLTERO(A)","CASADO(A)","DIVORCIADO(A)","VIUDO(A)","UNIÓN LIBRE"],help="Seleccione el estado civil del alumno",placeholder="Soltero(a)/Casado(a)/Divorciado(a)/Viudo(a)/Unión Libre")
 
 
 #enfermedad = st.selectbox("¿Padece alguna enfermedad crónica?",["Si","No"],help="Seleccione si el alumno padece alguna enfermedad crónica",placeholder="Si/No",index=1)
 
-telefono = st.text_input("Telefono*",placeholder="Telefono",help="Ingrese el telefono del tutor del alumno",max_chars=10)
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  telefono = st.text_input("Telefono*",placeholder="Telefono",help="Ingrese el telefono del tutor del alumno",max_chars=10,value=st.session_state.dataupdate['telefono'])
+else:
+  telefono = st.text_input("Telefono*",placeholder="Telefono",help="Ingrese el telefono del tutor del alumno",max_chars=10)
 
-celular = st.text_input("Celular",placeholder="Celular",help="Ingrese el celular del tutor del alumno",max_chars=10)
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  celular = st.text_input("Celular",placeholder="Celular",help="Ingrese el celular del tutor del alumno",max_chars=10,value=st.session_state.dataupdate['celular'])
+else:
+  celular = st.text_input("Celular",placeholder="Celular",help="Ingrese el celular del tutor del alumno",max_chars=10)
 
-correo_personal = st.text_input("Correo Personal*",placeholder="Correo Personal",help="Ingrese el correo personal del alumno")
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  correo_personal = st.text_input("Correo Personal*",placeholder="Correo Personal",help="Ingrese el correo personal del alumno",value=st.session_state.dataupdate['correoe_p'])
+else:
+  correo_personal = st.text_input("Correo Personal*",placeholder="Correo Personal",help="Ingrese el correo personal del alumno")
 
-correo_institucional = st.text_input("Correo Institucional*",placeholder="Correo Institucional",help="Ingrese el correo institucional del alumno")
-
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  correo_institucional = st.text_input("Correo Institucional*",placeholder="Correo Institucional",help="Ingrese el correo institucional del alumno",value=st.session_state.dataupdate['correoe_i'])
+else:
+  correo_institucional = st.text_input("Correo Institucional*",placeholder="Correo Institucional",help="Ingrese el correo institucional del alumno")
 
 datar = {
 'nombre': nombre.upper(),
@@ -283,9 +349,12 @@ if butt == 0:
     st.success("Datos básicos del alumno registrados con éxito")
     st.json(r)
     flag = True
-
-    time.sleep(5)
-    switch_page("registroAlumno3")
+    if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+      switch_page("perfilAlumno")
+    else:
+      with st.spinner("Redireccionando a la siguiente página..."):
+        time.sleep(3)
+        switch_page("registroAlumno3")
 
 
 

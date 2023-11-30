@@ -110,7 +110,6 @@ def get_current_user_info(usrname: str) -> dict:
     ch = xata.data().query("Credentials",{"filter": {"username": usrname}})
     return ch['records'][0]
 
-
 def register_Alumno(reg_data:dict)->tuple[bool,dict]:
     """
     The `register_Alumno` function registers a new student by creating records for the student's documents, background
@@ -289,23 +288,36 @@ def register_Alumno(reg_data:dict)->tuple[bool,dict]:
 
     return  data
 
+def validar_datos(reg_data: dict)->tuple[bool,str]:
+    """
+    Valida los datos de un estudiante con estándares usuales.
 
+    Args:
+    - reg_data (dict): Un diccionario con los datos del estudiante.
+
+    Returns:
+    - bool: True si los datos son válidos, False de lo contrario.
+    - str: Mensaje indicando el motivo de la invalidez si es False.
+    """
+    # Verificar que la carrera y el plantel sean cadenas no vacías
+    if not reg_data["carreraAlumno"].strip() or not reg_data["plantelAlumno"].strip():
+        return False, "Carrera y plantel no pueden estar vacíos."
+
+    # Verificar que la CURP tenga la longitud correcta
+    if len(reg_data["curp"]) != 18:
+        return False, "La CURP debe tener 18 caracteres."
+
+    # Verificar que el número de control tenga longitud 14
+    if len(reg_data["idcontrol"]) != 14:
+        return False, "El número de control debe tener longitud 14."
+
+    # Si todas las verificaciones pasan, los datos son válidos
+    return True, "Datos válidos."
 
 
 #--------------------------------------------------
 #Variables de Sesión
 
-if "control_number" not in st.session_state:
-  st.session_state.control_number = ""
-
-if "curp" not in st.session_state:
-  st.session_state.curp = ""
-
-if "plantel" not in st.session_state:
-  st.session_state.plantel = ""
-
-if "carrera" not in st.session_state:
-  st.session_state.carrera = ""
 
 if "last_registered" not in st.session_state:
   st.session_state.last_registered = {}
@@ -314,140 +326,187 @@ if "last_registered" not in st.session_state:
 #--------------------------------------------------
 #Contenido de la página
 
+
+
+#--------------------------------------------------
+#Boton de regresar a la pagina anterior
 colsb = st.columns([0.2,0.6,0.2])
 
 with colsb[0]:
+  indx0 = 1
   backpp = sac.buttons([
       sac.ButtonsItem(label='REGRESAR',icon='skip-backward-btn'),
   ], position='left', format_func='upper', align='center', size='large',
-  shape='round', return_index=True,index=1)
+  shape='round', return_index=True,index=indx0)
 
   if backpp == 0:
     switch_page('AlumnosHome')
 
 
-
+#--------------------------------------------------
 st.title('Registro de Alumno')
-
-
-
 st.divider()
 st.subheader('Datos Básicos')
-
+#--------------------------------------------------
+#Registro Numero de Control
 autog = st.checkbox("Generar numero de control automaticamente",help="Si se activa esta opción, el numero de control se generará aleatoriamente")
-
 cols1 = st.columns([0.4,0.6])
-
-
+checksum =  0
 with cols1[0]:
-  if autog:
-    control_number = uuid.uuid4().hex[:8]
-    st.write("Numero de control: ",control_number)
-    st.session_state.control_number = control_number
-  else:
-    control_number = st.text_input("Numero de Control",placeholder=uuid.uuid4().hex[:8],max_chars=8,help="Ingrese el numero de control del alumno",value=st.session_state.control_number)
-    if control_number != st.session_state.control_number:
-      st.session_state.control_number = control_number
+    control_number = st.text_input("Numero de Control",max_chars=14,
+    help="Ingrese el numero de control del alumno",value="")
 
+if len(control_number) < 14 and len(control_number) != 0:
+  st.error("El numero de control debe tener 14 caracteres")
+else:
+  checksum += 1
+
+#--------------------------------------------------
+#Registro CURP
 with cols1[1]:
-  curp = st.text_input("CURP*",placeholder="CURP",max_chars=18,help="Ingrese el CURP del alumno",value=st.session_state.curp)
-  if curp != st.session_state.curp:
-    st.session_state.curp = curp
+  curp = st.text_input("CURP*",placeholder="CURP",max_chars=18,help="Ingrese el CURP del alumno",value="")
 
+if len(curp) < 18 and len(curp) != 0:
+  st.error("El CURP no puede estar vacio")
+else:
+  checksum += 1
+#--------------------------------------------------
+#Registro Plantel
 cols2 = st.columns([0.4,0.6])
-
 with cols2[0]:
-  plantel = st.text_input("Plantel*",placeholder="Plantel",help="Ingrese el plantel del alumno",value=st.session_state.plantel)
-  if plantel != st.session_state.plantel:
-    st.session_state.plantel = plantel
+  plantel = st.text_input("Plantel*",placeholder="Plantel",help="Ingrese el plantel del alumno",value="")
+
+if plantel == "":
+  st.error("El plantel no puede estar vacio")
+else:
+  checksum += 1
+#--------------------------------------------------
+#Registro Carrera
+carreras = [
+    'Animación Digital',
+    'Autotrónica',
+    'Comercio Exterior',
+    'Construcción',
+    'Desarrollo Organizacional',
+    'Diseño Gráfico Digital',
+    'Electricidad',
+    'Electrónica',
+    'Enfermería General',
+    'Estudios de Mercado y de Entornos Sociales',
+    'Horticultura Sustentable',
+    'Instrumentación Industrial',
+    'Laboratorista Clínico',
+    'Laboratorista Químico',
+    'Logística',
+    'Mantenimiento Automotriz',
+    'Mantenimiento Industrial',
+    'Máquinas-Herramienta',
+    'Mecatrónica',
+    'Preparación de Alimentos y Bebidas',
+    'Procesos de Gestión Administrativa',
+    'Producción Industrial',
+    'Producción Industrial de Alimentos',
+    'Programación',
+    'Seguridad e Higiene y Protección Civil',
+    'Servicios de Hotelería',
+    'Soporte y Mantenimiento de Equipo de Cómputo',
+    'Trabajo Social',
+    'Ventas'
+]
+
+carreras = [carrera.upper() for carrera in carreras]
+
 with cols2[1]:
-  carrera = st.text_input("Carrera*",placeholder="Programación",help="Ingrese la carrera del alumno",value=st.session_state.carrera)
-  if carrera != st.session_state.carrera:
-    st.session_state.carrera = carrera
-flag = False
+  carrera = st.selectbox("Carrera*",carreras,help="Seleccione la carrera del alumno",index=0)
+  checksum += 1
 
 
-butt = sac.buttons([
-    sac.ButtonsItem(label='REGISTRAR',icon='cloud-haze2'),
-], position='right', format_func='upper', align='center', size='large',
-shape='round', return_index=True,index=1)
 
 
-if butt == 0:
-  reg_data = {"carreraAlumno": carrera.upper(),
-              "plantelAlumno": plantel.upper(),
-              "curp": curp.upper().strip(),
-              "idcontrol": control_number}
 
+
+#--------------------------------------------------
+#Boton de registro
+#Diccionario de datos
+reg_data = {"carreraAlumno": carrera.upper(),
+            "plantelAlumno": plantel.upper(),
+            "curp": curp.upper().strip(),
+            "idcontrol": control_number}
+
+check, mess = validar_datos(reg_data)
+
+st.write(mess)
+if check:
+  flag = False
+  indexreg = 1
+  butt = sac.buttons([
+      sac.ButtonsItem(label='REGISTRAR',icon='cloud-haze2'),
+  ], position='right', format_func='upper', align='center', size='large',
+  shape='round', return_index=True,index=indexreg)
+else:
+  butt = sac.buttons([
+      sac.ButtonsItem(label='REGISTRAR',icon='cloud-haze2',disabled=True),
+  ], position='right', format_func='upper', align='center', size='large',
+  shape='round', return_index=True,index=1)
+if butt == 0 and checksum == 4:
+
+  #Registro del alumno
   with st.spinner("Registrando Alumno..."):
     data = register_Alumno(reg_data)
 
   if "message" not in data:
+    #Registro exitoso
     st.session_state.last_registered = {"curp":curp.upper(),"id":data['id'],"idcontrol":control_number}
-    st.success("Alumno registrado con éxito")
+    st.success("Alumno registrado con éxito 😊")
     st.json(data)
 
     st.session_state.control_number = ""
     st.session_state.curp = ""
     st.session_state.plantel = ""
     st.session_state.carrera = ""
-    flag = True
+    with st.spinner("Redireccionando..."):
+      time.sleep(2)
+      switch_page("registroAlumno2")
   else:
-    st.error("Error al registrar al alumno")
+    #Registro fallido
+    st.error("Error al registrar al alumno 😥")
     st.error(data['message'])
 
+elif butt == 0 and checksum != 4:
+  #Campos vacios
+  st.error("No se puede registrar al alumno, hay campos vacios 😲")
 
 
+
+#--------------------------------------------------
+#Steps de registro
 if flag:
-
     stps = sac.steps(
-
     items=[
-
         sac.StepsItem(title='Paso 1',
         subtitle='Datos Básicos',
         description='Registra los datos básicos del alumno',
         disabled=True,icon='check2-square'),
-
         sac.StepsItem(title='Paso 2',icon='person-lines-fill'),
-
         sac.StepsItem(title='Paso 3',disabled=True,icon='pin-map'),
-
         sac.StepsItem(title='Paso4',disabled=True,icon='lungs'),
-
         sac.StepsItem(title='Paso5',disabled=True,icon='layer-backward'),
-
         sac.StepsItem(title='Paso6',disabled=True,icon='person-bounding-box'),
-
-        sac.StepsItem(title='Paso7',disabled=True,icon='file-earmark-text'),
-
-        ], format_func='title',index=0,return_index=True)
-
-
-    time.sleep(5)
-    switch_page("registroAlumno2")
-
+        sac.StepsItem(title='Paso7',disabled=True,icon='file-earmark-text'),],
+        format_func='title',index=0,return_index=True)
 else:
     sac.steps(
-
     items=[
-
         sac.StepsItem(title='Paso 1',
         subtitle='Datos Básicos',
         description='Registra los datos básicos del alumno',icon='fingerprint'),
-
         sac.StepsItem(title='Paso 2',disabled=True,icon='person-lines-fill'),
-
         sac.StepsItem(title='Paso 3',disabled=True,icon='pin-map'),
-
         sac.StepsItem(title='Paso4',disabled=True,icon='lungs'),
-
         sac.StepsItem(title='Paso5',disabled=True,icon='layer-backward'),
-
         sac.StepsItem(title='Paso6',disabled=True,icon='person-bounding-box'),
-
-        sac.StepsItem(title='Paso7',disabled=True,icon='file-earmark-text'),
-        ], format_func='title',index=0)
+        sac.StepsItem(title='Paso7',disabled=True,icon='file-earmark-text'),],
+        format_func='title',index=0)
 
 
 st_lottie('https://lottie.host/a9d8ce55-0145-4cce-87ff-06c4cd00c3dc/Y9tHbq2E8F.json',key='footer',height=100)
