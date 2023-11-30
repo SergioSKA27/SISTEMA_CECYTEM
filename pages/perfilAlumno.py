@@ -467,6 +467,22 @@ else:
 
                 st.divider()
                 st.subheader("Datos del Seguro")
+                if usrdata['role'] in ['admin','orientacion']:
+                    editseg = 1
+                    #Editar Informacion solo con permisos de administrador o orientacion
+                    editarseg = sac.buttons([
+                        sac.ButtonsItem(label='EDITAR',icon='pencil-square'),
+                    ], position='right', format_func='upper', align='center', size='large',
+                    shape='round', return_index=True,index=editseg,key='editseg')
+
+                    if editarseg == 0:
+                        st.session_state.last_registered['idcontrol'] = query['idcontrol']
+                        st.session_state.last_registered['curp'] = dtaAlumno['curp']
+                        st.session_state.last_registered['id'] = query['id']
+                        st.session_state.last_registered['update'] = True
+                        st.session_state.dataupdate = seguro
+                        switch_page('modify_seguro')
+
                 st.write("**Numero de Seguro:** ",seguro['no_seguro'])
                 st.write("**Tipo de Seguro:** ",seguro['tipo_seguro'])
                 st.write("**Proveedor de Seguro:** ",seguro['provedor'])
