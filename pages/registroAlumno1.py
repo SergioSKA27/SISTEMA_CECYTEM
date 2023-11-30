@@ -313,6 +313,20 @@ if "last_registered" not in st.session_state:
 
 #--------------------------------------------------
 #Contenido de la página
+
+colsb = st.columns([0.2,0.6,0.2])
+
+with colsb[0]:
+  backpp = sac.buttons([
+      sac.ButtonsItem(label='REGRESAR',icon='skip-backward-btn'),
+  ], position='left', format_func='upper', align='center', size='large',
+  shape='round', return_index=True,index=1)
+
+  if backpp == 0:
+    switch_page('AlumnosHome')
+
+
+
 st.title('Registro de Alumno')
 
 

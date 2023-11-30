@@ -28,7 +28,7 @@ from types import SimpleNamespace
 
 from modules import Dashboard,Editor, Card, DataGrid, Radar, Pie, Player
 
-
+#Configuración de la página
 st.set_page_config(page_title="Buscador de Alumnos", page_icon=":mag_right:", layout="wide", initial_sidebar_state="collapsed")
 
 st.markdown("""
@@ -215,7 +215,16 @@ else:
                 config['preauthorized']
             )
             st_lottie("https://lottie.host/b7ef026c-555f-42ba-8c63-d34ab2c09d34/ZozkKz25so.json",width=300,height=200,speed=1)
-            logcols = st.columns([0.8,0.2])
+            logcols = st.columns([0.2,0.6,0.2])
+            with logcols[0]:
+                backpp = sac.buttons([
+                    sac.ButtonsItem(label='REGRESAR',icon='skip-backward-btn'),
+                ], position='left', format_func='upper', align='center', size='large',
+                shape='round', return_index=True,index=1)
+
+                if backpp == 0:
+                    switch_page('AlumnosHome')
+
             with logcols[-1]:
                 authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
             # CSS style definitions
