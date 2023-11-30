@@ -13,11 +13,13 @@ from streamlit_lottie import st_lottie
 import datetime
 import pandas as pd
 import numpy as np
-#Esta es la pagina de inicio, donde se muestra el contenido de la pagina visible para todos los usuarios
+import json
+from mitosheet.streamlit.v1 import spreadsheet
 
 
-#Configuracion de la pagina
-st.set_page_config(page_title="Inicio", page_icon=":house:", layout="wide", initial_sidebar_state="collapsed")
+
+#Configuración de la página
+st.set_page_config(page_title="Buscador de Alumnos", page_icon=":mag_right:", layout="wide", initial_sidebar_state="collapsed")
 
 st.markdown("""
 <style>
@@ -44,6 +46,7 @@ st.markdown("""
     }
 </style>
 """,unsafe_allow_html=True)
+
 #--------------------------------------------------
 #Funciones
 def get_credentials():
@@ -82,7 +85,6 @@ def credentials_formating(credentials):
 
   return c
 
-
 def get_current_user_info(usrname):
     """
     The function `get_current_user_info` retrieves the information of the current user based on their username from a
@@ -103,7 +105,6 @@ def get_manager():
     """
     return stx.CookieManager(key='MyCookieManager')
 
-
 def get_all_students():
     """
     The function `get_all_students` retrieves all the students from a database.
@@ -117,13 +118,11 @@ def get_all_students():
                 "plantelAlumno",
                 "idcontrol",
                 "curp.curp"
-            ]
+            ],
     })
     for i in data['records']:
         i['curp'] = i['curp']['curp']
     return data
-
-
 
 
 # Add on_change callback
@@ -140,9 +139,8 @@ credentials = credentials_formating(data['records'])
 cookie_manager = get_manager()
 
 
-#st.session_state
-if "Alumnos_options" not in st.session_state or st.session_state.Alumnos_options != None:
-    st.session_state.Alumnos_options = None
+if "Alumnos_search" not in st.session_state:
+    st.session_state['Alumnos_search'] = None
 
 #--------------------------------------------------
 #Authentication
@@ -166,15 +164,23 @@ else:
                 config['cookie']['expiry_days'],
                 config['preauthorized']
             )
-            logcols = st.columns([0.8,0.2])
+            st_lottie("https://lottie.host/b7ef026c-555f-42ba-8c63-d34ab2c09d34/ZozkKz25so.json",width=300,height=200,speed=1)
+            logcols = st.columns([0.2,0.6,0.2])
+            with logcols[0]:
+                backpp = sac.buttons([
+                    sac.ButtonsItem(label='REGRESAR',icon='skip-backward-btn'),
+                ], position='left', format_func='upper', align='center', size='large',
+                shape='round', return_index=True,index=1)
+
+                if backpp == 0:
+                    switch_page('AlumnosHome')
+
             with logcols[-1]:
                 authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
-            #--------------------------------------------------
-            #Navbar
             # CSS style definitions
-            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación","Perfil"],
-                icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart'],
-                menu_icon="cast", default_index=1, orientation="vertical",
+            selected3 = option_menu(None, ["Inicio", "Alumnos",'Buscar Alumnos'],
+                icons=['house', 'mortarboard', 'search'],
+                menu_icon="cast", default_index=2, orientation="vertical",
                 styles={
                     "container": {"padding": "0!important", "background-color": "#e6f2f0"},
                     "icon": {"color": "#175947", "font-size": "25px"},
@@ -184,43 +190,52 @@ else:
             )
             if selected3 == 'Inicio':
                 switch_page('Inicio')
-            elif selected3 == 'Perfil':
-                switch_page('Perfil')
+            elif selected3 == 'Alumnos':
+                switch_page('AlumnosHome')
+
+            #--------------------------------------------------
+            #Student ID,student_name,gender,grade,school_name,reading_score,math_score
+            excelf = st.file_uploader("Subir Reporte de Alumnos de DEO",type=['csv','xlsx'])
+
+            if excelf is not None:
+                try:
+                    data = pd.read_excel(excelf)
+                except:
+                    data = pd.read_csv(excelf)
 
 
-            #-------------------------------------------------
-            st.title("Alumnos")
-            st.markdown("En esta sección se pueden registrar alumnos, buscarlos y buscar grupos")
 
-            options = option_menu(None, ['',"Registrar Alumno","Buscar Alumno","Buscar grupo","Estadísticas","Reportes DEO"],
-                icons=['house-gear-fill','person-plus', 'search', "search-plus","graph-up-arrow","file-earmark-bar-graph"],
-                menu_icon="cast", default_index=0, orientation="horizontal",
-                styles={
-                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
-                    "icon": {"color": "#175947", "font-size": "25px"},
-                    "nav-link": {"font-size": "20px", "text-align": "center", "margin":"0px", "--hover-color": "#FBA1A1"},
-                    "nav-link-selected": {"background-color": "#FBC5C5"},
-                },key='options'
-            )
+                # Display the dataframe in a Mito spreadsheet, no puede tener mas de 1500 filas
+                final_dfs, code = spreadsheet(data)
 
-            if options == "Registrar Alumno" and usrdata['role'] in ['orientacion','admin']:
-                switch_page('registroAlumno1')
-            elif options == "Buscar Alumno" and usrdata['role'] in ['orientacion','admin','vinculacion','profesor']:
-                switch_page('searchengineAlumnos')
 
-            elif options == "Reportes DEO" and usrdata['role'] in ['orientacion','admin','profesor']:
-                switch_page('reportesDEO')
 
-            metriccols = st.columns(3)
-            with metriccols[0]:
-                st.metric(label="Alumnos registrados", value=len(get_all_students()['records']), delta=1)
-            with metriccols[1]:
-                st.metric(label="Alumnos activos", value=0)
-            with metriccols[2]:
-                st.metric(label="Alumnos inactivos", value=0)
+                # Display the final dataframes created by editing the Mito component
+                # This is a dictionary from dataframe name -> dataframe
+                #st.write(final_dfs)
 
-            stdudents = get_all_students()['records']
-            df = pd.DataFrame(stdudents)
-            del df['id'], df['xata']
-            st.dataframe(df,use_container_width=True)
+                # Display the code that corresponds to the script
+                #st.code(code)
+                group = []
+                agrupar_por_grupo = st.checkbox('Agrupar por grupo')
+                agrupar_por_asignatura = st.checkbox('Agrupar por asignatura')
+                agrupar_por_alumno = st.checkbox('Agrupar por alumno')
 
+                if agrupar_por_grupo:
+                    group.append('Grupo')
+                if agrupar_por_asignatura:
+                    group.append('Asignatura')
+                if agrupar_por_alumno:
+                    group.append('Alumno')
+
+                if len(group) > 0:
+                    gr = data.groupby(group)
+
+                    dfs = []
+
+                    for i in gr:
+                        dfs.append(i[1])
+
+                    daf = sac.pagination(total=len(dfs), align='center', circle=True, jump=True, show_total=True)
+
+                    st.write(dfs[daf-1])
