@@ -120,7 +120,9 @@ def query_Alumno(record='NULL'):
                 "carreraAlumno",
                 "plantelAlumno",
                 "idcontrol",
-                "curp.*"
+                "curp.*",
+                "estatus.*",
+                "seguro.*",
             ],
             "filter": {
                 "idcontrol": record
@@ -167,6 +169,8 @@ domicilio = query_domicilioAlumno(dtaAlumno['id_domicilioAlumno']['id'])
 salud = query_SaludAlumno(dtaAlumno['id_saludAlumno']['id'])
 procencia = query_procedenciaAlumno(dtaAlumno['id_procedenciaAlumno']['id'])
 tutor = query_tutorAlumno(dtaAlumno['id_tutorAlumno']['id'])
+estatus = query['estatus']
+seguro = query['seguro']
 #--------------------------------------------------
 
 #--------------------------------------------------
@@ -216,6 +220,10 @@ else:
                     st.write("**CURP:** ",dtaAlumno['curp'])
                     st.write("**Carrera:** ",query['carreraAlumno'])
 
+                if estatus['current_status']:
+                    st.write("**Estatus:**  :green[Activo]")
+                else:
+                    st.write("**Estatus:**  :red[Inactivo]")
 
 
 
@@ -409,6 +417,12 @@ else:
                 st.write("**CURP:** ",tutor['curp'])
                 st.write("**Telefono:** ",tutor['telefono'])
                 st.write("**Celular:** ",tutor['celular'])
+
+                st.divider()
+                st.subheader("Datos del Seguro")
+                st.write("**Numero de Seguro:** ",seguro['no_seguro'])
+                st.write("**Tipo de Seguro:** ",seguro['tipo_seguro'])
+                st.write("**Proveedor de Seguro:** ",seguro['provedor'])
 
                 if st.checkbox("raw data"):
                     st.write(query)

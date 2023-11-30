@@ -120,7 +120,9 @@ def reg_procedenciaAlumno(reg_data,curpAlumno):
             "id_domicilioAlumno",
             "id_saludAlumno",
             "id_documentosAlumno",
-            "id_procedenciaAlumno"
+            "id_procedenciaAlumno",
+            "estatus",
+            "seguro"
         ],
         "filter": {
             "curp": curpAlumno
@@ -175,29 +177,29 @@ acta_nacimiento = st.file_uploader("Acta de Nacimiento",type=['pdf','png','jpg',
 
 if formatacta == 'pdf' and acta_nacimiento is not None:
     try:
-        acta_nacimientoAlumno = acta_nacimiento.read()
-        acta_nacimientoAlumno = base64.b64encode(acta_nacimientoAlumno).decode('utf-8')
+        acta_nacimientoa = acta_nacimiento.read()
+        acta_nacimientoAlumno = base64.b64encode(acta_nacimientoa.decode('utf-8'))
         acta_nacimientoAlumno = f"data:application/pdf;base64,{acta_nacimientoAlumno}"
         pdf_display = f'<iframe  src="{acta_nacimientoAlumno}" width="700" height="600" type="application/pdf"></iframe>'
         st.write('Preview del archivo pdf:')
         st.markdown(pdf_display, unsafe_allow_html=True)
         datareg['acta_nacimientoAlumno'] = {
-        "base64Content": acta_nacimientoAlumno,
+        "base64Content": acta_nacimientoa,
         "enablePublicUrl": False,
         "mediaType": "application/octet-stream",
-        "name": '-'.join([st.session_state.last_registered['curp'],"acta_nacimientoAlumno"])+".pdf",
+        "name": '-'.join(["acta_nacimientoAlumno",uuid.uuid4().hex])+".pdf",
         "signedUrlTimeout": 300
     }
     except:
         st.error("El archivo no es un pdf o está dañado")
 elif acta_nacimiento is not None:
     try:
-        acta_nacimientoAlumno = acta_nacimiento.read()
-        acta_nacimientoAlumno = base64.b64encode(acta_nacimientoAlumno).decode('utf-8')
+        acta_nacimientoa = acta_nacimiento.read()
+        acta_nacimientoAlumno = base64.b64encode(acta_nacimientoa).decode('utf-8')
         acta_nacimientoAlumno = f"data:image/{formatacta};base64,{acta_nacimientoAlumno}"
         st.image(acta_nacimientoAlumno)
         datareg['acta_nacimientoAlumno'] = {
-        "base64Content": acta_nacimientoAlumno,
+        "base64Content": acta_nacimientoa,
         "enablePublicUrl": False,
         "mediaType": "application/octet-stream",
         "name": '-'.join([st.session_state.last_registered['curp'],"acta_nacimientoAlumno"])+f".{formatacta}",

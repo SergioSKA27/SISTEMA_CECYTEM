@@ -129,7 +129,9 @@ def reg_saludAlumno(reg_data,curpAlumno):
             "id_domicilioAlumno",
             "id_saludAlumno",
             "id_documentosAlumno",
-            "id_procedenciaAlumno"
+            "id_procedenciaAlumno",
+            "estatus",
+            "seguro"
         ],
         "filter": {
             "curp": curpAlumno

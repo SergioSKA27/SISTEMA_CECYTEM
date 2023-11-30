@@ -130,6 +130,22 @@ def register_Alumno(reg_data:dict)->tuple[bool,dict]:
     iddocumentos = uuid.uuid4().hex
     idprocedencia = uuid.uuid4().hex
 
+    dataestatus = xata.records().insert("EstatusAlumno", {
+    "current_status": True,
+    "tipoBaja": "NO APLICA",
+    "causas": [
+        "NO APLICA"
+    ],
+    "periodos_baja": [
+        "NO APLICA"
+    ]
+    })
+
+    dataSeguro = xata.records().insert("SeguroAlumno", {
+    "tipo_seguro": "---",
+    "no_seguro": "---",
+    "provedor": "---"
+    })
 
     dataDocumentos = xata.records().insert("DocumentacionAlumno", {
       "acta_nacimientoAlumno": {
@@ -284,7 +300,9 @@ def register_Alumno(reg_data:dict)->tuple[bool,dict]:
         "carreraAlumno": reg_data['carreraAlumno'],
         "plantelAlumno": reg_data['plantelAlumno'],
         "idcontrol": reg_data['idcontrol'],
-        "curp": dataAlumno['id']
+        "curp": dataAlumno['id'],
+        "estatus": dataestatus['id'],
+        "seguro": dataSeguro['id'],
 	  })
 
 
