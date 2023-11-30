@@ -95,7 +95,6 @@ def credentials_formating(credentials):
 
   return c
 
-
 def get_current_user_info(usrname):
     """
     The function `get_current_user_info` retrieves the information of the current user based on their username from a
@@ -116,7 +115,6 @@ def get_manager():
     """
     return stx.CookieManager(key='MyCookieManager')
 
-
 def get_all_students():
     """
     The function `get_all_students` retrieves all the students from a database.
@@ -135,7 +133,6 @@ def get_all_students():
     for i in data['records']:
         i['curp'] = i['curp']['curp']
     return data
-
 
 def search_student(search: str)-> list[any]:
     """

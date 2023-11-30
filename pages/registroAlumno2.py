@@ -350,21 +350,21 @@ shape='round', return_index=True,index=1)
 
 
 if butt == 0:
-  with st.spinner("Registrando datos básicos del alumno..."):
+  with st.spinner("Registrando datos básicos del alumno en la base de datos... ⏳"):
     r = reg_basicdata(datar,st.session_state.last_registered["curp"])
 
   if "message" in r:
-    st.error("Error al registrar los datos básicos del alumno")
+    st.error("Error al registrar los datos básicos del alumno 😥")
     st.error(r["message"])
   else:
-    st.success("Datos básicos del alumno registrados con éxito")
+    st.success("Datos básicos del alumno registrados con éxito 😊")
     st.json(r)
     flag = True
     if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
       switch_page("perfilAlumno")
     else:
-      with st.spinner("Redireccionando a la siguiente página..."):
-        time.sleep(3)
+      with st.spinner("Redireccionando a la siguiente página... 🚀"):
+        time.sleep(2)
         switch_page("registroAlumno3")
 
 

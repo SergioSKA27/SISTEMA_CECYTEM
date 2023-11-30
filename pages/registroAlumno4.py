@@ -164,11 +164,42 @@ if "last_registered" not in st.session_state or "idcontrol" not in st.session_st
 
 #--------------------------------------------------
 #Contenido de la página
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  backpp = sac.buttons([
+                    sac.ButtonsItem(label='REGRESAR',icon='skip-backward-btn'),
+                ], position='left', format_func='upper', align='center', size='large',
+                shape='round', return_index=True,index=1)
+
+  if backpp == 0:
+    st.session_state.last_registered['update'] = False
+    st.session_state.dataupdate = {}
+    switch_page('perfilAlumno')
+
+else:
+  indexb = 1
+  backpp = sac.buttons([
+      sac.ButtonsItem(label='DETENER REGISTRO',
+      icon='sign-stop'),
+  ], position='left', format_func='upper', align='center', size='large',
+  shape='round', return_index=True,index=indexb)
+
+  if backpp == 0:
+    st.write("Los datos registrados hasta el momento no se perderán, y podrán ser modificados en cualquier momento, en el perfil del alumno.")
+    st.write("¿Desea detener el registro del alumno?")
+    opc = st.radio("Seleccione una opción",["Si","No"],index=1)
+
+    if opc == "Si":
+      switch_page('AlumnosHome')
+    else:
+      indexb = 1
+
+
+
 st.title('Registro de Alumno')
 st.divider()
 st.subheader('Registro Salud del Alumno')
 cols = st.columns([0.4,0.6])
-
+#--
 with cols[0]:
   st.write("**Número de Control** :",st.session_state.last_registered['idcontrol'])
 with cols[1]:
@@ -178,17 +209,30 @@ with cols[1]:
 st.divider()
 
 
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+    salud_status = st.selectbox("¿El alumno tiene alguna enfermedad?",("Si","No"),help="Selecciona una opción",index=[True,False].index(st.session_state.dataupdate['salud_status']))
+else:
+    salud_status = st.selectbox("¿El alumno tiene alguna enfermedad?",("Si","No"),index=1,help="Selecciona una opción")
 
-salud_status = st.selectbox("¿El alumno tiene alguna enfermedad?",("Si","No"),index=1,help="Selecciona una opción")
 
 if salud_status == 'Si':
-    enfermedad_desc = st.text_area("Descripción de la enfermedad",help="Escribe la descripción de la enfermedad")
+    if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+        enfermedad_desc = st.text_area("Descripción de la enfermedad",help="Escribe la descripción de la enfermedad",value=st.session_state.dataupdate['enfermedad_desc'])
+    else:
+        enfermedad_desc = st.text_area("Descripción de la enfermedad",help="Escribe la descripción de la enfermedad")
 
-    padecimientos = st.text_area("Padecimientos",help="Escribe los padecimientos del alumno separados por comas")
+    if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+        padecimientos = st.text_area("Padecimientos",help="Escribe los padecimientos del alumno separados por comas",value=','.join(st.session_state.dataupdate['padecimientos']))
+    else:
+        padecimientos = st.text_area("Padecimientos",help="Escribe los padecimientos del alumno separados por comas")
 
-    medicamentos = st.text_area("Medicamentos",help="Escribe los medicamentos del alumno separados por comas")
+    if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+        medicamentos = st.text_area("Medicamentos",help="Escribe los medicamentos del alumno separados por comas",value=','.join(st.session_state.dataupdate['medicamentos']))
+    else:
+        medicamentos = st.text_area("Medicamentos",help="Escribe los medicamentos del alumno separados por comas")
 
-    impedimentos = st.text_area("Impedimentos",help="Escribe los impedimentos del alumno separados por comas")
+    if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+        impedimentos = st.text_area("Impedimentos",help="Escribe los impedimentos del alumno separados por comas",value=','.join(st.session_state.dataupdate['impedimentos']))
 
 else:
     enfermedad_desc = 'NONE'
@@ -196,12 +240,16 @@ else:
     medicamentos = 'NONE'
     impedimentos = 'NONE'
 
-tipo_sangre = st.selectbox("Tipo de sangre",("A+","A-","B+","B-","AB+","AB-","O+","O-"),index=0,help="Selecciona el tipo de sangre del alumno")
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update'] and st.session_state.dataupdate['tipo_sangre'] != '---':
+    tipo_sangre = st.selectbox("Tipo de sangre",("A+","A-","B+","B-","AB+","AB-","O+","O-"),help="Selecciona el tipo de sangre del alumno",
+    index=["A+","A-","B+","B-","AB+","AB-","O+","O-"].index(st.session_state.dataupdate['tipo_sangre']))
+else:
+    tipo_sangre = st.selectbox("Tipo de sangre",("A+","A-","B+","B-","AB+","AB-","O+","O-"),index=0,help="Selecciona el tipo de sangre del alumno")
 
-
-
-opcional_desc = st.text_area("Descripción opcional",help="Escribe una descripción opcional")
-
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+    opcional_desc = st.text_area("Descripción opcional",help="Escribe una descripción opcional",value=st.session_state.dataupdate['opcional_desc'])
+else:
+    opcional_desc = st.text_area("Descripción opcional",help="Escribe una descripción opcional")
 
 
 if salud_status == 'No':
@@ -224,25 +272,32 @@ data_reg = {
 flag = False
 
 
+regi = 1
 butt = sac.buttons([
     sac.ButtonsItem(label='REGISTRAR',icon='cloud-haze2'),
 ], position='right', format_func='upper', align='center', size='large',
-shape='round', return_index=True,index=1)
+shape='round', return_index=True,index=regi)
 
 
 if butt == 0:
-    with st.spinner("Registrando datos de salud del alumno..."):
+    with st.spinner("Registrando datos de salud del alumno... 🌐"):
         dr = reg_saludAlumno(data_reg,st.session_state.last_registered['curp'])
 
     if "message" in dr:
-        st.error("Error al registrar los datos de salud del alumno")
+        st.error("Error al registrar los datos de salud del alumno 😥")
         st.error(dr['message'])
     else:
-        st.success("Datos de salud del alumno registrados exitosamente")
+        st.success("Datos de salud del alumno registrados exitosamente 😄")
         st.json(dr)
-        flag = True
-        time.sleep(5)
-        switch_page("registroAlumno5")
+        if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+            st.session_state.last_registered['update'] = False
+            st.session_state.dataupdate = {}
+            switch_page('perfilAlumno')
+        else:
+            flag = True
+            with st.spinner("Redireccionando... "):
+                time.sleep(2)
+                switch_page("registroAlumno5")
 
 
 

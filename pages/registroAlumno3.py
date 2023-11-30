@@ -177,6 +177,40 @@ if "last_registered" not in st.session_state or "idcontrol" not in st.session_st
 
 #--------------------------------------------------
 #Contenido de la página
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  backpp = sac.buttons([
+                    sac.ButtonsItem(label='REGRESAR',icon='skip-backward-btn'),
+                ], position='left', format_func='upper', align='center', size='large',
+                shape='round', return_index=True,index=1)
+
+  if backpp == 0:
+    st.session_state.last_registered['update'] = False
+    st.session_state.dataupdate = {}
+    switch_page('perfilAlumno')
+
+else:
+  indexb = 1
+  backpp = sac.buttons([
+      sac.ButtonsItem(label='DETENER REGISTRO',
+      icon='sign-stop'),
+  ], position='left', format_func='upper', align='center', size='large',
+  shape='round', return_index=True,index=indexb)
+
+  if backpp == 0:
+    st.write("Los datos registrados hasta el momento no se perderán, y podrán ser modificados en cualquier momento, en el perfil del alumno.")
+    st.write("¿Desea detener el registro del alumno?")
+    opc = st.radio("Seleccione una opción",["Si","No"],index=1)
+
+    if opc == "Si":
+      switch_page('AlumnosHome')
+    else:
+      indexb = 1
+
+
+
+
+
+
 st.title('Registro de Alumno')
 st.divider()
 st.subheader('Registro Domicilio del Alumno')
@@ -187,30 +221,50 @@ with cols[0]:
 with cols[1]:
   st.write("**CURP** :",st.session_state.last_registered["curp"])
 
-calle = st.text_input("Calle",help="Ingrese el nombre de la calle",placeholder="Ej. Av. 20 de Noviembre")
 
-cols = st.columns([0.6,0.4])
-with cols[0]:
-    num_ext = st.number_input("Número Exterior",help="Ingrese el número exterior",placeholder="Ej. 123",min_value=0)
 
-with cols[1]:
-    num_int = st.number_input("Número Interior",help="Ingrese el número interior",placeholder="Ej. 123",min_value=0)
-
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  calle = st.text_input("Calle*",help="Ingrese el nombre de la calle",placeholder="Ej. Av. 20 de Noviembre",value=st.session_state.dataupdate['calle'])
+else:
+  calle = st.text_input("Calle*",help="Ingrese el nombre de la calle",placeholder="Ej. Av. 20 de Noviembre")
 cols = st.columns([0.6,0.4])
 
 with cols[0]:
-    colonia = st.text_input("Colonia",help="Ingrese el nombre de la colonia",placeholder="Ej. Centro")
-
+  if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+    num_ext = st.number_input("Número Exterior*",help="Ingrese el número exterior",min_value=0,value=st.session_state.dataupdate['num_ext'])
+  else:
+    num_ext = st.number_input("Número Exterior*",help="Ingrese el número exterior",placeholder="Ej. 123",min_value=0)
 with cols[1]:
-    codigoP = st.text_input("Código Postal",help="Ingrese el código postal",placeholder="Ej. 12345")
+  if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+    num_int = st.number_input("Número Interior",help="Ingrese el número interior",min_value=0,value=st.session_state.dataupdate['num_int'])
 
-localidad = st.text_input("Localidad",help="Ingrese el nombre de la localidad",placeholder="Ej. Centro")
+cols = st.columns([0.6,0.4])
 
-mun = st.text_input("Municipio",help="Ingrese el nombre del municipio",placeholder="Ej. Chilpancingo de los Bravo")
+with cols[0]:
+  if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+    colonia = st.text_input("Colonia*",help="Ingrese el nombre de la colonia",value=st.session_state.dataupdate['colonia'])
+  else:
+    colonia = st.text_input("Colonia*",help="Ingrese el nombre de la colonia",placeholder="Ej. Centro")
+with cols[1]:
+  if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+    codigoP = st.text_input("Código Postal*",help="Ingrese el código postal",value=st.session_state.dataupdate['codigoP'])
+  else:
+    codigoP = st.text_input("Código Postal*",help="Ingrese el código postal",placeholder="Ej. 39000")
+
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  localidad = st.text_input("Localidad",help="Ingrese el nombre de la localidad",placeholder="Ej. Centro",value=st.session_state.dataupdate['localidad'])
+else:
+  localidad = st.text_input("Localidad",help="Ingrese el nombre de la localidad",placeholder="Ej. Centro")
+
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  mun = st.text_input("Municipio*",help="Ingrese el nombre del municipio",placeholder="Ej. Chilpancingo de los Bravo",value=st.session_state.dataupdate['municipio'])
+else:
+  mun = st.text_input("Municipio*",help="Ingrese el nombre del municipio",placeholder="Ej. Chilpancingo de los Bravo")
 
 
-estado = st.selectbox("Estado",
-options=[
+
+
+estados = [
 "Aguascalientes",
 "Baja California",
 "Baja California Sur",
@@ -231,8 +285,13 @@ options=[
 "Sinaloa","Sonora",
 "Tabasco","Tamaulipas",
 "Tlaxcala","Veracruz",
-"Yucatán","Zacatecas"],help="Seleccione el estado",index=10)
+"Yucatán","Zacatecas"]
 
+estados = [estado.upper() for estado in estados]
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update'] and st.session_state.dataupdate['estado'] != "---":
+  estado = st.selectbox("Estado",options=estados,help="Seleccione el estado",index=estados.index(st.session_state.dataupdate['estado']))
+else:
+  estado = st.selectbox("Estado",options=estados,help="Seleccione el estado",index=10)
 
 direccion = f'{calle},{localidad},{codigoP},{mun},{estado}'
 
@@ -251,7 +310,7 @@ try:
             "latitude": location.latitude,
             "longitude": location.longitude,
             "pitch": 0,
-            "zoom": len(location.address.split(","))*5.5,
+            "zoom": len(location.address.split(","))*4.5,
         },
 
     },
@@ -264,20 +323,30 @@ except:
     st.write("No se pudo obtener la ubicación")
 
 
-calleref1 = st.text_input("Calle de Referencia 1",help="Ingrese el nombre de la calle de referencia 1",placeholder="Ej. Av. 20 de Noviembre")
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  calleref1 = st.text_input("Calle de Referencia 1",help="Ingrese el nombre de la calle de referencia 1",placeholder="Ej. Av. 20 de Noviembre",value=st.session_state.dataupdate['calle_ref1'])
+else:
+  calleref1 = st.text_input("Calle de Referencia 1",help="Ingrese el nombre de la calle de referencia 1",placeholder="Ej. Av. 20 de Noviembre")
 
-calleref2 = st.text_input("Calle de Referencia 2",help="Ingrese el nombre de la calle de referencia 2",placeholder="Ej. Av. 20 de Noviembre")
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  calleref2 = st.text_input("Calle de Referencia 2",help="Ingrese el nombre de la calle de referencia 2",placeholder="Ej. Av. 20 de Noviembre",value=st.session_state.dataupdate['calle_ref2'])
+else:
+  calleref2 = st.text_input("Calle de Referencia 2",help="Ingrese el nombre de la calle de referencia 2",placeholder="Ej. Av. 20 de Noviembre")
 
 
-referecia_ad = st.text_area("Referencia Adicional",help="Ingrese una referencia adicional",placeholder="Ej. Entre las calles 20 de Noviembre y 5 de Mayo")
-
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  referecia_ad = st.text_area("Referencia Adicional",help="Ingrese una referencia adicional",placeholder="Ej. Entre las calles 20 de Noviembre y 5 de Mayo",value=st.session_state.dataupdate['opcional_ref'])
+else:
+  referecia_ad = st.text_area("Referencia Adicional",help="Ingrese una referencia adicional",placeholder="Ej. Entre las calles 20 de Noviembre y 5 de Mayo")
 
 flag = False
 
+
+regi = 1
 butt = sac.buttons([
     sac.ButtonsItem(label='REGISTRAR',icon='cloud-haze2'),
 ], position='right', format_func='upper', align='center', size='large',
-shape='round', return_index=True,index=1)
+shape='round', return_index=True,index=regi)
 
 
 
@@ -295,17 +364,24 @@ if butt == 0:
     'num_int': num_int,
     'opcional_ref': referecia_ad
     }
-    with st.spinner("Registrando domicilio..."):
+    with st.spinner("Registrando domicilio... 🌐"):
       dat = reg_domicilio(datareg,st.session_state.last_registered["curp"])
     if "message" in dat:
-      st.error("No se pudo registrar el domicilio")
+      st.error("No se pudo registrar el domicilio 😥")
       st.error(dat["message"])
     else:
-      st.success("Domicilio registrado con éxito")
+      st.success("Domicilio registrado con éxito 😄")
       flag = True
       st.json(dat)
       time.sleep(5)
-      switch_page("registroAlumno4")
+      if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+        st.session_state.last_registered['update'] = False
+        st.session_state.dataupdate = {}
+        switch_page('perfilAlumno')
+      else:
+        with st.spinner("Redireccionando..."):
+          time.sleep(2)
+          switch_page("registroAlumno4")
 
 
 if flag:

@@ -171,7 +171,7 @@ tutor = query_tutorAlumno(dtaAlumno['id_tutorAlumno']['id'])
 
 #--------------------------------------------------
 #Authentication
-if "authentication_status" not in st.session_state  :
+if "authentication_status" not in st.session_state:
     switch_page('Main')
 else:
 # el usuario debe estar autenticado para acceder a esta página
@@ -262,6 +262,7 @@ else:
                     st.write("**Correo Institucional:** ",dtaAlumno['correoe_i'])
 
 
+                #--------------------------------------------------
 
                 st.divider()
                 st.subheader("Datos de Domicilio")
@@ -284,6 +285,21 @@ else:
                 direccion = domicilio['calle'] +" " + domicilio['localidad']  + " " + domicilio['codigoP'] + " " + domicilio['municipio'] + " " + domicilio['estado']
 
                 with colsdom[1]:
+                    if usrdata['role'] in ['admin','orientacion']:
+                        edit1 = 1
+                        #Editar Informacion solo con permisos de administrador o orientacion
+                        editar3 = sac.buttons([
+                            sac.ButtonsItem(label='EDITAR',icon='pencil-square'),
+                        ], position='right', format_func='upper', align='right', size='large',
+                        shape='round', return_index=True,index=edit1,key='regdom')
+
+                        if editar3 == 0:
+                            st.session_state.last_registered['idcontrol'] = query['idcontrol']
+                            st.session_state.last_registered['curp'] = dtaAlumno['curp']
+                            st.session_state.last_registered['id'] = query['id']
+                            st.session_state.last_registered['update'] = True
+                            st.session_state.dataupdate = domicilio
+                            switch_page('registroAlumno3')
                     try:
                         #geolocator = Nominatim(user_agent="RegistroAlumno")
                         geolocator = Bing(api_key=st.secrets['db']['bing'])
@@ -298,7 +314,7 @@ else:
                                     "latitude": location.latitude,
                                     "longitude": location.longitude,
                                     "pitch": 0,
-                                    "zoom": len(location.address.split(","))*5.5,
+                                    "zoom": len(location.address.split(","))*4.5,
                                 },
 
                             },
@@ -311,9 +327,26 @@ else:
                 #--------------------------------------------------
                 st.divider()
                 st.subheader("Datos de Salud")
+
+                if usrdata['role'] in ['admin','orientacion']:
+                    edit2 = 1
+                    #Editar Informacion solo con permisos de administrador o orientacion
+                    editar4 = sac.buttons([
+                        sac.ButtonsItem(label='EDITAR',icon='pencil-square'),
+                    ], position='right', format_func='upper', align='right', size='large',
+                    shape='round', return_index=True,index=edit2,key='regsalud')
+
+                    if editar4 == 0:
+                        st.session_state.last_registered['idcontrol'] = query['idcontrol']
+                        st.session_state.last_registered['curp'] = dtaAlumno['curp']
+                        st.session_state.last_registered['id'] = query['id']
+                        st.session_state.last_registered['update'] = True
+                        st.session_state.dataupdate = salud
+                        switch_page('registroAlumno4')
+
                 if salud['salud_status']:
                     st.write("**Padece alguna enfermedad:**  SI")
-                    st.write("**Descripción de la enfermedad:** ",salud['salud_desc'])
+                    st.write("**Descripción de la enfermedad:** ",salud['enfermedad_desc'])
                     st.write("**Padecimientos:** ",",".join(salud['padecimientos']))
                     st.write("**Medicamentos:** ",",".join(salud['medicamentos']))
                     st.write("**Impedimentos:** ",",".join(salud['impedimentos']))
@@ -321,6 +354,8 @@ else:
                     st.write("**Padece alguna enfermedad:**  NO")
                 st.write("**Tipo de Sangre:** ",salud['tipo_sangre'])
                 st.write("**Notas adicionales:** ",salud['opcional_desc'])
+
+
                 #--------------------------------------------------
                 st.divider()
                 st.subheader("Datos de Procedencia")
@@ -330,6 +365,22 @@ else:
                     st.write("**Secundaria de Procedencia:** ",procencia['secundariaProcedencia'])
                     st.write("**Promedio de Secundaria:** ",procencia['promedioSecundaria'])
                 with colsproc[1]:
+                    if usrdata['role'] in ['admin','orientacion']:
+                        edit3 = 1
+                        #Editar Informacion solo con permisos de administrador o orientacion
+                        editar5 = sac.buttons([
+                            sac.ButtonsItem(label='EDITAR',icon='pencil-square'),
+                        ], position='right', format_func='upper', align='right', size='large',
+                        shape='round', return_index=True,index=edit3,key='regproc')
+
+                        if editar4 == 0:
+                            st.session_state.last_registered['idcontrol'] = query['idcontrol']
+                            st.session_state.last_registered['curp'] = dtaAlumno['curp']
+                            st.session_state.last_registered['id'] = query['id']
+                            st.session_state.last_registered['update'] = True
+                            st.session_state.dataupdate = salud
+                            switch_page('registroAlumno5')
+
                     st.write("**Estancia en Secundaria(Años):** ",procencia['estanciaSecundaria_years'])
                     st.write("**Intentos de Aceptación:** ",procencia['intentosAceptacion'])
                     st.write("**Puntaje de Ingreso:** ",procencia['puntajeIngreso'])
@@ -348,3 +399,5 @@ else:
                     st.write(salud)
                     st.write(procencia)
                     st.write(tutor)
+    else:
+        switch_page('Main')
