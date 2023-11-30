@@ -168,23 +168,34 @@ if "last_registered" not in st.session_state or "idcontrol" not in st.session_st
 
 #--------------------------------------------------
 #Contenido de la página
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  backpp = sac.buttons([
+                    sac.ButtonsItem(label='REGRESAR',icon='skip-backward-btn'),
+                ], position='left', format_func='upper', align='center', size='large',
+                shape='round', return_index=True,index=1)
 
-indexb = 1
-backpp = sac.buttons([
+  if backpp == 0:
+    st.session_state.last_registered['update'] = False
+    st.session_state.dataupdate = {}
+    switch_page('perfilAlumno')
+
+else:
+  indexb = 1
+  backpp = sac.buttons([
       sac.ButtonsItem(label='DETENER REGISTRO',
-      icon='skip-backward-btn'),
+      icon='sign-stop'),
   ], position='left', format_func='upper', align='center', size='large',
   shape='round', return_index=True,index=indexb)
 
-if backpp == 0:
-  st.write("Los datos registrados hasta el momento no se perderán, y podrán ser modificados en cualquier momento, en el perfil del alumno.")
-  st.write("¿Desea detener el registro del alumno?")
-  opc = st.radio("Seleccione una opción",["Si","No"],index=1)
+  if backpp == 0:
+    st.write("Los datos registrados hasta el momento no se perderán, y podrán ser modificados en cualquier momento, en el perfil del alumno.")
+    st.write("¿Desea detener el registro del alumno?")
+    opc = st.radio("Seleccione una opción",["Si","No"],index=1)
 
-  if opc == "Si":
-    switch_page('AlumnosHome')
-  else:
-    indexb = 1
+    if opc == "Si":
+      switch_page('AlumnosHome')
+    else:
+      indexb = 1
 
 
 
@@ -265,17 +276,17 @@ estados =  ["Aguascalientes",
 
 estados = list(map(lambda x: x.upper(),estados))
 
-if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update'] and st.session_state.dataupdate['estadoNacimiento'] != "---":
   estado_nacimiento = st.selectbox("Estado de Nacimiento*",estados,help="Seleccione el estado de nacimiento del alumno",placeholder="Estado de México",index=estados.index(st.session_state.dataupdate['estadoNacimiento']) )
 else:
   estado_nacimiento = st.selectbox("Estado de Nacimiento*",estados,help="Seleccione el estado de nacimiento del alumno",placeholder="Estado de México")
 
-if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update'] and st.session_state.dataupdate['nacionalidad'] != "---":
   nacionalidad = st.selectbox("Nacionalidad*",["MEXICANA","EXTRANJERA"],help="Seleccione la nacionalidad del alumno",placeholder="Mexicana/Extranjera",index=["MEXICANA","EXTRANJERA"].index(st.session_state.dataupdate['nacionalidad']))
 else:
   nacionalidad = st.selectbox("Nacionalidad*",["MEXICANA","EXTRANJERA"],help="Seleccione la nacionalidad del alumno",placeholder="Mexicana/Extranjera")
 
-if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update'] and st.session_state.dataupdate['sexo'] != "---":
   sexo = st.selectbox("Sexo*",["MASCULINO","FEMENINO"],help="Seleccione el sexo del alumno",placeholder="Masculino/Femenino",index=["MASCULINO","FEMENINO"].index(st.session_state.dataupdate['sexo']))
 else:
   sexo = st.selectbox("Sexo*",["Masculino","Femenino"],help="Seleccione el sexo del alumno")
@@ -283,7 +294,7 @@ else:
 
 
 
-if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update'] and st.session_state.dataupdate['estadoCivil'] != "---":
   estado_civil = st.selectbox("Estado Civil*",["SOLTERO(A)","CASADO(A)","DIVORCIADO(A)","VIUDO(A)","UNIÓN LIBRE"],help="Seleccione el estado civil del alumno",placeholder="Soltero(a)/Casado(a)/Divorciado(a)/Viudo(a)/Unión Libre",index=["SOLTERO(A)","CASADO(A)","DIVORCIADO(A)","VIUDO(A)","UNIÓN LIBRE"].index(st.session_state.dataupdate['estadoCivil']))
 else:
   estado_civil = st.selectbox("Estado Civil*",["SOLTERO(A)","CASADO(A)","DIVORCIADO(A)","VIUDO(A)","UNIÓN LIBRE"],help="Seleccione el estado civil del alumno",placeholder="Soltero(a)/Casado(a)/Divorciado(a)/Viudo(a)/Unión Libre")

@@ -233,11 +233,12 @@ else:
                 with colssH[1]:
 
                     if usrdata['role'] in ['admin','orientacion']:
+                        edit0 = 1
                         #Editar Informacion solo con permisos de administrador o orientacion
                         editar2 = sac.buttons([
                             sac.ButtonsItem(label='EDITAR',icon='pencil-square'),
                         ], position='right', format_func='upper', align='right', size='large',
-                        shape='round', return_index=True,index=1)
+                        shape='round', return_index=True,index=edit0)
 
                         if editar2 == 0:
                             st.session_state.last_registered['idcontrol'] = query['idcontrol']
