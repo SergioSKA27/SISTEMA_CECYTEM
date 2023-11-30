@@ -125,6 +125,26 @@ def get_all_students():
     return data
 
 
+def reg_calificacion(id_alumno,calificacion,asignatura,grupo,semestre,evaluacion):
+    """
+    The function `reg_calificacion` registers a grade for a student in a database.
+
+    :param id_alumno: The `id_alumno` parameter is the id of the student whose grade you want to register.
+    :param calificacion: The `calificacion` parameter is the grade you want to register.
+    :param asignatura: The `asignatura` parameter is the subject of the grade you want to register.
+    :param grupo: The `grupo` parameter is the group of the student whose grade you want to register.
+    :return: The function `reg_calificacion` returns the response from the XataClient API.
+    """
+    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
+    data = xata.records().insert("Calificacion", {
+    "semestre": semestre,
+    "grupo": grupo,
+    "asignatura": asignatura.upper(),
+    "evaluacion": evaluacion,
+    "calificacion": calificacion,
+    "num_control": id_alumno
+    })
+
 # Add on_change callback
 def on_change(key):
     st.session_state.Alumnos_options = key
@@ -207,8 +227,12 @@ else:
 
                 # Display the dataframe in a Mito spreadsheet, no puede tener mas de 1500 filas
                 final_dfs, code = spreadsheet(data)
-
-
+                st.warning('No se pueden subir mas de 100 registros a la vez, recomendamos subir los registros por grupos')
+                if st.button('Subir Calificaciones'):
+                    with st.spinner('Subiendo Calificaciones...'):
+                        for i in range(len(data)):
+                            reg_calificacion(str(data['No de control'][i]),int(data['Calificación'][i]),data['Asignatura'][i],int(data['Grupo'][i]),int(data['Semestre'][i]),data['Evaluación'][i])
+                        st.success('Calificaciones subidas con éxito :heart:')
 
                 # Display the final dataframes created by editing the Mito component
                 # This is a dictionary from dataframe name -> dataframe
@@ -216,6 +240,8 @@ else:
 
                 # Display the code that corresponds to the script
                 #st.code(code)
+                st.subheader('Registros por Agrupación')
+                st.divider()
                 group = []
                 agrupar_por_grupo = st.checkbox('Agrupar por grupo')
                 agrupar_por_asignatura = st.checkbox('Agrupar por asignatura')
@@ -228,6 +254,7 @@ else:
                 if agrupar_por_alumno:
                     group.append('Alumno')
 
+
                 if len(group) > 0:
                     gr = data.groupby(group)
 
@@ -236,6 +263,13 @@ else:
                     for i in gr:
                         dfs.append(i[1])
 
-                    daf = sac.pagination(total=len(dfs), align='center', circle=True, jump=True, show_total=True)
+                    daf = sac.pagination(total=len(dfs), align='center', circle=True, jump=True, show_total=True,page_size=1)
+                    df = dfs[daf-1]
+                    st.write(df)
 
-                    st.write(dfs[daf-1])
+                    if st.button('Subir Calificaciones',key='subir'):
+                        with st.spinner('Subiendo Calificaciones...'):
+                            for i in range(len(df)):
+                                data = df.iloc[i]
+                                reg_calificacion(str(data['No de control']),int(data['Calificación']),data['Asignatura'],int(data['Grupo']),int(data['Semestre']),data['Evaluación'])
+                            st.success('Calificaciones subidas con éxito :hugging_face:')

@@ -15,6 +15,8 @@ from geopy.geocoders import Nominatim,Bing
 from streamlit_keplergl import keplergl_static
 from keplergl import KeplerGl
 import time
+import pandas as pd
+import numpy as np
 #Esta es la pagina de inicio, donde se muestra el contenido de la pagina visible para todos los usuarios
 
 
@@ -152,6 +154,29 @@ def query_tutorAlumno(record):
     data = xata.records().get("TutorAlumno", record)
     return data
 
+def query_calificaciones(idcontrol):
+    """
+    The function `query_calificaciones` retrieves the information of all the students from a database.
+    :return: The function `query_calificaciones` returns the information of all the students.
+    """
+    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
+
+    data = xata.data().query("Calificacion", {
+        "columns": [
+            "id",
+            "semestre",
+            "grupo",
+            "asignatura",
+            "evaluacion",
+            "calificacion",
+            "num_control"
+        ],
+        "filter": {
+            "num_control": idcontrol
+        }
+    })
+
+    return data
 
 def delete_alumno(record):
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
@@ -486,6 +511,16 @@ else:
                 st.write("**Numero de Seguro:** ",seguro['no_seguro'])
                 st.write("**Tipo de Seguro:** ",seguro['tipo_seguro'])
                 st.write("**Proveedor de Seguro:** ",seguro['provedor'])
+
+                st.subheader("Calificaciones")
+                st.divider()
+                calificaciones = query_calificaciones(query['idcontrol'])
+
+                if "message"  in calificaciones or len(calificaciones['records']) == 0:
+                    st.warning("El alumno no tiene calificaciones registradas")
+                else:
+                    calf = pd.DataFrame(calificaciones['records'])
+                    st.dataframe(calf,use_container_width=True)
 
                 if st.checkbox("raw data"):
                     st.write(query)
