@@ -14,6 +14,7 @@ import datetime
 from geopy.geocoders import Nominatim,Bing
 from streamlit_keplergl import keplergl_static
 from keplergl import KeplerGl
+import time
 #Esta es la pagina de inicio, donde se muestra el contenido de la pagina visible para todos los usuarios
 
 
@@ -150,6 +151,37 @@ def query_tutorAlumno(record):
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
     data = xata.records().get("TutorAlumno", record)
     return data
+
+
+def delete_alumno(record):
+    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
+    data = xata.data().query("Alumno", {
+            "columns": [
+                "id",
+                "carreraAlumno",
+                "plantelAlumno",
+                "idcontrol",
+                "curp.*",
+                "estatus.id",
+                "seguro.id",
+            ],
+            "filter": {
+                "idcontrol": record
+            }
+    })
+
+    d1 = xata.records().delete("TutorAlumno", data['records'][0]['curp']['id_tutorAlumno']['id'])
+    d2 = xata.records().delete("ProcedenciaAlumno", data['records'][0]['curp']['id_procedenciaAlumno']['id'])
+    d3 = xata.records().delete("SaludAlumno", data['records'][0]['curp']['id_saludAlumno']['id'])
+    d4 =xata.records().delete("DomicilioAlumno", data['records'][0]['curp']['id_domicilioAlumno']['id'])
+    d5 =xata.records().delete("DocumentacionAlumno", data['records'][0]['curp']['id_documentosAlumno']['id'])
+    d6 =xata.records().delete("DataAlumno", data['records'][0]['curp']['id'])
+    d7 =xata.records().delete("EstatusAlumno", data['records'][0]['estatus']['id'])
+    d8 =xata.records().delete("SeguroAlumno", data['records'][0]['seguro']['id'])
+    d9 =xata.records().delete("Alumno", data['records'][0]['id'])
+
+    return d1,d2,d3,d4,d5,d6,d7,d8,d9
+
 #--------------------------------------------------
 
 if "last_registered" not   in st.session_state:
@@ -431,5 +463,24 @@ else:
                     st.write(salud)
                     st.write(procencia)
                     st.write(tutor)
+
+                if usrdata['role'] in ['admin','orientacion']:
+
+                    with st.form(key='my_form'):
+                        st.subheader(":red_circle:  :red[Eliminar Alumno]")
+                        st.warning("¿Estas seguro de eliminar este alumno?")
+                        r1 = st.checkbox("Si, eliminar")
+                        st.error("Esta accion no se puede deshacer todos los datos del alumno seran eliminados y no se podran recuperar 🚨, ¿Esta Seguro?")
+                        r2 = st.checkbox("Estoy seguro")
+                        if st.form_submit_button(":red[Eliminar]") and r1 and r2:
+                            d = delete_alumno(query['idcontrol'])
+                            st.success("Alumno Eliminado")
+                            for i in d:
+                                st.write(i)
+                            with st.spinner("Redireccionando..."):
+                                time.sleep(5)
+                                switch_page('searchengineAlumnos')
+
+
     else:
         switch_page('Main')
