@@ -146,6 +146,8 @@ def reg_tutor(data,curpAlumno):
     "apellidoMaterno": data['apellidoMaterno'],
     "id_tutorAlumno": iid['records'][0]['id_tutorAlumno']['id'],
     "curp": data['curp'],
+    "telefono": data['telefono'],
+    "celular": data['celular']
     })
 
     return data
@@ -164,6 +166,36 @@ if "last_registered" not in st.session_state or "idcontrol" not in st.session_st
 
 #--------------------------------------------------
 #Contenido de la página
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  backpp = sac.buttons([
+                    sac.ButtonsItem(label='REGRESAR',icon='skip-backward-btn'),
+                ], position='left', format_func='upper', align='center', size='large',
+                shape='round', return_index=True,index=1)
+
+  if backpp == 0:
+    st.session_state.last_registered['update'] = False
+    st.session_state.dataupdate = {}
+    switch_page('perfilAlumno')
+
+else:
+  indexb = 1
+  backpp = sac.buttons([
+      sac.ButtonsItem(label='DETENER REGISTRO',
+      icon='sign-stop'),
+  ], position='left', format_func='upper', align='center', size='large',
+  shape='round', return_index=True,index=indexb)
+
+  if backpp == 0:
+    st.write("Los datos registrados hasta el momento no se perderán, y podrán ser modificados en cualquier momento, en el perfil del alumno.")
+    st.write("¿Desea detener el registro del alumno?")
+    opc = st.radio("Seleccione una opción",["Si","No"],index=1)
+
+    if opc == "Si":
+      switch_page('AlumnosHome')
+    else:
+      indexb = 1
+
+
 st.title('Registro de Alumno')
 st.divider()
 st.subheader('Registro Datos Básicos del Tutor')
@@ -174,29 +206,51 @@ with cols[0]:
 with cols[1]:
   st.write("**CURP** :",st.session_state.last_registered["curp"])
 
-nombre_completo = st.text_input("Nombre(s)*",placeholder="Nombre(s)",help="Ingrese el nombre(s) del tutor")
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  nombre_completo = st.text_input("Nombre(s)*",placeholder="Nombre(s)",help="Ingrese el nombre(s) del tutor",value=st.session_state.dataupdate['nombre'])
+else:
+  nombre_completo = st.text_input("Nombre(s)*",placeholder="Nombre(s)",help="Ingrese el nombre(s) del tutor")
+
 cols2 = st.columns([0.5,0.5])
 
 with cols2[0]:
-    apellidop = st.text_input("Apellido Paterno*",placeholder="Apellido Paterno",help="Ingrese el apellido paterno del tutor")
+    if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+      apellidop = st.text_input("Apellido Paterno*",placeholder="Apellido Paterno",help="Ingrese el apellido paterno del tutor",value=st.session_state.dataupdate['apellidoPaterno'])
+    else:
+      apellidop = st.text_input("Apellido Paterno*",placeholder="Apellido Paterno",help="Ingrese el apellido paterno del tutor")
 with cols2[1]:
-    apellidom = st.text_input("Apellido Materno*",placeholder="Apellido Materno",help="Ingrese el apellido materno del tutor")
+    if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+      apellidom = st.text_input("Apellido Materno*",placeholder="Apellido Materno",help="Ingrese el apellido materno del tutor",value=st.session_state.dataupdate['apellidoMaterno'])
+    else:
+      apellidom = st.text_input("Apellido Materno*",placeholder="Apellido Materno",help="Ingrese el apellido materno del tutor")
 
-crp = st.text_input("CURP*",placeholder="CURP",help="Ingrese el CURP del tutor",max_chars=18)
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  crp = st.text_input("CURP*",placeholder="CURP",help="Ingrese el CURP del tutor",max_chars=18,value=st.session_state.dataupdate['curp'])
+else:
+  crp = st.text_input("CURP*",placeholder="CURP",help="Ingrese el CURP del tutor",max_chars=18)
+
+
 cols3 = st.columns([0.5,0.5])
 with cols3[0]:
-    telefono = st.text_input("Telefono*",placeholder="Telefono",help="Ingrese el telefono del tutor",max_chars=10)
+    if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+      telefono = st.text_input("Telefono*",placeholder="Telefono",help="Ingrese el telefono del tutor",max_chars=10,value=st.session_state.dataupdate['telefono'])
+    else:
+      telefono = st.text_input("Telefono*",placeholder="Telefono",help="Ingrese el telefono del tutor",max_chars=10)
 
 with cols3[1]:
-    celular = st.text_input("Celular",placeholder="Celular",help="Ingrese el celular del tutor",max_chars=10)
+    if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+      celular = st.text_input("Celular",placeholder="Celular",help="Ingrese el celular del tutor",max_chars=10,value=st.session_state.dataupdate['celular'])
+    else:
+      celular = st.text_input("Celular",placeholder="Celular",help="Ingrese el celular del tutor",max_chars=10)
 
 
 flag = False
 
+regi = 1
 butt = sac.buttons([
     sac.ButtonsItem(label='REGISTRAR',icon='cloud-haze2'),
 ], position='right', format_func='upper', align='center', size='large',
-shape='round', return_index=True,index=1)
+shape='round', return_index=True,index=regi)
 
 
 
@@ -209,19 +263,24 @@ if butt == 0:
         "telefono": telefono.strip(),
         "celular": celular.strip(),
     }
-    with st.spinner('Registrando tutor...'):
+    with st.spinner('Registrando tutor... 🕐'):
       data = reg_tutor(data,st.session_state.last_registered['curp'])
 
     if 'message' in data:
-        st.error('Error al registrar el tutor')
+        st.error('Error al registrar el tutor 😥')
         st.error(data['message'])
     else:
         st.json(data)
-        st.success('Tutor registrado con éxito')
+        st.success('Tutor registrado con éxito 😄')
         flag = True
-        with st.spinner('Redireccionando...'):
-          time.sleep(2)
-          switch_page('documentacionAlumno')
+        if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+          st.session_state.last_registered['update'] = False
+          st.session_state.dataupdate = {}
+          switch_page('perfilAlumno')
+        else:
+          with st.spinner('Redireccionando...'):
+            time.sleep(2)
+            switch_page('documentacionAlumno')
 
 if flag:
 

@@ -333,7 +333,7 @@ else:
                     #Editar Informacion solo con permisos de administrador o orientacion
                     editar4 = sac.buttons([
                         sac.ButtonsItem(label='EDITAR',icon='pencil-square'),
-                    ], position='right', format_func='upper', align='right', size='large',
+                    ], position='right', format_func='upper', align='center', size='large',
                     shape='round', return_index=True,index=edit2,key='regsalud')
 
                     if editar4 == 0:
@@ -359,38 +359,56 @@ else:
                 #--------------------------------------------------
                 st.divider()
                 st.subheader("Datos de Procedencia")
+                if usrdata['role'] in ['admin','orientacion']:
+                    edit3 = 1
+                    #Editar Informacion solo con permisos de administrador o orientacion
+                    editar5 = sac.buttons([
+                        sac.ButtonsItem(label='EDITAR',icon='pencil-square'),
+                    ], position='right', format_func='upper', align='center', size='large',
+                    shape='round', return_index=True,index=edit3,key='regproc')
+
+                    if editar5 == 0:
+                        st.session_state.last_registered['idcontrol'] = query['idcontrol']
+                        st.session_state.last_registered['curp'] = dtaAlumno['curp']
+                        st.session_state.last_registered['id'] = query['id']
+                        st.session_state.last_registered['update'] = True
+                        st.session_state.dataupdate = procencia
+                        switch_page('registroAlumno5')
+
                 colsproc = st.columns([0.5,0.5])
                 with colsproc[0]:
                     st.write("**Clave CENEVAL:** ",procencia['claveCeneval'])
                     st.write("**Secundaria de Procedencia:** ",procencia['secundariaProcedencia'])
                     st.write("**Promedio de Secundaria:** ",procencia['promedioSecundaria'])
                 with colsproc[1]:
-                    if usrdata['role'] in ['admin','orientacion']:
-                        edit3 = 1
-                        #Editar Informacion solo con permisos de administrador o orientacion
-                        editar5 = sac.buttons([
-                            sac.ButtonsItem(label='EDITAR',icon='pencil-square'),
-                        ], position='right', format_func='upper', align='right', size='large',
-                        shape='round', return_index=True,index=edit3,key='regproc')
-
-                        if editar4 == 0:
-                            st.session_state.last_registered['idcontrol'] = query['idcontrol']
-                            st.session_state.last_registered['curp'] = dtaAlumno['curp']
-                            st.session_state.last_registered['id'] = query['id']
-                            st.session_state.last_registered['update'] = True
-                            st.session_state.dataupdate = salud
-                            switch_page('registroAlumno5')
-
                     st.write("**Estancia en Secundaria(Años):** ",procencia['estanciaSecundaria_years'])
                     st.write("**Intentos de Aceptación:** ",procencia['intentosAceptacion'])
                     st.write("**Puntaje de Ingreso:** ",procencia['puntajeIngreso'])
                 #--------------------------------------------------
                 st.divider()
                 st.subheader("Datos del Tutor")
+                if usrdata['role'] in ['admin','orientacion']:
+                    edit4 = 1
+                    #Editar Informacion solo con permisos de administrador o orientacion
+                    editar6 = sac.buttons([
+                        sac.ButtonsItem(label='EDITAR',icon='pencil-square'),
+                    ], position='right', format_func='upper', align='center', size='large',
+                    shape='round', return_index=True,index=edit4,key='regtutor')
+
+                    if editar6 == 0:
+                        st.session_state.last_registered['idcontrol'] = query['idcontrol']
+                        st.session_state.last_registered['curp'] = dtaAlumno['curp']
+                        st.session_state.last_registered['id'] = query['id']
+                        st.session_state.last_registered['update'] = True
+                        st.session_state.dataupdate = tutor
+                        switch_page('registro_tutor')
+
                 st.write("**Nombre:** ",tutor['nombre'])
                 st.write("**Apellido Paterno:** ",tutor['apellidoPaterno'])
                 st.write("**Apellido Materno:** ",tutor['apellidoMaterno'])
                 st.write("**CURP:** ",tutor['curp'])
+                st.write("**Telefono:** ",tutor['telefono'])
+                st.write("**Celular:** ",tutor['celular'])
 
                 if st.checkbox("raw data"):
                     st.write(query)

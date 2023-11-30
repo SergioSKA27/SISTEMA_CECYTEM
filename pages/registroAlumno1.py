@@ -254,7 +254,9 @@ def register_Alumno(reg_data:dict)->tuple[bool,dict]:
         "apellidoPaterno": "---",
         "apellidoMaterno": "---",
         "curp": "---",
-        "id_tutorAlumno": idtutor
+        "id_tutorAlumno": idtutor,
+        "telefono": "string",
+        "celular": "string"
 	  })
 
     dataAlumno = xata.records().insert("DataAlumno", {

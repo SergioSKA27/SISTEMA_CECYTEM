@@ -152,6 +152,36 @@ if "last_registered" not in st.session_state or "idcontrol" not in st.session_st
 
 #--------------------------------------------------
 #Contenido de la página
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  backpp = sac.buttons([
+                    sac.ButtonsItem(label='REGRESAR',icon='skip-backward-btn'),
+                ], position='left', format_func='upper', align='center', size='large',
+                shape='round', return_index=True,index=1)
+
+  if backpp == 0:
+    st.session_state.last_registered['update'] = False
+    st.session_state.dataupdate = {}
+    switch_page('perfilAlumno')
+
+else:
+  indexb = 1
+  backpp = sac.buttons([
+      sac.ButtonsItem(label='DETENER REGISTRO',
+      icon='sign-stop'),
+  ], position='left', format_func='upper', align='center', size='large',
+  shape='round', return_index=True,index=indexb)
+
+  if backpp == 0:
+    st.write("Los datos registrados hasta el momento no se perderán, y podrán ser modificados en cualquier momento, en el perfil del alumno.")
+    st.write("¿Desea detener el registro del alumno?")
+    opc = st.radio("Seleccione una opción",["Si","No"],index=1)
+
+    if opc == "Si":
+      switch_page('AlumnosHome')
+    else:
+      indexb = 1
+
+
 st.title('Registro de Alumno')
 st.divider()
 st.subheader('Registro Procedencia del Alumno')
@@ -167,19 +197,38 @@ st.divider()
 
 
 
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  claveCeneval = st.text_input("Clave Ceneval",help="Ingrese la clave Ceneval del alumno", placeholder="ej. 123456789",value=st.session_state.dataupdate['claveCeneval'])
+else:
+  claveCeneval = st.text_input("Clave Ceneval",help="Ingrese la clave Ceneval del alumno", placeholder="ej. 123456789")
 
-claveCeneval = st.text_input("Clave Ceneval",help="Ingrese la clave Ceneval del alumno", placeholder="ej. 123456789")
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  puntajeIngreso = st.number_input("Puntaje de Ingreso",help="Ingrese el puntaje de ingreso del alumno", placeholder="ej. 100",min_value=0,max_value=200,value=st.session_state.dataupdate['puntajeIngreso'])
+else:
+  puntajeIngreso = st.number_input("Puntaje de Ingreso",help="Ingrese el puntaje de ingreso del alumno", placeholder="ej. 100",min_value=0,max_value=200)
 
-puntajeIngreso = st.number_input("Puntaje de Ingreso",help="Ingrese el puntaje de ingreso del alumno", placeholder="ej. 100",min_value=0,max_value=200)
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  secundariaProcedencia = st.text_input("Secundaria de Procedencia",help="Ingrese la secundaria de procedencia del alumno", placeholder="ej. Secundaria 1",value=st.session_state.dataupdate['secundariaProcedencia'])
+else:
+  secundariaProcedencia = st.text_input("Secundaria de Procedencia",help="Ingrese la secundaria de procedencia del alumno", placeholder="ej. Secundaria 1")
 
-secundariaProcedencia = st.text_input("Secundaria de Procedencia",help="Ingrese la secundaria de procedencia del alumno", placeholder="ej. Secundaria 1")
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  estaciaSecundaria_years = st.number_input("Años de Estancia en Secundaria",help="Ingrese los años de estancia en secundaria del alumno", placeholder="ej. 3",min_value=0,max_value=10,value=st.session_state.dataupdate['estanciaSecundaria_years'])
+else:
+  estaciaSecundaria_years = st.number_input("Años de Estancia en Secundaria",help="Ingrese los años de estancia en secundaria del alumno", placeholder="ej. 3",min_value=0,max_value=10)
 
-estaciaSecundaria_years = st.number_input("Años de Estancia en Secundaria",help="Ingrese los años de estancia en secundaria del alumno", placeholder="ej. 3",min_value=0,max_value=10)
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  promedioSecundaria = st.number_input("Promedio de Secundaria",help="Ingrese el promedio de secundaria del alumno", placeholder="ej. 9.5",min_value=5,max_value=10,value=st.session_state.dataupdate['promedioSecundaria'],step=1)
+else:
+  promedioSecundaria = st.number_input("Promedio de Secundaria",help="Ingrese el promedio de secundaria del alumno", placeholder="ej. 9.5",min_value=5.0,max_value=10.0)
 
-promedioSecundaria = st.number_input("Promedio de Secundaria",help="Ingrese el promedio de secundaria del alumno", placeholder="ej. 9.5",min_value=5.0,max_value=10.0)
 
 
-intentosAceptacion = st.number_input("Intentos de Aceptación",help="Ingrese los intentos de aceptación del alumno", placeholder="ej. 1",min_value=0,max_value=10)
+if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+  intentosAceptacion = st.number_input("Intentos de Aceptación",help="Ingrese los intentos de aceptación del alumno", placeholder="ej. 1",min_value=0,max_value=10,value=st.session_state.dataupdate['intentosAceptacion'])
+else:
+  intentosAceptacion = st.number_input("Intentos de Aceptación",help="Ingrese los intentos de aceptación del alumno", placeholder="ej. 1",min_value=0,max_value=10)
+
 
 data_reg = {'claveCeneval': claveCeneval,
 'puntajeIngreso': puntajeIngreso,
@@ -191,26 +240,33 @@ data_reg = {'claveCeneval': claveCeneval,
 
 flag = False
 
+regi = 1
 butt = sac.buttons([
     sac.ButtonsItem(label='REGISTRAR',icon='cloud-haze2'),
 ], position='right', format_func='upper', align='center', size='large',
-shape='round', return_index=True,index=1)
+shape='round', return_index=True,index=regi)
 
 
 
 if butt == 0:
-  with st.spinner("Registrando datos de procedencia del alumno..."):
+  with st.spinner("Registrando datos de procedencia del alumno... 🌐"):
     dr = reg_procedenciaAlumno(data_reg,st.session_state.last_registered['curp'])
 
     if 'message' in dr:
-      st.error('Error al registrar los datos de procedencia del alumno')
+      st.error('Error al registrar los datos de procedencia del alumno 😥')
       st.error(dr['message'])
     else:
-        st.success('Datos de procedencia del alumno registrados con éxito')
+        st.success('Datos de procedencia del alumno registrados con éxito 😄')
         flag = True
         st.json(dr)
-        time.sleep(5)
-        switch_page("registro_tutor")
+        if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+          st.session_state.last_registered['update'] = False
+          st.session_state.dataupdate = {}
+          switch_page('perfilAlumno')
+        else:
+          with st.spinner("Redireccionando..."):
+            time.sleep(5)
+            switch_page("registro_tutor")
 
 
 

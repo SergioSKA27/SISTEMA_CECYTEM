@@ -237,6 +237,8 @@ with cols[0]:
 with cols[1]:
   if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
     num_int = st.number_input("Número Interior",help="Ingrese el número interior",min_value=0,value=st.session_state.dataupdate['num_int'])
+  else:
+    num_int = st.number_input("Número Interior",help="Ingrese el número interior",placeholder="Ej. 123",min_value=0)
 
 cols = st.columns([0.6,0.4])
 
