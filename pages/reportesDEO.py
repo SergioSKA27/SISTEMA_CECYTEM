@@ -198,8 +198,8 @@ else:
             with logcols[-1]:
                 authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
             # CSS style definitions
-            selected3 = option_menu(None, ["Inicio", "Alumnos",'Buscar Alumnos'],
-                icons=['house', 'mortarboard', 'search'],
+            selected3 = option_menu(None, ["Inicio", "Alumnos",'Reportes DEO'],
+                icons=['house', 'mortarboard', 'file-earmark-bar-graph'],
                 menu_icon="cast", default_index=2, orientation="vertical",
                 styles={
                     "container": {"padding": "0!important", "background-color": "#e6f2f0"},
