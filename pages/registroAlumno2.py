@@ -123,15 +123,27 @@ def reg_basicdata(reg_data: dict, curp: str)->dict:
   iid  = xata.data().query("DataAlumno", {
    "columns": [
         "id",
-        "carreraAlumno",
-        "plantelAlumno",
-        "idcontrol",
+        "nombre",
+        "apellidoPaterno",
+        "apellidoMaterno",
+        "fechaNacimiento",
+        "estadoNacimiento",
+        "sexo",
+        "nacionalidad",
+        "estadoCivil",
+        "telefono",
+        "celular",
+        "correoe_p",
+        "correoe_i",
         "curp",
-        "estatus",
-        "seguro"
+        "id_tutorAlumno",
+        "id_domicilioAlumno",
+        "id_saludAlumno",
+        "id_documentosAlumno",
+        "id_procedenciaAlumno"
     ],
     "filter": {
-        "curp.curp": curp
+        "curp": curp
     }
   })
 
