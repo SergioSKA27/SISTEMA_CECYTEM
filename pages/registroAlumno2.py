@@ -136,6 +136,8 @@ def reg_basicdata(reg_data: dict, curp: str)->dict:
         "curp.curp": curp
     }
   })
+
+  st.write(iid)
   data = xata.records().update("DataAlumno", iid['records'][0]['id'],{
     "nombre": reg_data["nombre"],
     "apellidoPaterno": reg_data["apellidoPaterno"],
@@ -156,6 +158,7 @@ def reg_basicdata(reg_data: dict, curp: str)->dict:
     "id_documentosAlumno": iid['records'][0]['id_documentosAlumno']['id'],
     "id_procedenciaAlumno": iid['records'][0]['id_procedenciaAlumno']['id']
   })
+
 
   return data
 
