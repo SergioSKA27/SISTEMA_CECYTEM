@@ -134,8 +134,6 @@ def reg_tutor(data,curpAlumno):
         "id_saludAlumno",
         "id_documentosAlumno",
         "id_procedenciaAlumno",
-        "estatus",
-        "seguro"
     ],
     "filter": {
         "curp.curp": curpAlumno
