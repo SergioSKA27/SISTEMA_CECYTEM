@@ -121,14 +121,12 @@ def reg_basicdata(reg_data: dict, curp: str)->dict:
   """
   xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
   iid  = xata.data().query("DataAlumno", {
-    "columns": [
+   "columns": [
         "id",
+        "carreraAlumno",
+        "plantelAlumno",
+        "idcontrol",
         "curp",
-        "id_tutorAlumno",
-        "id_domicilioAlumno",
-        "id_saludAlumno",
-        "id_documentosAlumno",
-        "id_procedenciaAlumno",
         "estatus",
         "seguro"
     ],
