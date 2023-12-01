@@ -133,7 +133,7 @@ def reg_basicdata(reg_data: dict, curp: str)->dict:
         "seguro"
     ],
     "filter": {
-        "curp": curp
+        "curp.curp": curp
     }
   })
   data = xata.records().update("DataAlumno", iid['records'][0]['id'],{

@@ -138,7 +138,7 @@ def reg_tutor(data,curpAlumno):
         "seguro"
     ],
     "filter": {
-        "curp": curpAlumno
+        "curp.curp": curpAlumno
     }
   })
     data = xata.records().update("TutorAlumno", iid['records'][0]['id_tutorAlumno']['id'],

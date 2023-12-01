@@ -125,7 +125,7 @@ def reg_procedenciaAlumno(reg_data,curpAlumno):
             "seguro"
         ],
         "filter": {
-            "curp": curpAlumno
+            "curp.curp": curpAlumno
         }
     })
 

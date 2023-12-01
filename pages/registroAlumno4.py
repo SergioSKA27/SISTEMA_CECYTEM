@@ -134,7 +134,7 @@ def reg_saludAlumno(reg_data,curpAlumno):
             "seguro"
         ],
         "filter": {
-            "curp": curpAlumno
+            "curp.curp": curpAlumno
         }
     })
 
