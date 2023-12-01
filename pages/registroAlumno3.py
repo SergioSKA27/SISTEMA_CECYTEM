@@ -132,11 +132,9 @@ def reg_domicilio(reg_data,curpAlumno):
         "id_saludAlumno",
         "id_documentosAlumno",
         "id_procedenciaAlumno",
-        "estatus",
-        "seguro"
     ],
     "filter": {
-        "curp.curp": curpAlumno
+        "curp": curpAlumno
     }
   })
     data = xata.records().update("DomicilioAlumno",iid['records'][0]['id_domicilioAlumno']['id'], {
