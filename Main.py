@@ -77,9 +77,16 @@ background-color: #e5e5f7;
 
 #MainMenu, header, footer {visibility: hidden;}
 
+.st-emotion-cache-1juwlj7 {
+  border: 1px solid rgba(9, 59, 41, 0.2);
+  border-radius: 0.5rem;
+  padding: calc(1em - 1px);
+  background-color: azure;
+}
+
 .bg {
   animation:slide 20s ease-in-out infinite alternate;
-  background-image: linear-gradient(315deg, #085C83 0%, #FAD5C4 74%);
+  background-image: linear-gradient(-60deg, #6c3 50%, #09f 50%);
   bottom:0;
   left:-50%;
   opacity:.5;
@@ -170,7 +177,7 @@ with cols1[1]:
         config['preauthorized']
     )
   # Creamos el formulario de inicio de sesion
-    authenticator.login('Login', 'main')
+    authenticator.login('Inicio de Sesión', 'main')
   # Si el usuario se ha autenticado correctamente, mostramos un mensaje de bienvenida y cambiamos de pagina a Home
     if st.session_state["authentication_status"]:
 		#set_cookie(cookie_manager)
