@@ -12,7 +12,7 @@ import extra_streamlit_components as stx
 from streamlit_lottie import st_lottie
 import datetime
 from mitosheet.streamlit.v1 import spreadsheet
-
+from streamlit_custom_notification_box import custom_notification_box
 #Esta es la pagina de inicio, donde se muestra el contenido de la pagina visible para todos los usuarios
 
 
@@ -106,16 +106,6 @@ def get_manager():
 
 
 
-
-@st.cache_data
-def runballoons():
-    """
-    The function `runballoons` runs the balloons animation on the page.
-    """
-    if datetime.datetime.now().month == 12:
-        st.snow()
-    else:
-        st.balloons()
 #--------------------------------------------------
 #credenciales de la base de datos
 data,xta = get_credentials()
@@ -134,17 +124,20 @@ if "ballons" not in st.session_state:
 
 #--------------------------------------------------
 #Authentication
-if "authentication_status" not in st.session_state  :
+if "authentication_status" not in st.session_state or st.session_state["authentication_status"] == False:
     switch_page('Main')
 else:
 # el usuario debe estar autenticado para acceder a esta página
     if st.session_state["authentication_status"]:
             #--------------------------------------------------
             #Ballons
-            if st.session_state.ballons:
-                runballoons()
-                st.session_state.ballons = False
+            if datetime.datetime.now().year < 2025 or (datetime.datetime.now().month == 12 or datetime.datetime.now().month == 11):
+                st.balloons()
 
+
+            #--------------------------------------------------
+            #Notificaciones
+            st.toast(f'Bienvenido {st.session_state["name"]}',icon='👋')
             #--------------------------------------------------
             #usrdata
             usrdata = get_current_user_info(st.session_state['username'])
@@ -174,11 +167,11 @@ else:
             # CSS style definitions
             selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación","Perfil"],
                 icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart'],
-                menu_icon="cast", default_index=0, orientation="vertical",
+                menu_icon="cast", default_index=0, orientation="horizontal",
                 styles={
                     "container": {"padding": "0!important", "background-color": "#e6f2f0"},
-                    "icon": {"color": "#175947", "font-size": "25px"},
-                    "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#FBA1A1"},
+                    "icon": {"color": "#175947", "font-size": "20px"},
+                    "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "#FBA1A1"},
                     "nav-link-selected": {"background-color": "#FBC5C5"},
                 },key='menu'
             )
@@ -188,8 +181,9 @@ else:
                 switch_page('Perfil')
             #--------------------------------------------------
             #Contenido de la pagina
-            sac.alert(message=f'Bienvenido {st.session_state.name}',
+            sac.alert(message=f'Bienvenido {st.session_state.name} al Sistema de Gestion y Analisis CECYTEM',
             description=f'Tu rol actual es {usrdata["role"]} ', banner=True, icon=True, closable=True, height=100,type='success')
-            st.toast(f'Bienvenido {st.session_state["name"]}',icon='👋')
             st.title('Sistema de Administración Escolar CECYTEM')
             st_lottie('https://lottie.host/204fe26b-ee80-4dfe-b95c-e1bcabbcf8ef/11JlAAyTKa.json',key='mainbanner')
+    else:
+        switch_page('Main')

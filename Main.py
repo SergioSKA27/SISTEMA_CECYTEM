@@ -9,6 +9,8 @@ import extra_streamlit_components as stx
 import datetime
 import streamlit_analytics
 import uuid
+import bcrypt
+
 #Configuracion de la pagina
 st.set_page_config(page_title="SISTEMA CECYTEM", page_icon=":lock:", layout="wide", initial_sidebar_state="collapsed")
 
@@ -135,6 +137,11 @@ credentials = credentials_formating(data['records'])
 #credentials
 #st.session_state
 
+if 'authentication_status' not in st.session_state:
+    st.session_state['authentication_status'] = None
+
+if 'name' not in st.session_state:
+    st.session_state['name'] = None
 
 
 #--------------------------------------------------
@@ -152,9 +159,14 @@ cookie_manager = get_manager()
 sac.alert(message='Bienvenido al Sistema de Gestion y Analisis CECYTEM',
 description='Si no tienes usuario y contraseña, contacta con el administrador.', banner=True, icon=True, closable=True, height=100)
 
-
+st.toast('Bienvenido al Sistema de Gestion y Analisis CECYTEM',icon='👋')
 
 #--------------------------------------------------
+#Otro login
+
+
+
+
 # Banner principal de la pagina
 cols1 = st.columns([.5,.5])
 with cols1[0]:
@@ -176,8 +188,24 @@ with cols1[1]:
         config['cookie']['expiry_days'],
         config['preauthorized']
     )
+
+
   # Creamos el formulario de inicio de sesion
-    authenticator.login('Inicio de Sesión', 'main')
+
+    with st.form(key='login_form'):
+      st.header('Iniciar Sesión')
+      username = st.text_input('Usuario')
+      password = st.text_input('Contraseña', type='password')
+      if st.form_submit_button('Iniciar Sesión'):
+        if bcrypt.checkpw(password.encode(), credentials[username]['password'].encode()):
+          st.session_state['authentication_status'] = True
+          st.session_state['name'] = credentials[username]['name']
+          st.session_state['username'] = username
+          switch_page('Inicio')
+        else:
+          st.session_state['authentication_status'] = False
+
+
   # Si el usuario se ha autenticado correctamente, mostramos un mensaje de bienvenida y cambiamos de pagina a Home
     if st.session_state["authentication_status"]:
 		#set_cookie(cookie_manager)

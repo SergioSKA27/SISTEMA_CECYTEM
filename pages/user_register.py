@@ -9,6 +9,7 @@ import uuid
 import base64
 import re
 from streamlit_option_menu import option_menu
+import bcrypt
 
 #Configuracion de la pagina
 st.set_page_config(page_title="Login", page_icon=":lock:", layout="wide", initial_sidebar_state="collapsed")
@@ -119,7 +120,7 @@ def verifydata(data: dict)->bool:
 
     return flag
 
-@st.cache_data
+
 def credentials_formating(credentials: list)->dict:
   """
   The function `credentials_formating` takes a list of dictionaries representing credentials and returns a formatted
@@ -179,7 +180,7 @@ def register_user(data: dict)->bool:
     data = xata.records().insert("Credentials", {
         "username": data['username'],
         "email": data['email'],
-        "password": stauth.Hasher(data['password']).generate()[0],
+        "password": bcrypt.hashpw(data['password'], bcrypt.gensalt()).decode(),
         "avatar": {
                     "base64Content":data['avatar'],
                     "enablePublicUrl": True,
@@ -427,3 +428,4 @@ placeholder='Ejemplo: usuario123',value=st.session_state.usrname)
 
 
 
+st.session_state

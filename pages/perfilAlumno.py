@@ -273,6 +273,10 @@ else:
                 with cols0[0]:
                     st.write("**Numero de Control:** ",query['idcontrol'])
                     st.write("**Plantel:** ",query['plantelAlumno'])
+                    if estatus['current_status']:
+                        st.write("**Estatus:**  :green[Activo]")
+                    else:
+                        st.write("**Estatus:**  :red[Inactivo]")
                 with cols0[1]:
                     st.write("**CURP:** ",dtaAlumno['curp'])
                     st.write("**Carrera:** ",query['carreraAlumno'])
@@ -292,10 +296,7 @@ else:
                             st.session_state.dataupdate = estatus
                             switch_page('modify_status')
 
-                if estatus['current_status']:
-                    st.write("**Estatus:**  :green[Activo]")
-                else:
-                    st.write("**Estatus:**  :red[Inactivo]")
+
 
 
 
