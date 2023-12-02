@@ -10,7 +10,7 @@ import datetime
 import streamlit_analytics
 import uuid
 #Configuracion de la pagina
-st.set_page_config(page_title="Login", page_icon=":lock:", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="SISTEMA CECYTEM", page_icon=":lock:", layout="wide", initial_sidebar_state="collapsed")
 
 
 
