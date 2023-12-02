@@ -12,7 +12,6 @@ import extra_streamlit_components as stx
 from streamlit_lottie import st_lottie
 import datetime
 from mitosheet.streamlit.v1 import spreadsheet
-from streamlit_custom_notification_box import custom_notification_box
 #Esta es la pagina de inicio, donde se muestra el contenido de la pagina visible para todos los usuarios
 
 
