@@ -25,4 +25,4 @@ geopy
 keplergl
 streamlit-searchbox
 networkx
-pip install streamlit-custom-notification-box
+
