@@ -169,3 +169,34 @@ selected3 = option_menu(None, ["Inicio", "Docs","Acerca de","Contacto","Login"],
 
 if selected3 == "Login":
     switch_page('Login')
+
+
+st.markdown(
+    """
+<style>
+h1 {
+--s: 0.1em;   /* the thickness of the line */
+--c: #2c4bff; /* the color */
+
+color: #0000;
+padding-bottom: var(--s);
+background:
+  linear-gradient(90deg,var(--c) 50%,#000 0) calc(100% - var(--_p,0%))/200% 100%,
+  linear-gradient(var(--c) 0 0) 0% 100%/var(--_p,0%) var(--s) no-repeat;
+-webkit-background-clip: text,padding-box;
+        background-clip: text,padding-box;
+transition: 0.5s;
+text-align: center;
+}
+h1:hover {--_p: 100%}
+h1 {
+  font-family: system-ui, sans-serif;
+  font-size: 3rem;
+  cursor: pointer;
+}
+</style>""",unsafe_allow_html=True,
+)
+
+
+
+"# COLEGIO DE ESTUDIOS CIENTIFICOS Y TECNOLOGICOS DEL ESTADO DE MEXICO"
