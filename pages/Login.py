@@ -10,8 +10,6 @@ import datetime
 import streamlit_analytics
 import uuid
 import bcrypt
-from streamlit_option_menu import option_menu
-
 
 #Configuracion de la pagina
 st.set_page_config(page_title="SISTEMA CECYTEM", page_icon=":lock:", layout="wide", initial_sidebar_state="collapsed")
@@ -81,14 +79,6 @@ background-color: #e5e5f7;
 
 #MainMenu, header, footer {visibility: hidden;}
 
-.reportview-container .main .block-container {{
-                    1100px
-                    padding-top: 1rem;
-                    padding-right: 5rem;
-                    padding-left: 5rem;
-                    padding-bottom: 1rem;
-                }}
-
 .st-emotion-cache-1juwlj7 {
   border: 1px solid rgba(9, 59, 41, 0.2);
   border-radius: 0.5rem;
@@ -98,7 +88,7 @@ background-color: #e5e5f7;
 
 .bg {
   animation:slide 20s ease-in-out infinite alternate;
-  background-image: url(https://images.unsplash.com/photo-1444927714506-8492d94b4e3d?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=067f0b097deff88a789e125210406ffe);
+  background-image: linear-gradient(-60deg, #6c3 50%, #09f 50%);
   bottom:0;
   left:-50%;
   opacity:.5;
@@ -106,11 +96,25 @@ background-color: #e5e5f7;
   right:-50%;
   top:0;
   z-index:0;
-  ackground-size: cover;
-  background-position: center center;
 }
 
+.bg2 {
+  animation-direction:alternate-reverse;
+  animation-duration:15s;
+}
 
+.bg3 {
+  animation-duration:17s;
+}
+
+@keyframes slide {
+  0% {
+    transform:translateX(-25%);
+  }
+  100% {
+    transform:translateX(25%);
+  }
+}
 </style>
 
 
@@ -144,20 +148,106 @@ if 'name' not in st.session_state:
 # Cookie manager
 
 cookie_manager = get_manager()
+
+
+
+
+
+
 #--------------------------------------------------
-#Navbar
-# CSS style definitions
-selected3 = option_menu(None, ["Inicio", "Docs","Acerca de","Contacto","Login"],
-    icons=['house',  "easel2", 'link', 'person-lines-fill', 'key'],
-    menu_icon="cast", default_index=0, orientation="horizontal",
-    styles={
-        "container": {"padding": "0!important", "background-color": "#99B1BF00", "border-radius": "10px"},
-        "icon": {"color": "#011526", "font-size": "25px"},
-        "nav-link": {"font-size": "25px", "text-align": "left", "margin":"0px", "--hover-color": "#4F758C"},
-        "nav-link-selected": {"background-color": "#0F4C59"},
-    },key='menu'
-)
+# Mensaje de bienvenida
+sac.alert(message='Bienvenido al Sistema de Gestion y Analisis CECYTEM',
+description='Si no tienes usuario y contraseña, contacta con el administrador.', banner=True, icon=True, closable=True, height=100)
+
+st.toast('Bienvenido al Sistema de Gestion y Analisis CECYTEM',icon='👋')
+
+#--------------------------------------------------
+#Otro login
 
 
-if selected3 == "Login":
-    switch_page('Login')
+
+
+# Banner principal de la pagina
+cols1 = st.columns([.5,.5])
+with cols1[0]:
+    '### Colegio de Estudios Científicos y Tecnológicos del Estado de México'
+    st.image("rsc/back1.jpg",use_column_width=True)
+
+
+#--------------------------------------------------
+# Formulario de inicio de sesion
+with cols1[1]:
+  #Cargamos el archivo de configuracion
+    with open('config.yaml') as file:
+        config = yaml.load(file, Loader=SafeLoader)
+  # Creamos el objeto de autenticacion
+    authenticator = stauth.Authenticate(
+        {'usernames':credentials},
+        config['cookie']['name'],
+        config['cookie']['key'],
+        config['cookie']['expiry_days'],
+        config['preauthorized']
+    )
+
+
+  # Creamos el formulario de inicio de sesion
+
+    with st.form(key='login_form'):
+      st.header('Iniciar Sesión')
+      username = st.text_input('Usuario')
+      password = st.text_input('Contraseña', type='password')
+      if st.form_submit_button('Iniciar Sesión'):
+        if bcrypt.checkpw(password.encode(), credentials[username]['password'].encode()):
+          st.session_state['authentication_status'] = True
+          st.session_state['name'] = credentials[username]['name']
+          st.session_state['username'] = username
+          switch_page('Inicio')
+        else:
+          st.session_state['authentication_status'] = False
+
+
+  # Si el usuario se ha autenticado correctamente, mostramos un mensaje de bienvenida y cambiamos de pagina a Home
+    if st.session_state["authentication_status"]:
+		#set_cookie(cookie_manager)
+        #cookie_manager.set('username', st.session_state['username'],key='username')
+        #cookie_manager.set('authentication_status', 'True',key='authentication_status')
+        #cookie_manager.set('name', credentials[st.session_state['username']]['name'],key='name')
+        switch_page('Inicio')
+
+
+
+    elif st.session_state["authentication_status"] is False:
+        st.error('Username/password is incorrect')
+    elif st.session_state["authentication_status"] is None:
+        st.warning('Por favor, introduce tu usuario y contraseña')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#--------------------------------------------------
+# Pie de pagina
+sac.tags([
+    sac.Tag(label='Contacto', icon='person-lines-fill',
+    color='cyan', link='https://ant.design/components/tag'),
+    sac.Tag(label='Página Oficial CECYTEM', icon='mortarboard-fill',
+    color='blue', link='https://cecytem.edomex.gob.mx/'),
+    sac.Tag(label='Facebook', icon='facebook',
+    color='geekblue', link='https://www.facebook.com/cecytem.edomex'),
+
+], format_func='title', align='center',)
+

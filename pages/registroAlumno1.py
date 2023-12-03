@@ -393,9 +393,25 @@ else:
 #--------------------------------------------------
 #Registro Plantel
 cols2 = st.columns([0.4,0.6])
-with cols2[0]:
-  plantel = st.text_input("Plantel*",placeholder="Plantel",help="Ingrese el plantel del alumno",value="")
 
+planteles = [
+    "acambay", "aculco", "almoloya", "atlautla", "chalco",
+    "chicoloapan", "chimalhuacan", "chimalhuacan ii", "coacalco", "coatepec harinas",
+    "cuautitlan", "cuautitlan izcalli", "donato guerra", "ecatepec", "ecatepec ii",
+    "ecatepec iii", "huixquilucan", "ixtapaluca", "ixtapaluca ii", "ixtapan de la sal",
+    "ixtlahuaca", "jilotepec", "jiquipilco", "jocotitlan", "la_paz", "lerma",
+    "malinalco", "metepec", "metepec ii", "nezahualcoyotl", "nezahualcoyotl ii",
+    "nicolas romero i", "nicolas romero ii", "nicolas romero iii", "san felipe del progreso",
+    "san jose del rincon", "sultepec", "tecamac", "tejupilco", "temascalapa", "temascaltepec",
+    "tenancingo", "tenango del valle", "tepotzotlan", "tequixquiac", "texcoco", "tezoyuca",
+    "toluca", "toluca ii", "tultepec", "tultitlan", "valle de bravo", "valle chalco s i",
+    "valle chalco s ii", "villa carbon", "villa victoria", "villa de allende", "xonacatlan",
+    "zacazonapan", "zinacantepec"
+]
+
+planteles = [plantel.upper() for plantel in planteles]
+with cols2[0]:
+  plantel = st.selectbox("Plantel*",planteles,help="Seleccione el plantel del alumno",index=planteles.index("tequixquiac".upper()))
 if plantel == "":
   st.error("El plantel no puede estar vacio")
 else:

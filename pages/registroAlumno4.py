@@ -9,6 +9,7 @@ import uuid
 import time
 import datetime
 import requests
+from streamlit_tags import st_tags
 
 
 #Configuracion de la pagina
@@ -160,6 +161,192 @@ if "last_registered" not in st.session_state or "idcontrol" not in st.session_st
   switch_page("registroAlumno1")
 
 
+padecimientos_salud = [
+    "Resfriado común",
+    "Gripe",
+    "Hipertensión",
+    "Diabetes",
+    "Asma",
+    "Artritis",
+    "Cáncer",
+    "Enfermedad cardiovascular",
+    "Enfermedad pulmonar obstructiva crónica (EPOC)",
+    "Epilepsia",
+    "Enfermedad de Alzheimer",
+    "Trastorno de ansiedad",
+    "Depresión",
+    "Trastorno del sueño",
+    "Obesidad",
+    "Alergias",
+    "Intolerancia alimentaria",
+    "Enfermedad celíaca",
+    "Enfermedad de Crohn",
+    "Colitis ulcerosa",
+    "VIH/SIDA",
+    "Hepatitis",
+    "Insomnio",
+    "Trastorno por déficit de atención e hiperactividad (TDAH)",
+    "Esquizofrenia",
+    "Trastorno bipolar",
+    "Enfermedad renal crónica",
+    "Endometriosis",
+    "Fibromialgia",
+    "Síndrome del túnel carpiano",
+    "Migraña",
+    "Osteoporosis",
+    "Psoriasis",
+    "Esclerosis múltiple",
+    "Síndrome de fatiga crónica",
+    "Úlcera péptica",
+    "Trastorno del espectro autista (TEA)",
+    "Hipotiroidismo",
+    "Hipertiroidismo",
+    "Anemia",
+    "Leucemia",
+    "Enfermedad de Parkinson",
+    "Síndrome del intestino irritable (SII)",
+    "Gota",
+    "Síndrome de ovario poliquístico (SOP)",
+    "Eczema",
+    "Hernia de disco",
+    "Lupus",
+    "Cálculos renales",
+    "Pancreatitis",
+    "Escoliosis"
+]
+
+medicamentos_sug = [
+    "Paracetamol",
+    "Ibuprofeno",
+    "Aspirina",
+    "Amoxicilina",
+    "Omeprazol",
+    "Loratadina",
+    "Atorvastatina",
+    "Metformina",
+    "Hidroclorotiazida",
+    "Enalapril",
+    "Simvastatina",
+    "Ciprofloxacino",
+    "Fluoxetina",
+    "Amitriptilina",
+    "Insulina",
+    "Albuterol (salbutamol)",
+    "Lisinopril",
+    "Losartan",
+    "Levotiroxina",
+    "Warfarina",
+    "Clopidogrel",
+    "Ranitidina",
+    "Cetirizina",
+    "Montelukast",
+    "Escitalopram",
+    "Olanzapina",
+    "Metoprolol",
+    "Venlafaxina",
+    "Diazepam",
+    "Tramadol",
+    "Morfina",
+    "Oxicodona",
+    "Acetaminofén con codeína",
+    "Risperidona",
+    "Metilfenidato",
+    "Hormonas anticonceptivas",
+    "Alendronato",
+    "Ondansetrón",
+    "Asenapina",
+    "Clozapina",
+    "Eritromicina",
+    "Cefalexina",
+    "Fluconazol",
+    "Atenolol",
+    "Duloxetina",
+    "Pregabalina",
+    "Sildenafil",
+    "Tadalafilo",
+    "Esomeprazol",
+    "Rabeprazol",
+    "Prednisona",
+    "Hidroxicloroquina",
+    "Colchicina",
+    "Acetazolamida",
+    "Levodopa",
+    "Carbidopa",
+    "Rivastigmina",
+    "Donepezilo",
+    "Ropinirol",
+    "Doxorrubicina",
+    "Ciclofosfamida",
+    "Vincristina",
+    "Tamoxifeno",
+    "Interferón",
+    "Ribavirina",
+    "Oseltamivir"
+]
+
+
+
+impedimentos_sug = [
+    "Ceguera total",
+    "Discapacidad visual",
+    "Sordera total",
+    "Discapacidad auditiva",
+    "Parálisis cerebral",
+    "Espina bífida",
+    "Amputación de extremidades",
+    "Esclerosis múltiple",
+    "Esclerosis lateral amiotrófica (ELA)",
+    "Lesión medular",
+    "Artritis",
+    "Fibromialgia",
+    "Enfermedades cardíacas",
+    "Diabetes",
+    "Enfermedades respiratorias crónicas",
+    "Enfermedad de Crohn",
+    "Trastornos del espectro autista (TEA)",
+    "Trastorno por déficit de atención e hiperactividad (TDAH)",
+    "Trastorno del espectro alcohólico fetal (TEAF)",
+    "Trastorno del sueño",
+    "Depresión",
+    "Trastorno de ansiedad",
+    "Esquizofrenia",
+    "Trastorno bipolar",
+    "Trastornos alimentarios",
+    "Dificultades de aprendizaje",
+    "Síndrome de Down",
+    "Síndrome de Asperger",
+    "Parálisis facial",
+    "Parkinson",
+    "Alzheimer",
+    "Enfermedad renal crónica",
+    "HIV/SIDA",
+    "Cáncer",
+    "Ceguera de color",
+    "Debilidad visual",
+    "Hipoacusia",
+    "Tinnitus",
+    "Distrofia muscular",
+    "Dificultades de movilidad",
+    "Enanismo",
+    "Trastorno del habla",
+    "Discalculia",
+    "Alergias severas",
+    "Intolerancia al gluten",
+    "Intolerancia a la lactosa",
+    "Enfermedades autoinmunes",
+    "Obesidad",
+    "Epilepsia",
+    "Hemofilia",
+    "TDAH",
+    "Dolor crónico",
+    "Enfermedades infecciosas crónicas",
+    "Trastornos de la tiroides",
+    "Síndrome del intestino irritable (SII)",
+    "Afasia",
+    "Agorafobia",
+    "Claustrofobia",
+    "Trastorno de estrés postraumático (TEPT)"
+]
 
 
 #--------------------------------------------------
@@ -222,14 +409,14 @@ if salud_status == 'Si':
         enfermedad_desc = st.text_area("Descripción de la enfermedad",help="Escribe la descripción de la enfermedad")
 
     if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
-        padecimientos = st.text_area("Padecimientos",help="Escribe los padecimientos del alumno separados por comas",value=','.join(st.session_state.dataupdate['padecimientos']))
+        padecimientos = st_tags(st.session_state.dataupdate['padecimientos'], maxtags=10, key="tags",suggestions=padecimientos_salud,label="Padecimientos",text="Escribe los padecimientos del alumno y presiona enter para agregarlo")
     else:
-        padecimientos = st.text_area("Padecimientos",help="Escribe los padecimientos del alumno separados por comas")
+        padecimientos= st_tags(maxtags=5, key="tags",suggestions=padecimientos_salud,label="Padecimientos",text="Escribe los padecimientos del alumno y presiona enter para agregarlo")
 
     if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
-        medicamentos = st.text_area("Medicamentos",help="Escribe los medicamentos del alumno separados por comas",value=','.join(st.session_state.dataupdate['medicamentos']))
+        medicamentos = st_tags(maxtags=10, key="tags2",label="Medicamentos",text="Escribe los medicamentos del alumno y presiona enter para agregarlo",value=st.session_state.dataupdate['medicamentos'])
     else:
-        medicamentos = st.text_area("Medicamentos",help="Escribe los medicamentos del alumno separados por comas")
+        medicamentos = st_tags(maxtags=10, key="tags2",label="Medicamentos",text="Escribe los medicamentos del alumno y presiona enter para agregarlo")
 
     if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
         impedimentos = st.text_area("Impedimentos",help="Escribe los impedimentos del alumno separados por comas",value=','.join(st.session_state.dataupdate['impedimentos']))
@@ -261,7 +448,7 @@ else:
 data_reg = {
 'salud_status': sttatus,
 'enfermedad_desc': enfermedad_desc.upper(),
-'padecimientos': padecimientos.upper().split(','),
+'padecimientos': padecimientos,
 'medicamentos': medicamentos.upper().split(','),
 'impedimentos': impedimentos.upper().split(','),
 'tipo_sangre': tipo_sangre,
