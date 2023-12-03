@@ -419,7 +419,9 @@ if salud_status == 'Si':
         medicamentos = st_tags(maxtags=10, key="tags2",label="Medicamentos",text="Escribe los medicamentos del alumno y presiona enter para agregarlo")
 
     if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
-        impedimentos = st.text_area("Impedimentos",help="Escribe los impedimentos del alumno separados por comas",value=','.join(st.session_state.dataupdate['impedimentos']))
+        impedimentos = st_tags(maxtags=10, key="tags3",label="Impedimentos",text="Escribe los impedimentos del alumno y presiona enter para agregarlo",value=st.session_state.dataupdate['impedimentos'])
+    else:
+        impedimentos = st_tags(maxtags=10, key="tags3",label="Impedimentos",text="Escribe los impedimentos del alumno y presiona enter para agregarlo")
 
 else:
     enfermedad_desc = 'NONE'
