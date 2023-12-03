@@ -10,6 +10,7 @@ import datetime
 import streamlit_analytics
 import uuid
 import bcrypt
+import base64
 from streamlit_option_menu import option_menu
 
 
@@ -335,7 +336,6 @@ sac.divider(label='', icon='house', align='center')
 
 st.markdown('''
 <style>
-
 /* Desktops and laptops ----------- */
 @media only screen and (min-width: 1224px) {
 .gallery-wrap {
@@ -409,11 +409,6 @@ st.markdown('''
 }
 }
 
-
-
-
-
-
 .item {
   flex: 1;
   height: 100%;
@@ -426,25 +421,7 @@ st.markdown('''
   flex: 7;
 }
 
-.item-1 {
-  background-image: url("https://pbs.twimg.com/media/CLGIjQQUwAEoXvH.jpg");
-}
 
-.item-2 {
-  background-image: url("https://www.cecytemchimalhuacan.com/wp-content/uploads/2019/11/Banner-1024x363.png");
-}
-
-.item-3 {
-  background-image: url("https://cecytem.edomex.gob.mx/sites/cecytem.edomex.gob.mx/files/images/TEQUIXQUIAC.jpg");
-}
-
-.item-4 {
-  background-image: url("https://asisucede.com.mx/wp-content/uploads/2022/01/educacion.jpeg");
-}
-
-.item-5 {
-  background-image: url("https://s3.amazonaws.com/rytvmx/wpmedia/2022/01/04202709/WhatsApp-Image-2022-01-04-at-1.53.09-PM-2.jpeg");
-}
 
 .social {
   position: absolute;
@@ -456,10 +433,44 @@ st.markdown('''
   width: 32px;
 }
 </style>
+''',unsafe_allow_html=True)
 
+#Defaul images
+URL1 = "https://pbs.twimg.com/media/CLGIjQQUwAEoXvH.jpg"
+
+URL2 = "https://www.cecytemchimalhuacan.com/wp-content/uploads/2019/11/Banner-1024x363.png"
+
+URL3 = "https://cecytem.edomex.gob.mx/sites/cecytem.edomex.gob.mx/files/images/TEQUIXQUIAC.jpg"
+
+URL4 = "https://asisucede.com.mx/wp-content/uploads/2022/01/educacion.jpeg"
+
+URL5 = "https://s3.amazonaws.com/rytvmx/wpmedia/2022/01/04202709/WhatsApp-Image-2022-01-04-at-1.53.09-PM-2.jpeg"
+
+
+urlpreba3 = "https://images.unsplash.com/photo-1503631285924-e1544dce8b28?auto=format&fit=crop&w=1234&q=80"
+urlpreba1 = 'https://images.unsplash.com/photo-1499198116522-4a6235013d63?auto=format&fit=crop&w=1233&q=80'
+urlpreba2 = 'https://images.unsplash.com/photo-1492760864391-753aaae87234?auto=format&fit=crop&w=1336&q=80'
+urlpreba4 = 'https://images.unsplash.com/photo-1510425463958-dcced28da480?auto=format&fit=crop&w=1352&q=80'
+urlpreba5 = 'https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=1234&q=80'
+
+if st.checkbox("Cambiar Imagenes") :
+  st.markdown('<style>.item-1 {'+f'background-image: url({urlpreba1});'+'}</style>',unsafe_allow_html=True )
+  st.markdown('<style>.item-2 {'+f'background-image: url({urlpreba2});'+'}</style>',unsafe_allow_html=True )
+  st.markdown('<style>.item-3 {'+f'background-image: url({urlpreba3});'+'}</style>',unsafe_allow_html=True)
+  st.markdown('<style>.item-4 {'+f'background-image: url({urlpreba4});'+'}</style>',unsafe_allow_html=True)
+  st.markdown('<style>.item-5 {'+f'background-image: url({urlpreba5});'+'}</style>',unsafe_allow_html=True )
+else:
+  st.markdown('<style>.item-1 {'+f'background-image: url({URL1});'+'}</style>',unsafe_allow_html=True )
+  st.markdown('<style>.item-2 {'+f'background-image: url({URL2});'+'}</style>',unsafe_allow_html=True )
+  st.markdown('<style>.item-3 {'+f'background-image: url({URL3});'+'}</style>',unsafe_allow_html=True)
+  st.markdown('<style>.item-4 {'+f'background-image: url({URL4});'+'}</style>',unsafe_allow_html=True)
+  st.markdown('<style>.item-5 {'+f'background-image: url({URL5});'+'}</style>',unsafe_allow_html=True )
+
+
+
+st.markdown('''
 
 <div class="container">
-
   <div class="gallery-wrap">
     <div class="item item-1"></div>
     <div class="item item-2"></div>
@@ -468,7 +479,6 @@ st.markdown('''
     <div class="item item-5"></div>
   </div>
  </div>
-
 
 
 

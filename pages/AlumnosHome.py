@@ -167,26 +167,29 @@ else:
                 config['cookie']['expiry_days'],
                 config['preauthorized']
             )
-            logcols = st.columns([0.8,0.2])
-            with logcols[-1]:
-                authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
-            #--------------------------------------------------
+           #--------------------------------------------------
             #Navbar
             # CSS style definitions
-            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación","Perfil"],
-                icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart'],
-                menu_icon="cast", default_index=1, orientation="vertical",
+            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación",st.session_state.username,"Cerrar Sesión"],
+                icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart','door-open'],
+                menu_icon="cast", default_index=0, orientation="horizontal",
                 styles={
                     "container": {"padding": "0!important", "background-color": "#e6f2f0"},
-                    "icon": {"color": "#175947", "font-size": "25px"},
-                    "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#FBA1A1"},
+                    "icon": {"color": "#175947", "font-size": "20px"},
+                    "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "#FBA1A1"},
                     "nav-link-selected": {"background-color": "#FBC5C5"},
                 },key='menu'
             )
-            if selected3 == 'Inicio':
-                switch_page('Inicio')
+            if selected3 == 'Alumnos':
+                switch_page('AlumnosHome')
             elif selected3 == 'Perfil':
                 switch_page('Perfil')
+
+            elif selected3 == 'Cerrar Sesión':
+                st.session_state["authentication_status"] = False
+                st.session_state["username"] = None
+                st.session_state["name"] = None
+                switch_page('Login')
 
 
             #-------------------------------------------------
