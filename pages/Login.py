@@ -267,7 +267,7 @@ x = sac.tags([
 indx = 1
 
 butt = sac.buttons([
-    sac.ButtonsItem(label='Pagina Principal', icon='home',color='cyan'),
+    sac.ButtonsItem(label='Pagina Principal', icon='house-heart',color='cyan'),
 ], format_func='title', align='center', size='small', shape='round', type='dashed', compact=True, return_index=True,index=indx)
 
 if butt == 0:
