@@ -115,6 +115,15 @@ background-color: #e5e5f7;
     transform:translateX(25%);
   }
 }
+.st-emotion-cache-z5fcl4 {
+    width: 100%;
+    padding: 0rem 0rem 0rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    min-width: auto;
+    max-width: initial;
+    top: 0;
+  }
 </style>
 
 
