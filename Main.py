@@ -177,7 +177,6 @@ st.markdown(
 h1 {
 --s: 0.1em;   /* the thickness of the line */
 --c: #2c4bff; /* the color */
-
 color: #0000;
 padding-bottom: var(--s);
 background:
@@ -190,7 +189,7 @@ text-align: left;
 }
 h1:hover {--_p: 100%}
 h1 {
-  font-family: system-ui, sans-serif;
+  font-family: Impact, sans-serif;
   font-size: 3rem;
   cursor: pointer;
 }
