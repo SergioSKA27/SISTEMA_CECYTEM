@@ -229,9 +229,14 @@ with cols[1]:
 sac.divider(label='', icon='house', align='center')
 
 st.markdown("## Sistema de Gestión Escolar y Análisis de Datos CECYTEM")
-st.divider()
 
 
+st.markdown("<div style='text-align: center;font-family: futura;font-size: 30px;'>Bienvenido al Sistema de Gestión Escolar y Análisis CECYTEM</div>", unsafe_allow_html=True)
+
+st.markdown("<div style='text-align: center;font-family: futura;font-size: 20px;'>Nuestra plataforma integral está diseñada para ofrecer una experiencia educativa sin complicaciones y eficiente. Descubre cómo nuestro sistema puede potenciar la gestión escolar y optimizar el análisis de datos para estudiantes, maestros y administradores.</div>", unsafe_allow_html=True)
+
+
+sac.divider(label='', icon='mortarboard', align='center')
 cols2 = st.columns([0.6, 0.4])
 
 
@@ -252,87 +257,48 @@ with cols2[0]:
 with cols2[1]:
   st_lottie("https://lottie.host/b7ef026c-555f-42ba-8c63-d34ab2c09d34/ZozkKz25so.json", height=300)
 
+st.divider()
 
 
+st.markdown('''
+<div style="text-align: center;font-family: 'Osaka';font-size: 30px;">
+Conectando estudiantes, maestros y administradores de manera eficiente.
+</div>
+<div style="text-align: center;font-family: 'futura';font-size: 20px;">
+Datos potenciados, educación mejorada.
+</div>
+''',unsafe_allow_html=True)
 
+sac.divider(label='', icon='graph-up', align='center')
 
+cols3 = st.columns([0.6, 0.4])
+
+with cols3[0]:
+  '''
+  ### Estadísticas y Análisis:
+
+    - Sumérgete en estadísticas detalladas y métricas generales para evaluar el rendimiento académico y la eficiencia operativa.
+
+    - Utiliza herramientas de hoja de cálculo y SQL para un análisis personalizado y profundo de los datos.
+
+  '''
+
+with cols3[1]:
+  st.image("https://miro.medium.com/v2/resize:fit:1400/1*cXdJh394X6YIzRCvXsaJzg.gif", width=300)
 
 
 
 st.markdown('''
 <style>
-/* Desktops and laptops ----------- */
-@media only screen and (min-width: 1224px) {
 .gallery-wrap {
   display: flex;
   flex-direction: row;
   width: 100%;
   height: 70vh;
 }
-}
 
-@media all and (min-width:960px) and (max-width: 1024px) {
-.gallery-wrap {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 70vh;
-}
-}
 
-@media all and (min-width:801px) and (max-width: 959px) {
-.gallery-wrap {
-  display: flex;
-  flex-direction: row;
-  width: 80%;
-  height: 70vh;
-}
-}
 
-@media all and (min-width:769px) and (max-width: 800px) {
-.gallery-wrap {
-  display: flex;
-  flex-direction: row;
-  width: 80%;
-  height: 70vh;
-}
-}
-
-@media all and (min-width:569px) and (max-width: 768px) {
-.gallery-wrap {
-  display: flex;
-  flex-direction: row;
-  width: 80%;
-  height: 70vh;
-}
-}
-
-@media all and (min-width:481px) and (max-width: 568px) {
-.gallery-wrap {
-  display: flex;
-  flex-direction: row;
-  width: 80%;
-  height: 70vh;
-}
-}
-
-@media all and (min-width:321px) and (max-width: 480px) {
-.gallery-wrap {
-  display: flex;
-  flex-direction: row;
-  width: 80%;
-  height: 70vh;
-}
-}
-
-@media all and (min-width:0px) and (max-width: 320px) {
-.gallery-wrap {
-  display: flex;
-  flex-direction: row;
-  width: 80%;
-  height: 70vh;
-}
-}
 
 .item {
   flex: 1;
