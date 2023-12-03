@@ -205,7 +205,9 @@ with cols1[1]:
       st.header('Iniciar Sesión')
       username = st.text_input('Usuario')
       password = st.text_input('Contraseña', type='password')
-      if st.form_submit_button('Iniciar Sesión'):
+
+
+      if st.form_submit_button('Iniciar Sesión') and username != '' and password != '':
         if bcrypt.checkpw(password.encode(), credentials[username]['password'].encode()):
           st.session_state['authentication_status'] = True
           st.session_state['name'] = credentials[username]['name']
@@ -250,7 +252,7 @@ with cols1[1]:
 
 #--------------------------------------------------
 # Pie de pagina
-sac.tags([
+x = sac.tags([
     sac.Tag(label='Contacto', icon='person-lines-fill',
     color='cyan', link='https://ant.design/components/tag'),
     sac.Tag(label='Página Oficial CECYTEM', icon='mortarboard-fill',
@@ -260,3 +262,13 @@ sac.tags([
 
 ], format_func='title', align='center',)
 
+
+
+indx = 1
+
+butt = sac.buttons([
+    sac.ButtonsItem(label='Pagina Principal', icon='home',color='cyan'),
+], format_func='title', align='center', size='small', shape='round', type='dashed', compact=True, return_index=True,index=indx)
+
+if butt == 0:
+    switch_page('Main')

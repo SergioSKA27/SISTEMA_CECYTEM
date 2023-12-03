@@ -203,4 +203,8 @@ with cols[0]:
 
 
 with cols[1]:
-  st.image("rsc/Logos/cecytem-logo.png", width=200)
+  st.image("rsc/Logos/cecytem-logo.png", width=120)
+
+sac.divider(label='', icon='house', align='center')
+
+
