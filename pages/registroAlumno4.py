@@ -450,9 +450,9 @@ else:
 data_reg = {
 'salud_status': sttatus,
 'enfermedad_desc': enfermedad_desc.upper(),
-'padecimientos': padecimientos,
-'medicamentos': medicamentos.upper().split(','),
-'impedimentos': impedimentos.upper().split(','),
+'padecimientos': list(map(str.upper,padecimientos)),
+'medicamentos': list(map(str.upper,medicamentos)),
+'impedimentos': list(map(str.upper,impedimentos)),
 'tipo_sangre': tipo_sangre,
 'opcional_desc': opcional_desc
 }
