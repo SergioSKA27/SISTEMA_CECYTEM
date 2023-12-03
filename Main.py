@@ -13,6 +13,7 @@ import bcrypt
 import base64
 from streamlit_option_menu import option_menu
 
+from streamlit_lottie import st_lottie
 
 # License: BSD 3-Clause
 
@@ -156,7 +157,15 @@ background-color: #e5e5f7;
     max-width: initial;
     top: 0;
   }
+
+h2 {
+  text-align:center;
+  font-family: 'Osaka';
+}
+
 </style>
+
+
 
 
 <div class="bg"></div>
@@ -219,6 +228,32 @@ with cols[1]:
 
 sac.divider(label='', icon='house', align='center')
 
+st.markdown("## Sistema de Gestión Escolar y Análisis de Datos CECYTEM")
+st.divider()
+
+
+cols2 = st.columns([0.6, 0.4])
+
+
+with cols2[0]:
+  st.markdown('''
+  ### Gestión de Alumnos:
+
+  - Registra fácilmente nuevos alumnos, capturando información esencial en un proceso fluido y estructurado.
+
+
+  - Explora herramientas avanzadas de búsqueda y gestión de perfiles para un acceso rápido y eficiente a la información del alumno.
+
+
+  - Control total sobre la información académica, de salud, procedencia y documentación de cada estudiante.
+
+  ''',unsafe_allow_html=True)
+
+with cols2[1]:
+  st_lottie("https://lottie.host/b7ef026c-555f-42ba-8c63-d34ab2c09d34/ZozkKz25so.json", height=300)
+
+
+
 
 
 
@@ -249,7 +284,7 @@ st.markdown('''
 .gallery-wrap {
   display: flex;
   flex-direction: row;
-  width: 70%;
+  width: 80%;
   height: 70vh;
 }
 }
@@ -258,7 +293,7 @@ st.markdown('''
 .gallery-wrap {
   display: flex;
   flex-direction: row;
-  width: 60%;
+  width: 80%;
   height: 70vh;
 }
 }
@@ -267,7 +302,7 @@ st.markdown('''
 .gallery-wrap {
   display: flex;
   flex-direction: row;
-  width: 50%;
+  width: 80%;
   height: 70vh;
 }
 }
@@ -276,7 +311,7 @@ st.markdown('''
 .gallery-wrap {
   display: flex;
   flex-direction: row;
-  width: 100%;
+  width: 80%;
   height: 70vh;
 }
 }
@@ -285,7 +320,7 @@ st.markdown('''
 .gallery-wrap {
   display: flex;
   flex-direction: row;
-  width: 50%;
+  width: 80%;
   height: 70vh;
 }
 }
@@ -294,7 +329,7 @@ st.markdown('''
 .gallery-wrap {
   display: flex;
   flex-direction: row;
-  width: 50%;
+  width: 80%;
   height: 70vh;
 }
 }
