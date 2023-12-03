@@ -186,7 +186,7 @@ background:
 -webkit-background-clip: text,padding-box;
         background-clip: text,padding-box;
 transition: 0.5s;
-text-align: center;
+text-align: left;
 }
 h1:hover {--_p: 100%}
 h1 {
@@ -197,6 +197,11 @@ h1 {
 </style>""",unsafe_allow_html=True,
 )
 
+cols = st.columns([0.8, 0.2])
+
+with cols[0]:
+  "# COLEGIO DE ESTUDIOS CIENTIFICOS Y TECNOLOGICOS DEL ESTADO DE MEXICO"
 
 
-"# COLEGIO DE ESTUDIOS CIENTIFICOS Y TECNOLOGICOS DEL ESTADO DE MEXICO"
+with cols[1]:
+  st.image("rsc/Logos/cecytem-logo.png", width=200)
