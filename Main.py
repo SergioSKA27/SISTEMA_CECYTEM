@@ -148,7 +148,7 @@ cookie_manager = get_manager()
 #Navbar
 # CSS style definitions
 selected3 = option_menu(None, ["Inicio", "Docs","Acerca de","Contacto","Login"],
-    icons=['house',  "easel2", 'link', 'person-lines-fill', 'key'],
+    icons=['house-heart',  "filetype-doc", 'patch-question', 'person-lines-fill', 'key'],
     menu_icon="cast", default_index=0, orientation="horizontal",
     styles={
         "container": {"padding": "0!important", "background-color": "#99B1BF00", "border-radius": "10px"},
