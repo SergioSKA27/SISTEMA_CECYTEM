@@ -15,7 +15,6 @@ from streamlit_option_menu import option_menu
 
 # License: BSD 3-Clause
 
-
 #Sistema de Gestión y Análisis CECYTEM
 
 #Copyright (c) 2023 Sergio Demis Lopez Martinez
@@ -336,12 +335,84 @@ sac.divider(label='', icon='house', align='center')
 
 st.markdown('''
 <style>
+
+/* Desktops and laptops ----------- */
+@media only screen and (min-width: 1224px) {
 .gallery-wrap {
   display: flex;
   flex-direction: row;
   width: 100%;
   height: 70vh;
 }
+}
+
+@media all and (min-width:960px) and (max-width: 1024px) {
+.gallery-wrap {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 70vh;
+}
+}
+
+@media all and (min-width:801px) and (max-width: 959px) {
+.gallery-wrap {
+  display: flex;
+  flex-direction: row;
+  width: 70%;
+  height: 70vh;
+}
+}
+
+@media all and (min-width:769px) and (max-width: 800px) {
+.gallery-wrap {
+  display: flex;
+  flex-direction: row;
+  width: 60%;
+  height: 70vh;
+}
+}
+
+@media all and (min-width:569px) and (max-width: 768px) {
+.gallery-wrap {
+  display: flex;
+  flex-direction: row;
+  width: 50%;
+  height: 70vh;
+}
+}
+
+@media all and (min-width:481px) and (max-width: 568px) {
+.gallery-wrap {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 70vh;
+}
+}
+
+@media all and (min-width:321px) and (max-width: 480px) {
+.gallery-wrap {
+  display: flex;
+  flex-direction: row;
+  width: 50%;
+  height: 70vh;
+}
+}
+
+@media all and (min-width:0px) and (max-width: 320px) {
+.gallery-wrap {
+  display: flex;
+  flex-direction: row;
+  width: 50%;
+  height: 70vh;
+}
+}
+
+
+
+
+
 
 .item {
   flex: 1;
