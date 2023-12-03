@@ -189,7 +189,7 @@ text-align: left;
 }
 h1:hover {--_p: 100%}
 h1 {
-  font-family: Impact, sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 3rem;
   cursor: pointer;
 }
