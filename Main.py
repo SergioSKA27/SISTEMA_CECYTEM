@@ -356,23 +356,23 @@ st.markdown('''
 }
 
 .item-1 {
-  background-image: url("https://images.unsplash.com/photo-1499198116522-4a6235013d63?auto=format&fit=crop&w=1233&q=80");
+  background-image: url("https://pbs.twimg.com/media/CLGIjQQUwAEoXvH.jpg");
 }
 
 .item-2 {
-  background-image: url("https://images.unsplash.com/photo-1492760864391-753aaae87234?auto=format&fit=crop&w=1336&q=80");
+  background-image: url("https://www.cecytemchimalhuacan.com/wp-content/uploads/2019/11/Banner-1024x363.png");
 }
 
 .item-3 {
-  background-image: url("https://images.unsplash.com/photo-1503631285924-e1544dce8b28?auto=format&fit=crop&w=1234&q=80");
+  background-image: url("https://cecytem.edomex.gob.mx/sites/cecytem.edomex.gob.mx/files/images/TEQUIXQUIAC.jpg");
 }
 
 .item-4 {
-  background-image: url("https://images.unsplash.com/photo-1510425463958-dcced28da480?auto=format&fit=crop&w=1352&q=80");
+  background-image: url("https://asisucede.com.mx/wp-content/uploads/2022/01/educacion.jpeg");
 }
 
 .item-5 {
-  background-image: url("https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=1234&q=80");
+  background-image: url("https://s3.amazonaws.com/rytvmx/wpmedia/2022/01/04202709/WhatsApp-Image-2022-01-04-at-1.53.09-PM-2.jpeg");
 }
 
 .social {
