@@ -43,6 +43,7 @@ st.markdown("""
     padding-left: 1rem;
     min-width: auto;
     max-width: initial;
+    top: 0px;
     }
 </style>
 """,unsafe_allow_html=True)
