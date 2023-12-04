@@ -217,8 +217,8 @@ else:
                     "nav-link-selected": {"background-color": "#FBC5C5"},
                 },key='menu'
             )
-            if selected3 == 'Alumnos':
-                switch_page('AlumnosHome')
+            if selected3 == 'Inicio':
+                switch_page('Inicio')
             elif selected3 == st.session_state.username:
                 switch_page('Perfil')
 

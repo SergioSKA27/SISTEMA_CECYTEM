@@ -176,47 +176,65 @@ def modify_status(curp,datareg):
 if "last_registered" not in st.session_state or "idcontrol" not in st.session_state.last_registered:
   switch_page("registroAlumno1")
 
-
 #--------------------------------------------------
-#Contenido de la página
-if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
-  backpp = sac.buttons([
-                    sac.ButtonsItem(label='REGRESAR',icon='skip-backward-btn'),
-                ], position='left', format_func='upper', align='center', size='large',
-                shape='round', return_index=True,index=1)
-
-  if backpp == 0:
-    st.session_state.last_registered['update'] = False
-    st.session_state.dataupdate = {}
-    switch_page('perfilAlumno')
-
-
-
-st.markdown("<h1>CAMBIO DE ESTATUS ALUMNO</h1>", unsafe_allow_html=True)
-st.divider()
-
-
-if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
-    currents = st.checkbox("¿El alumno se encuentra actualmente inscrito?",value=str(st.session_state.dataupdate['current_status']))
+#Authentication
+if "authentication_status" not in st.session_state  :
+    switch_page('Main')
 else:
-    currents = st.checkbox("¿El alumno se encuentra actualmente inscrito?",value=True)
+# el usuario debe estar autenticado para acceder a esta página
+    if st.session_state["authentication_status"]:
 
-if not currents:
+            usrdata = get_current_user_info(st.session_state['username'])
+
+    #--------------------------------------------------
+    #Contenido de la página
     if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
-        tipoBaja = st.radio("Tipo de baja",options=["Temporal","Definitiva"])
-    else:
-        tipoBaja = st.radio("Tipo de baja",options=["Temporal","Definitiva"],index=0)
+      backpp = sac.buttons([
+                        sac.ButtonsItem(label='REGRESAR',icon='skip-backward-btn'),
+                    ], position='left', format_func='upper', align='center', size='large',
+                    shape='round', return_index=True,index=1)
+
+      if backpp == 0:
+        st.session_state.last_registered['update'] = False
+        st.session_state.dataupdate = {}
+        switch_page('perfilAlumno')
+
+
+
+    st.markdown("<h1>CAMBIO DE ESTATUS ALUMNO</h1>", unsafe_allow_html=True)
+    st.divider()
+
 
     if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
-        causas = st.text_area("Causas de la baja",value=','.join(st.session_state.dataupdate['causas']),help="Separa las causas con una coma")
-    else:
-        causas = st.text_area("Causas de la baja",help="Separa las causas con una coma")
 
-    if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
-        periodos_baja = st.text_area("Periodos de baja",value=','.join(st.session_state.dataupdate['periodos_baja']),help="Separa los periodos con una coma")
-    else:
-        periodos_baja = st.text_area("Periodos de baja",help="Separa los periodos con una coma")
 
+        if st.session_state.dataupdate['current_status'] == False:
+            currents = st.checkbox("¿El alumno se encuentra actualmente inscrito?",value=False)
+            #st.write(st.session_state.dataupdate)
+        else:
+            currents = st.checkbox("¿El alumno se encuentra actualmente inscrito?",value=True)
+    else:
+        currents = st.checkbox("¿El alumno se encuentra actualmente inscrito?",value=True)
+
+    if  currents == False:
+        if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+            tipoBaja = st.radio("Tipo de baja",options=["Temporal","Definitiva"])
+        else:
+            tipoBaja = st.radio("Tipo de baja",options=["Temporal","Definitiva"],index=0)
+
+        if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+            causas = st.text_area("Causas de la baja",value=','.join(st.session_state.dataupdate['causas']),help="Separa las causas con una coma")
+        else:
+            causas = st.text_area("Causas de la baja",help="Separa las causas con una coma")
+
+        if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
+            periodos_baja = st.text_area("Periodos de baja",value=','.join(st.session_state.dataupdate['periodos_baja']),help="Separa los periodos con una coma")
+        else:
+            periodos_baja = st.text_area("Periodos de baja",help="Separa los periodos con una coma")
+    else:
+        tipoBaja = 'NO APLICA'
+        causas = 'NO APLICA'
+        periodos_baja = 'NO APLICA'
     if "update" in st.session_state.last_registered and st.session_state.last_registered['update']:
         if st.button("Actualizar"):
             datareg = {
