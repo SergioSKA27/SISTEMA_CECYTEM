@@ -28,15 +28,16 @@ class Player(Dashboard.Item):
                 mui.Typography("Media player")
             if urlset:
                 self._url = urlset
-                if desc and desc !=  'patrick' and desc != '':
+                if desc and  desc != '':
                     mui.Typography(desc)
-                elif desc == 'patrick':
-                    self._url = 'https://www.youtube.com/watch?v=DtL_giO-EB8&pp=ygUaZmx5IG1lIHRvIHRoZSBtb29uIHBhdHJpY2s%3D'
-
             else:
-
                 with mui.Stack(direction="row", spacing=2, justifyContent="space-evenly", alignItems="center", sx={"padding": "10px"}):
                     mui.TextField(defaultValue=self._url, label="URL", variant="standard", sx={"flex": 0.97}, onChange=lazy(self._set_url))
                     mui.IconButton(mui.icon.PlayCircleFilled, onClick=sync(), sx={"color": "primary.main"})
+
+            if self._url == 'patrick':
+                self._url = 'https://www.youtube.com/watch?v=DtL_giO-EB8&pp=ygUaZmx5IG1lIHRvIHRoZSBtb29uIHBhdHJpY2s%3D'
+
+
 
             media.Player(self._url, controls=True, width="100%", height="100%")

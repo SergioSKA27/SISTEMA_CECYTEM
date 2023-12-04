@@ -209,7 +209,7 @@ else:
             # CSS style definitions
             selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación",st.session_state.username,"Cerrar Sesión"],
                 icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart','door-open'],
-                menu_icon="cast", default_index=0, orientation="horizontal",
+                menu_icon="cast", default_index=1, orientation="horizontal",
                 styles={
                     "container": {"padding": "0!important", "background-color": "#e6f2f0"},
                     "icon": {"color": "#175947", "font-size": "20px"},
@@ -219,7 +219,7 @@ else:
             )
             if selected3 == 'Alumnos':
                 switch_page('AlumnosHome')
-            elif selected3 == 'Perfil':
+            elif selected3 == st.session_state.username:
                 switch_page('Perfil')
 
             elif selected3 == 'Cerrar Sesión':

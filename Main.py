@@ -151,8 +151,8 @@ background-color: #e5e5f7;
 .st-emotion-cache-z5fcl4 {
     width: 100%;
     padding: 0rem 0rem 0rem;
-    padding-right: 3rem;
-    padding-left: 3rem;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
     min-width: auto;
     max-width: initial;
     top: 0;

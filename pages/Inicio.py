@@ -229,7 +229,7 @@ else:
             )
             if selected3 == 'Alumnos':
                 switch_page('AlumnosHome')
-            elif selected3 == 'Perfil':
+            elif selected3 == st.session_state.username:
                 switch_page('Perfil')
 
             elif selected3 == 'Cerrar Sesión':

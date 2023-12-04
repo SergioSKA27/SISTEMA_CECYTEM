@@ -144,8 +144,8 @@ background-color: #e5e5f7;
 .st-emotion-cache-z5fcl4 {
     width: 100%;
     padding: 0rem 0rem 0rem;
-    padding-right: 1rem;
-    padding-left: 1rem;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
     min-width: auto;
     max-width: initial;
     top: 0;
@@ -234,10 +234,10 @@ with cols1[1]:
 
 
       if st.form_submit_button('Iniciar Sesión') and username != '' and password != '':
-        if bcrypt.checkpw(password.encode(), credentials[username]['password'].encode()):
+        if bcrypt.checkpw(password.strip().encode(), credentials[username.strip()]['password'].encode()):
           st.session_state['authentication_status'] = True
-          st.session_state['name'] = credentials[username]['name']
-          st.session_state['username'] = username
+          st.session_state['name'] = credentials[username.strip()]['name']
+          st.session_state['username'] = username.strip()
           switch_page('Inicio')
         else:
           st.session_state['authentication_status'] = False
