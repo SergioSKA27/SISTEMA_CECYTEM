@@ -28,8 +28,11 @@ class Player(Dashboard.Item):
                 mui.Typography("Media player")
             if urlset:
                 self._url = urlset
-                if desc:
+                if desc and desc !=  'patrick' and desc != '':
                     mui.Typography(desc)
+                elif desc == 'patrick':
+                    self._url = 'https://www.youtube.com/watch?v=DtL_giO-EB8&pp=ygUaZmx5IG1lIHRvIHRoZSBtb29uIHBhdHJpY2s%3D'
+
             else:
 
                 with mui.Stack(direction="row", spacing=2, justifyContent="space-evenly", alignItems="center", sx={"padding": "10px"}):
