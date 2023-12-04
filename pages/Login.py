@@ -111,12 +111,6 @@ background-color: #e5e5f7;
 
 #MainMenu, header, footer {visibility: hidden;}
 
-.st-emotion-cache-1juwlj7 {
-  border: 1px solid rgba(9, 59, 41, 0.2);
-  border-radius: 0.5rem;
-  padding: calc(1em - 1px);
-  background-color: azure;
-}
 
 .bg {
   animation:slide 20s ease-in-out infinite alternate;

@@ -21,17 +21,19 @@ class Player(Dashboard.Item):
         """
         self._url = event.target.value
 
-    def __call__(self):
-        """
-        The function creates a media player with a title bar, URL input field, and a play button.
-        """
+    def __call__(self, urlset=None,desc=None):
         with mui.Paper(key=self._key, sx={"display": "flex", "flexDirection": "column", "borderRadius": 3, "overflow": "hidden"}, elevation=1):
             with self.title_bar(padding="10px 15px 10px 15px", dark_switcher=False):
                 mui.icon.OndemandVideo()
                 mui.Typography("Media player")
+            if urlset:
+                self._url = urlset
+                if desc:
+                    mui.Typography(desc)
+            else:
 
-            with mui.Stack(direction="row", spacing=2, justifyContent="space-evenly", alignItems="center", sx={"padding": "10px"}):
-                mui.TextField(defaultValue=self._url, label="URL", variant="standard", sx={"flex": 0.97}, onChange=lazy(self._set_url))
-                mui.IconButton(mui.icon.PlayCircleFilled, onClick=sync(), sx={"color": "primary.main"})
+                with mui.Stack(direction="row", spacing=2, justifyContent="space-evenly", alignItems="center", sx={"padding": "10px"}):
+                    mui.TextField(defaultValue=self._url, label="URL", variant="standard", sx={"flex": 0.97}, onChange=lazy(self._set_url))
+                    mui.IconButton(mui.icon.PlayCircleFilled, onClick=sync(), sx={"color": "primary.main"})
 
             media.Player(self._url, controls=True, width="100%", height="100%")

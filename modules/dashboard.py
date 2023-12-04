@@ -33,8 +33,26 @@ class Dashboard:
         # Draggable classname query selector.
         props["draggableHandle"] = f".{Dashboard.DRAGGABLE_CLASS}"
 
-        with dashboard.Grid(self._layout, **props):
+        def on_change(event):
+            self._layout =  event
+
+        with dashboard.Grid(self._layout,onLayoutChange=on_change, **props):
             yield
+
+    def __repr__(self) -> list:
+        """
+        The function returns the string representation of the object.
+        """
+        return self._layout
+
+    def __str__(self) -> str:
+        """
+        The function returns the string representation of the object.
+        """
+        return f"<Dashboard: {self._layout}>"
+
+    def layout(self):
+        return self._layout
 
     # The above class is an abstract base class for creating items in a dashboard, with methods for switching themes and
     # displaying a title bar.

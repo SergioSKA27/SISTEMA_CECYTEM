@@ -11,7 +11,7 @@ class Card(Dashboard.Item):
         "if you like."
     )
 
-    def __call__(self, content):
+    def __call__(self, content,img):
         """
         The function creates a card component with a title, subheader, image, content, and action buttons.
 
@@ -29,7 +29,7 @@ class Card(Dashboard.Item):
             mui.CardMedia(
                 component="img",
                 height=194,
-                image="https://mui.com/static/images/cards/paella.jpg",
+                image=img,
                 alt="Paella dish",
             )
 

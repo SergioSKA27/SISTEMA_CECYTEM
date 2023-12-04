@@ -26,3 +26,5 @@ keplergl
 streamlit-searchbox
 networkx
 streamlit-tags
+streamlit-calendar
+
