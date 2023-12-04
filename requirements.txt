@@ -25,4 +25,4 @@ geopy
 keplergl
 streamlit-searchbox
 networkx
-
+streamlit-tags
