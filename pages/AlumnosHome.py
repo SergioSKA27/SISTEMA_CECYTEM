@@ -234,7 +234,7 @@ else:
             st.markdown("En esta sección se pueden registrar alumnos, buscarlos y buscar grupos")
 
             options = option_menu(None, ['',"Registrar Alumno","Buscar Alumno","Buscar grupo","Estadísticas","Reportes DEO"],
-                icons=['house-gear-fill','person-plus', 'search', "search-plus","graph-up-arrow","file-earmark-bar-graph"],
+                icons=['house-gear-fill','person-plus', 'search', "ui-checks-grid","graph-up-arrow","file-earmark-bar-graph"],
                 menu_icon="cast", default_index=0, orientation="horizontal",
                 styles={
                     "container": {"padding": "0!important", "background-color": "#e6f2f0"},

@@ -144,7 +144,7 @@ def get_current_user_info(usrname: str) -> dict:
     ch = xata.data().query("Credentials",{"filter": {"username": usrname}})
     return ch['records'][0]
 
-def reg_procedenciaAlumno(reg_data,curpAlumno):
+def reg_DOCSALUMNO(reg_data,curpAlumno):
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
     iid  = xata.data().query("DataAlumno", {
         "columns": [
@@ -219,28 +219,28 @@ else:
         if formatacta == 'pdf' and acta_nacimiento is not None:
             try:
                 acta_nacimientoa = acta_nacimiento.read()
-                acta_nacimientoAlumno = base64.b64encode(acta_nacimientoa.decode('utf-8'))
-                acta_nacimientoAlumno = f"data:application/pdf;base64,{acta_nacimientoAlumno}"
+                _acta_nacimiento = base64.b64encode(acta_nacimientoa).decode('utf-8')
+                acta_nacimientoAlumno = f"data:application/pdf;base64,{_acta_nacimiento}"
                 pdf_display = f'<iframe  src="{acta_nacimientoAlumno}" width="700" height="600" type="application/pdf"></iframe>'
                 st.write('Preview del archivo pdf:')
                 st.markdown(pdf_display, unsafe_allow_html=True)
                 datareg['acta_nacimientoAlumno'] = {
-                "base64Content": acta_nacimientoa,
+                "base64Content": _acta_nacimiento,
                 "enablePublicUrl": False,
                 "mediaType": "application/octet-stream",
                 "name": '-'.join(["acta_nacimientoAlumno",uuid.uuid4().hex])+".pdf",
                 "signedUrlTimeout": 300
             }
-            except:
+            except Exception as e:
                 st.error("El archivo no es un pdf o está dañado")
+                st.error(e)
         elif acta_nacimiento is not None:
             try:
                 acta_nacimientoa = acta_nacimiento.read()
                 acta_nacimientoAlumno = base64.b64encode(acta_nacimientoa).decode('utf-8')
-                acta_nacimientoAlumno = f"data:image/{formatacta};base64,{acta_nacimientoAlumno}"
                 st.image(acta_nacimientoAlumno)
                 datareg['acta_nacimientoAlumno'] = {
-                "base64Content": acta_nacimientoa,
+                "base64Content": acta_nacimientoAlumno,
                 "enablePublicUrl": False,
                 "mediaType": "application/octet-stream",
                 "name": '-'.join([st.session_state.last_registered['curp'],"acta_nacimientoAlumno"])+f".{formatacta}",
@@ -266,13 +266,13 @@ else:
         if formatacertificadoSec == 'pdf' and filecertificado_secundariaAlumno is not None:
             try:
                 certificado_secundariaAlumno = filecertificado_secundariaAlumno.read()
-                certificado_secundariaAlumno = base64.b64encode(certificado_secundariaAlumno).decode('utf-8')
-                certificado_secundariaAlumno = f"data:application/pdf;base64,{certificado_secundariaAlumno}"
-                pdf_display = f'<iframe  src="{certificado_secundariaAlumno}" width="700" height="600" type="application/pdf"></iframe>'
+                _certificado_secundariaAlumno = base64.b64encode(certificado_secundariaAlumno).decode('utf-8')
+                certificado_secundariaAlumno_ = f"data:application/pdf;base64,{_certificado_secundariaAlumno}"
+                pdf_display = f'<iframe  src="{certificado_secundariaAlumno_}" width="700" height="600" type="application/pdf"></iframe>'
                 st.write('Preview del archivo pdf:')
                 st.markdown(pdf_display, unsafe_allow_html=True)
                 datareg['certificado_secundariaAlumno'] = {
-                "base64Content": certificado_secundariaAlumno,
+                "base64Content": _certificado_secundariaAlumno,
                 "enablePublicUrl": False,
                 "mediaType": "application/octet-stream",
                 "name": "-".join([st.session_state.last_registered['curp'],'certificado_secundariaAlumno'])+".pdf",
@@ -283,11 +283,11 @@ else:
         elif filecertificado_secundariaAlumno is not None:
             try:
                 certificado_secundariaAlumno = filecertificado_secundariaAlumno.read()
-                certificado_secundariaAlumno = base64.b64encode(certificado_secundariaAlumno).decode('utf-8')
-                certificado_secundariaAlumno = f"data:image/{formatacertificadoSec};base64,{certificado_secundariaAlumno}"
-                st.image(certificado_secundariaAlumno)
+                _certificado_secundariaAlumno = base64.b64encode(certificado_secundariaAlumno).decode('utf-8')
+                certificado_secundariaAlumno_ = f"data:image/{formatacertificadoSec};base64,{certificado_secundariaAlumno}"
+                st.image(certificado_secundariaAlumno_)
                 datareg['certificado_secundariaAlumno'] = {
-                "base64Content": certificado_secundariaAlumno,
+                "base64Content": _certificado_secundariaAlumno,
                 "enablePublicUrl": False,
                 "mediaType": "application/octet-stream",
                 "name": "-".join([st.session_state.last_registered['curp'],'certificado_secundariaAlumno'])+f".{formatacertificadoSec}",
@@ -312,13 +312,13 @@ else:
         if formatacomprobanteDom == 'pdf' and filecomprobante_domAlumno is not None:
             try:
                 comprobante_domAlumno = filecomprobante_domAlumno.read()
-                comprobante_domAlumno = base64.b64encode(comprobante_domAlumno).decode('utf-8')
-                comprobante_domAlumno = f"data:application/pdf;base64,{comprobante_domAlumno}"
+                _comprobante_domAlumno = base64.b64encode(comprobante_domAlumno).decode('utf-8')
+                comprobante_domAlumno_ = f"data:application/pdf;base64,{_comprobante_domAlumno}"
                 pdf_display = f'<iframe  src="{comprobante_domAlumno}" width="700" height="600" type="application/pdf"></iframe>'
                 st.write('Preview del archivo pdf:')
                 st.markdown(pdf_display, unsafe_allow_html=True)
                 datareg['comprobante_domAlumno'] = {
-                "base64Content": comprobante_domAlumno,
+                "base64Content": _comprobante_domAlumno,
                 "enablePublicUrl": False,
                 "mediaType": "application/octet-stream",
                 "name": "-".join([st.session_state.last_registered['curp'],'comprobante_domAlumno'])+".pdf",
@@ -330,8 +330,8 @@ else:
         elif filecomprobante_domAlumno is not None:
             try:
                 comprobante_domAlumno = filecomprobante_domAlumno.read()
-                comprobante_domAlumno = base64.b64encode(comprobante_domAlumno).decode('utf-8')
-                comprobante_domAlumno = f"data:image/{formatacomprobanteDom};base64,{comprobante_domAlumno}"
+                _comprobante_domAlumno = base64.b64encode(comprobante_domAlumno).decode('utf-8')
+                comprobante_domAlumno_ = f"data:image/{formatacomprobanteDom};base64,{comprobante_domAlumno}"
                 st.image(comprobante_domAlumno)
                 datareg['comprobante_domAlumno'] = {
                 "base64Content": comprobante_domAlumno,
@@ -676,7 +676,7 @@ else:
 
         if butt == 0:
             with st.spinner("Registrando Documentación del Alumno"):
-                data = reg_procedenciaAlumno(datareg,st.session_state.last_registered['curp'])
+                data = reg_DOCSALUMNO(datareg,st.session_state.last_registered['curp'])
 
             if "message"  in data:
                 st.error('Error al registrar la documentación del alumno')
@@ -715,9 +715,6 @@ else:
                 sac.StepsItem(title='Paso7',disabled=True,icon='file-earmark-text'),
 
                 ], format_func='title',index=6)
-
-
-
         else:
             sac.steps(items=[
 

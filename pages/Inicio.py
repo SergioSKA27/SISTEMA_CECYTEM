@@ -16,6 +16,8 @@ from streamlit_calendar import calendar
 from streamlit_elements import elements, mui, html
 from streamlit_elements import elements, sync, event
 import json
+import asyncio
+import concurrent.futures
 
 
 from pathlib import Path
@@ -25,6 +27,7 @@ from types import SimpleNamespace
 
 
 from modules import Dashboard,Editor, Card, DataGrid, Radar, Pie, Player
+
 # License: BSD 3-Clause
 # License: BSD 3-Clause
 
@@ -116,7 +119,7 @@ def get_credentials():
         "role"
     ],
   })
-  return data,xata
+  return data
 
 @st.cache_data
 def credentials_formating(credentials):
