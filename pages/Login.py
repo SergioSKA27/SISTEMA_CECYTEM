@@ -57,7 +57,7 @@ st.set_page_config(
 # Funciones
 
 
-async def get_credentials():
+def get_credentials():
     """
     The function `get_credentials` retrieves credentials data from a database using an API key and database URL.
     :return: The function `get_credentials` returns the data retrieved from the XataClient API.
@@ -192,8 +192,9 @@ background-color: #e5e5f7;
 
 # --------------------------------------------------
 # credenciales de la base de datos
-st.write(asyncio.run(get_all_data()))
-data = get_credentials()
+#st.write(asyncio.run(get_all_data()))
+data = asyncio.run(get_all_data())
+#data
 credentials = credentials_formating(data["records"])
 # credentials
 # st.session_state
