@@ -24,6 +24,8 @@ from types import SimpleNamespace
 
 
 from modules import Dashboard,Editor, Card, DataGrid, Radar, Pie, Player
+import asyncio
+import concurrent.futures
 # License: BSD 3-Clause
 
 #Sistema de Gestión y Análisis CECYTEM
@@ -124,7 +126,13 @@ def get_all_students():
         i['estatus'] = i['estatus']['current_status']
     return data
 
+async def get_all_students_async():
+    loop = asyncio.get_event_loop()
 
+    with concurrent.futures.ThreadPoolExecutor() as pool:
+        data = await loop.run_in_executor(pool, get_all_students)
+
+        return data
 
 
 # Add on_change callback
@@ -213,18 +221,22 @@ else:
                     switch_page('reportesDEO')
                 else:
                     st.warning("No tienes permisos para acceder a esta sección")
+            stdudents =asyncio.run(get_all_students_async())['records']
+            df = pd.DataFrame(stdudents)
+            del df['id'], df['xata']
+
+            active = len(df[df['estatus'] == True])
+            inactive = len(df[df['estatus'] == False])
 
             metriccols = st.columns(3)
             with metriccols[0]:
                 st.metric(label="Alumnos registrados", value=len(get_all_students()['records']), delta=1)
             with metriccols[1]:
-                st.metric(label="Alumnos activos", value=0)
+                st.metric(label="Alumnos activos", value=active)
             with metriccols[2]:
-                st.metric(label="Alumnos inactivos", value=0)
+                st.metric(label="Alumnos inactivos", value=inactive)
 
-            stdudents = get_all_students()['records']
-            df = pd.DataFrame(stdudents)
-            del df['id'], df['xata']
+
             #st.dataframe(df,use_container_width=True)
             #stdudents
 
@@ -235,7 +247,7 @@ else:
                 k = SimpleNamespace(
                     dashboard=board,
                     pie=Pie(board, 8, 0, 4, 4, minW=3, minH=4),
-                    radar=Radar(board, 0, 4, 6, 4, minW=2, minH=4),
+                    radar=Radar(board, 0, 4, 6, 7, minW=2, minH=4),
                     card=Card(board, 6, 4, 4, 4, minW=2, minH=4),
                     data_grid=DataGrid(board, 0, 0, 8, 7, minH=4),
                 )
@@ -247,8 +259,8 @@ else:
             with elements("demo"):
                 event.Hotkey("ctrl+s", sync(), bindInputs=True, overrideDefault=True)
                 piedata = [
-                    { "id": "Estudiantes Activos", "label": "Activos", "value":len(df[df['estatus'] == True]), "color": "hsl(128, 70%, 50%)" },
-                    { "id": "Estudiantes Inactivos", "label": "Inactivos", "value": len(df[df['estatus'] == False]), "color": "hsl(322, 70%, 50%)"},
+                    { "id": "Estudiantes Activos", "label": "Activos", "value":active, "color": "hsl(128, 70%, 50%)" },
+                    { "id": "Estudiantes Inactivos", "label": "Inactivos", "value": inactive, "color": "hsl(322, 70%, 50%)"},
                     ]
                 radardata =[
                     { "taste": "fruity", "chardonay": 93, "carmenere": 61, "syrah": 114 },
@@ -267,7 +279,7 @@ else:
                     ]
 
                 with k.dashboard(rowHeight=57):
-                    k.pie(json.dumps(piedata))
+                    k.pie(json.dumps(piedata),title='Alumnos Activos e Inactivos')
                     k.radar(json.dumps(radardata))
                     k.card('HI','https://www.certus.edu.pe/blog/wp-content/uploads/2020/09/que-es-data-analytics-importancia-1-1200x720.jpg')
                     k.data_grid(json.dumps(stdudents),columnas,title='Alumnos')
