@@ -23,7 +23,7 @@ from streamlit_elements import elements, sync, event
 from types import SimpleNamespace
 
 
-from modules import Dashboard,Editor, Card, DataGrid, Radar, Pie, Player
+from modules import Dashboard,Editor, Card, DataGrid, Radar, Pie, Player,Bar
 import asyncio
 import concurrent.futures
 # License: BSD 3-Clause
@@ -135,11 +135,6 @@ async def get_all_students_async():
         return data
 
 
-# Add on_change callback
-def on_change(key):
-    st.session_state.Alumnos_options = key
-    selection = st.session_state['Alumnos_options']
-    st.write(f"Selection changed to {selection}")
 
 #--------------------------------------------------
 
@@ -168,9 +163,9 @@ else:
                 menu_icon="cast", default_index=1, orientation="horizontal",
                 styles={
                     "container": {"padding": "0!important", "background-color": "#e6f2f0"},
-                    "icon": {"color": "#175947", "font-size": "20px"},
-                    "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "#FBA1A1"},
-                    "nav-link-selected": {"background-color": "#FBC5C5"},
+                    "icon": {"color": "#FFFFFF", "font-size": "20px"},
+                    "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "#4F758C"},
+                    "nav-link-selected": {"background-color": "#0F4C59"},
                 },key='menu'
             )
             if selected3 == 'Inicio':
@@ -196,9 +191,9 @@ else:
                 menu_icon="cast", default_index=0, orientation="horizontal",
                 styles={
                     "container": {"padding": "0!important", "background-color": "#e6f2f0"},
-                    "icon": {"color": "#175947", "font-size": "25px"},
-                    "nav-link": {"font-size": "20px", "text-align": "center", "margin":"0px", "--hover-color": "#FBA1A1"},
-                    "nav-link-selected": {"background-color": "#FBC5C5"},
+                    "icon": {"color": "#FFFFFF", "font-size": "25px"},
+                    "nav-link": {"font-size": "20px", "text-align": "center", "margin":"0px", "--hover-color": "#4F758C"},
+                    "nav-link-selected": {"background-color": "#0F4C59"},
                 },key='options'
             )
 
@@ -221,13 +216,16 @@ else:
                     switch_page('reportesDEO')
                 else:
                     st.warning("No tienes permisos para acceder a esta sección")
+            #-------------------------------------------------
+            #Obtener datos de la base de datos
             stdudents =asyncio.run(get_all_students_async())['records']
             df = pd.DataFrame(stdudents)
             del df['id'], df['xata']
 
             active = len(df[df['estatus'] == True])
             inactive = len(df[df['estatus'] == False])
-
+            #-------------------------------------------------
+            #Metricas
             metriccols = st.columns(3)
             with metriccols[0]:
                 st.metric(label="Alumnos registrados", value=len(get_all_students()['records']), delta=1)
@@ -239,7 +237,8 @@ else:
 
             #st.dataframe(df,use_container_width=True)
             #stdudents
-
+            #-------------------------------------------------
+            #Dashboard
             if "k" not in state:
                 board = Dashboard()
                 args = {}
@@ -250,6 +249,7 @@ else:
                     radar=Radar(board, 0, 4, 6, 7, minW=2, minH=4),
                     card=Card(board, 6, 4, 4, 4, minW=2, minH=4),
                     data_grid=DataGrid(board, 0, 0, 8, 7, minH=4),
+                    barplot=Bar(board, 0, 12, 8, 7, minH=4),
                 )
                 state.k = k
 

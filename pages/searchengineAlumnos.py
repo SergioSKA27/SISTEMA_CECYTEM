@@ -27,6 +27,8 @@ from types import SimpleNamespace
 
 
 from modules import Dashboard,Editor, Card, DataGrid, Radar, Pie, Player
+
+#--------------------------------------------------
 # License: BSD 3-Clause
 
 #Sistema de Gestión y Análisis CECYTEM
@@ -230,19 +232,35 @@ else:
 
             usrdata = get_current_user_info(st.session_state['username'])
 
-            #usrdata
-            #--------------------------------------------------
-            with open('config.yaml') as file:
-                config = yaml.load(file, Loader=SafeLoader)
 
-            authenticator = stauth.Authenticate(
-                {'usernames':credentials},
-                config['cookie']['name'],
-                config['cookie']['key'],
-                config['cookie']['expiry_days'],
-                config['preauthorized']
+            #--------------------------------------------------
+            #Navbar
+            # CSS style definitions
+            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación",st.session_state.username,"Cerrar Sesión"],
+                icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart','door-open'],
+                menu_icon="cast", default_index=1, orientation="horizontal",
+                styles={
+                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
+                    "icon": {"color": "#FFFFFF", "font-size": "20px"},
+                    "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "#4F758C"},
+                    "nav-link-selected": {"background-color": "#0F4C59"},
+                },key='menu'
             )
-            st_lottie("https://lottie.host/b7ef026c-555f-42ba-8c63-d34ab2c09d34/ZozkKz25so.json",width=300,height=200,speed=1)
+
+            if selected3 == st.session_state.username:
+                switch_page('Perfil')
+            elif selected3 == 'Inicio':
+                switch_page('Inicio')
+
+            elif selected3 == 'Cerrar Sesión':
+                st.session_state["authentication_status"] = False
+                st.session_state["username"] = None
+                st.session_state["name"] = None
+                st.session_state["role"] = None
+                st.session_state["record_id"] = None
+                switch_page('Login')
+
+            #--------------------------------------------------
             logcols = st.columns([0.2,0.6,0.2])
             with logcols[0]:
                 backpp = sac.buttons([
@@ -253,25 +271,6 @@ else:
                 if backpp == 0:
                     switch_page('AlumnosHome')
 
-            with logcols[-1]:
-                authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
-            # CSS style definitions
-            selected3 = option_menu(None, ["Inicio", "Alumnos",'Buscar Alumnos'],
-                icons=['house', 'mortarboard', 'search'],
-                menu_icon="cast", default_index=2, orientation="vertical",
-                styles={
-                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
-                    "icon": {"color": "#175947", "font-size": "25px"},
-                    "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#FBA1A1"},
-                    "nav-link-selected": {"background-color": "#FBC5C5"},
-                },key='menu'
-            )
-            if selected3 == 'Inicio':
-                switch_page('Inicio')
-            elif selected3 == 'Alumnos':
-                switch_page('AlumnosHome')
-
-            #--------------------------------------------------
 
 
             st.title('Buscador de Alumnos :mag_right:')
@@ -292,38 +291,8 @@ else:
                         switch_page('perfilAlumno')
 
 
-            if "w" not in state:
-                board = Dashboard()
-                args = {}
-                args["board"] = board
-                w = SimpleNamespace(
-                    dashboard=board,
-                    editor=Editor(board, 0, 0, 6, 11,),
-                    player=Player(board, 7, 0, 4, 10, minH=5),
-                    pie=Pie(board, 6, 0, 6, 7, minW=3, minH=4),
-                    radar=Radar(board, 12, 7, 3, 7, minW=2, minH=4),
-                    card=Card(board, 6, 7, 3, 7, minW=2, minH=4),
-                    data_grid=DataGrid(board, 6, 13, 6, 7, minH=4),
-                )
-                state.w = w
-
-                w.editor.add_tab("Card content", Card.DEFAULT_CONTENT, "plaintext")
-                w.editor.add_tab("Data grid", json.dumps(DataGrid.DEFAULT_ROWS, indent=2), "json")
-                w.editor.add_tab("Radar chart", json.dumps(Radar.DEFAULT_DATA, indent=2), "json")
-                w.editor.add_tab("Pie chart", json.dumps(Pie.DEFAULT_DATA, indent=2), "json")
-            else:
-                w = state.w
-
-            with elements("demo"):
-                event.Hotkey("ctrl+s", sync(), bindInputs=True, overrideDefault=True)
-
-                with w.dashboard(rowHeight=57):
-                    w.player()
-                    w.pie()
-                    w.radar()
-                    w.card('HI','https://www.certus.edu.pe/blog/wp-content/uploads/2020/09/que-es-data-analytics-importancia-1-1200x720.jpg')
-                    w.data_grid()
 
             #--------------------------------------------------
+            st_lottie("https://lottie.host/b7ef026c-555f-42ba-8c63-d34ab2c09d34/ZozkKz25so.json",width=300,height=200,speed=1)
     else:
         switch_page('Login')
