@@ -70,12 +70,12 @@ def get_credentials():
         {
             "columns": [
                 "id",
-                "username",
-                "email",
-                "password",
-                "avatar",
-                "name",
-                "role",
+            "username",
+            "email",
+            "password",
+            "avatar",
+            "name",
+            "role"
             ],
         },
     )
@@ -98,6 +98,8 @@ def credentials_formating(credentials):
             "password": credential["password"],
             "email": credential["email"],
             "name": credential["name"],
+            "role": credential["role"],
+            "id": credential["id"],
         }
 
     return c
@@ -279,6 +281,7 @@ with cols1[1]:
                 st.session_state["name"] = credentials[username.strip()]["name"]
                 st.session_state["username"] = username.strip()
                 st.session_state["role"] = credentials[username.strip()]["role"]
+                st.session_state["record_id"] = credentials[username.strip()]["id"]
                 switch_page("Inicio")
             else:
                 st.session_state["authentication_status"] = False

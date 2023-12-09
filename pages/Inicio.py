@@ -104,7 +104,7 @@ st.markdown("""
 #Funciones
 
 
-def get_current_user_info(usrname):
+def get_current_user_info(id):
     """
     The function `get_current_user_info` retrieves the information of the current user based on their username from a
     database.
@@ -114,8 +114,8 @@ def get_current_user_info(usrname):
     parameter.
     """
     xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-    ch = xata.data().query("Credentials",{"filter": {"username": usrname}})
-    return ch['records'][0]
+    data = xata.records().get("Credentials", id)
+    return data
 
 def get_manager():
     """
@@ -150,7 +150,10 @@ else:
             if 'ballons' not in st.session_state:
                 st.session_state['ballons'] = False
                 if datetime.datetime.now().year < 2025 or (datetime.datetime.now().month == 12 or datetime.datetime.now().month == 11):
-                    st.session_state.ballons = st.balloons()
+                    if datetime.datetime.now().month == 12:
+                        st.snow()
+                    else:
+                        st.balloons()
                 else:
                     st.session_state.ballons = False
 
@@ -162,8 +165,8 @@ else:
                 st.toast(f'Bienvenido {st.session_state["name"]}',icon='👋')
             #--------------------------------------------------
             #usrdata
-            usrdata = get_current_user_info(st.session_state['username'])
-
+            #usrdata = get_current_user_info(st.session_state['record_id'])
+            #usrdata
             #--------------------------------------------------
             #Navbar
             # CSS style definitions
@@ -193,7 +196,7 @@ else:
             sac.divider(label='',icon='house',align='center')
             if 'welcome' not in st.session_state:
                 sac.alert(message=f'Bienvenido {st.session_state.name} al Sistema de Gestion y Analisis CECYTEM',
-                description=f'Tu rol actual es {usrdata["role"]} ', banner=True, icon=True, closable=True, height=100,type='success')
+                description=f'Tu rol actual es {st.session_state["role"]} ', banner=True, icon=True, closable=True, height=100,type='success')
 
             #--------------------------------------------------
             #Dashboard de Inicio
