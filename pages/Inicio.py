@@ -175,7 +175,7 @@ else:
                 menu_icon="cast", default_index=0, orientation="horizontal",
                 styles={
                     "container": {"padding": "0!important", "background-color": "#e6f2f0"},
-                    "icon": {"color": "#FFFFFF", "font-size": "20px"},
+                    "icon": {"color": "#1B7821", "font-size": "20px"},
                     "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "#4F758C"},
                     "nav-link-selected": {"background-color": "#0F4C59"},
                 },key='menu'

@@ -149,7 +149,7 @@ selected3 = option_menu(None, ["Inicio", "Docs","Acerca de","Contacto","Login"],
     icons=['house-heart',  "filetype-doc", 'patch-question', 'person-lines-fill', 'key'],
     menu_icon="cast", default_index=0, orientation="horizontal",
     styles={
-        "container": {"padding": "0!important", "background-color": "#99B1BF00", "border-radius": "10px"},
+        "container": {"padding": "0!important", "background-color": "#99B1BF00",},
         "icon": {"color": "#011526", "font-size": "25px"},
         "nav-link": {"font-size": "25px", "text-align": "left", "margin":"0px", "--hover-color": "#4F758C"},
         "nav-link-selected": {"background-color": "#0F4C59"},

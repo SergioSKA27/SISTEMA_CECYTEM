@@ -277,16 +277,35 @@ else:
 
             #usrdata
             #--------------------------------------------------
-            with open('config.yaml') as file:
-                config = yaml.load(file, Loader=SafeLoader)
 
-            authenticator = stauth.Authenticate(
-                {'usernames':credentials},
-                config['cookie']['name'],
-                config['cookie']['key'],
-                config['cookie']['expiry_days'],
-                config['preauthorized']
+            #--------------------------------------------------
+            #Navbar
+            # CSS style definitions
+            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación",st.session_state.username,"Cerrar Sesión"],
+                icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart','door-open'],
+                menu_icon="cast", default_index=1, orientation="horizontal",
+                styles={
+                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
+                    "icon": {"color": "#1B7821", "font-size": "20px"},
+                    "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "#4F758C"},
+                    "nav-link-selected": {"background-color": "#0F4C59"},
+                },key='menu'
             )
+
+            if selected3 == st.session_state.username:
+                switch_page('Perfil')
+            elif selected3 == 'Inicio':
+                switch_page('Inicio')
+
+            elif selected3 == 'Cerrar Sesión':
+                st.session_state["authentication_status"] = False
+                st.session_state["username"] = None
+                st.session_state["name"] = None
+                st.session_state["role"] = None
+                st.session_state["record_id"] = None
+                switch_page('Login')
+
+            #--------------------------------------------------
             logcols = st.columns([0.2,0.6,0.2])
             with logcols[0]:
                 backpp = sac.buttons([
@@ -296,8 +315,8 @@ else:
 
                 if backpp == 0:
                     switch_page('searchengineAlumnos')
-            with logcols[-1]:
-                authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
+            #--------------------------------------------------
+            #Contenido de la pagina
 
             if usrdata['role'] in ['vinculacion','maestro','orientacion','admin']:
 
