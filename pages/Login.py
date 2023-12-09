@@ -47,7 +47,7 @@ from yaml.loader import SafeLoader
 # Configuracion de la pagina
 st.set_page_config(
     page_title="SISTEMA CECYTEM",
-    page_icon=":lock:",
+    page_icon='rsc/Logos/cecytem-logo.png',
     layout="wide",
     initial_sidebar_state="collapsed",
 )

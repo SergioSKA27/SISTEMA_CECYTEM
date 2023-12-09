@@ -54,7 +54,7 @@ import numpy as np
 
 
 #Configuracion de la pagina
-st.set_page_config(page_title="Inicio", page_icon=":house:", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Alumnos", page_icon="rsc/Logos/cecytem-logo.png", layout="wide", initial_sidebar_state="collapsed")
 
 st.markdown("""
 <style>
@@ -84,55 +84,6 @@ st.markdown("""
 """,unsafe_allow_html=True)
 #--------------------------------------------------
 #Funciones
-def get_credentials():
-  """
-  The function `get_credentials` retrieves credentials data from a database using an API key and database URL.
-  :return: The function `get_credentials` returns the data retrieved from the XataClient API.
-  """
-  xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-  data = xata.data().query("Credentials", {
-    "columns": [
-        "id",
-        "username",
-        "email",
-        "password",
-        "avatar",
-        "name",
-        "role"
-    ],
-  })
-  return data,xata
-
-@st.cache_data
-def credentials_formating(credentials):
-  """
-  The function `credentials_formating` takes a list of dictionaries representing credentials and returns a formatted
-  dictionary with usernames as keys and corresponding password, email, and name as values.
-
-  :param credentials: The parameter "credentials" is a list of dictionaries. Each dictionary represents a set of
-  credentials and has the following keys: 'username', 'password', 'email', and 'name'
-  :return: a dictionary where the keys are the usernames from the input credentials list, and the values are dictionaries
-  containing the password, email, and name for each username.
-  """
-  c = {}
-  for credential in credentials:
-    c[credential['username']] = {'password': credential['password'], 'email': credential['email'],'name': credential['name']}
-
-  return c
-
-
-def get_current_user_info(usrname):
-    """
-    The function `get_current_user_info` retrieves the information of the current user based on their username from a
-    database.
-
-    :param usrname: The `usrname` parameter is the username of the user whose information you want to retrieve
-    :return: The function `get_current_user_info` returns the information of the current user specified by the `usrname`
-    parameter.
-    """
-    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-    ch = xata.data().query("Credentials",{"filter": {"username": usrname}})
-    return ch['records'][0]
 
 def get_manager():
     """
@@ -171,10 +122,7 @@ def on_change(key):
     st.write(f"Selection changed to {selection}")
 
 #--------------------------------------------------
-#credenciales de la base de datos
-data,xta = get_credentials()
-#data
-credentials = credentials_formating(data['records'])
+
 cookie_manager = get_manager()
 
 
@@ -190,20 +138,8 @@ else:
 # el usuario debe estar autenticado para acceder a esta página
     if st.session_state["authentication_status"]:
 
-            usrdata = get_current_user_info(st.session_state['username'])
 
-            #usrdata
-            #--------------------------------------------------
-            with open('config.yaml') as file:
-                config = yaml.load(file, Loader=SafeLoader)
 
-            authenticator = stauth.Authenticate(
-                {'usernames':credentials},
-                config['cookie']['name'],
-                config['cookie']['key'],
-                config['cookie']['expiry_days'],
-                config['preauthorized']
-            )
            #--------------------------------------------------
             #Navbar
             # CSS style definitions
@@ -226,6 +162,8 @@ else:
                 st.session_state["authentication_status"] = False
                 st.session_state["username"] = None
                 st.session_state["name"] = None
+                st.session_state["role"] = None
+                st.session_state["record_id"] = None
                 switch_page('Login')
 
 
@@ -244,13 +182,25 @@ else:
                 },key='options'
             )
 
-            if options == "Registrar Alumno" and usrdata['role'] in ['orientacion','admin']:
-                switch_page('registroAlumno1')
-            elif options == "Buscar Alumno" and usrdata['role'] in ['orientacion','admin','vinculacion','profesor']:
-                switch_page('searchengineAlumnos')
+            if options == "Registrar Alumno" :
+                if st.session_state['role'] in ['orientacion','admin']:
+                    switch_page('registroAlumno1')
+                else:
+                    st.warning("No tienes permisos para acceder a esta sección")
 
-            elif options == "Reportes DEO" and usrdata['role'] in ['orientacion','admin','profesor']:
-                switch_page('reportesDEO')
+
+            if options == "Buscar Alumno" :
+                if st.session_state['role'] in ['orientacion','admin','vinculacion','profesor']:
+                    switch_page('searchengineAlumnos')
+                else:
+                    st.warning("No tienes permisos para acceder a esta sección")
+
+
+            if options == "Reportes DEO" :
+                if st.session_state['role'] in ['orientacion','admin','profesor']:
+                    switch_page('reportesDEO')
+                else:
+                    st.warning("No tienes permisos para acceder a esta sección")
 
             metriccols = st.columns(3)
             with metriccols[0]:

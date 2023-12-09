@@ -28,7 +28,7 @@ from types import SimpleNamespace
 
 from modules import Dashboard,Editor, Card, DataGrid, Radar, Pie, Player
 
-# License: BSD 3-Clause
+
 # License: BSD 3-Clause
 
 #Sistema de Gestión y Análisis CECYTEM
@@ -71,7 +71,7 @@ from modules import Dashboard,Editor, Card, DataGrid, Radar, Pie, Player
 
 
 #Configuracion de la pagina
-st.set_page_config(page_title="Inicio", page_icon=":house:", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Inicio", page_icon="rsc/Logos/cecytem-logo.png", layout="wide", initial_sidebar_state="collapsed")
 
 
 st.markdown("""
@@ -189,6 +189,8 @@ else:
                 st.session_state["authentication_status"] = False
                 st.session_state["username"] = None
                 st.session_state["name"] = None
+                st.session_state["role"] = None
+                st.session_state["record_id"] = None
                 switch_page('Login')
             #--------------------------------------------------
             #Contenido de la pagina
@@ -207,12 +209,12 @@ else:
                 args["board"] = board
                 w = SimpleNamespace(
                     dashboard=board,
-                    player=Player(board, 0, 0, 4, 6, minH=6),
-                    card=Card(board, 4, 0, 4, 6, minW=4, minH=6),
-                    card2=Card(board, 8, 0, 4, 6, minW=4, minH=6),
-                    card3=Card(board, 0,6, 4, 6, minW=4, minH=6),
-                    card4=Card(board, 4, 6, 4, 6, minW=4, minH=6),
-                    card5=Card(board, 8, 6, 4, 6, minW=4, minH=6),
+                    player=Player(board, 0, 0, 8, 12, minH=6),
+                    card=Card(board, 8, 0, 4, 6, minW=4, minH=6),
+                    card2=Card(board, 4, 12, 4, 6, minW=4, minH=6),
+                    card3=Card(board, 0,12, 4, 6, minW=4, minH=6),
+                    card4=Card(board, 8, 6, 4, 6, minW=4, minH=6),
+                    card5=Card(board, 8, 12, 4, 6, minW=4, minH=6),
 
                 )
                 state.w = w
