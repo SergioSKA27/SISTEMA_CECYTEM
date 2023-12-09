@@ -33,7 +33,7 @@ class DataGrid(Dashboard.Item):
         """
         print(params)
 
-    def __call__(self, json_data,colums):
+    def __call__(self, json_data,colums,title='Data grid'):
         """
         The function takes in JSON data, parses it, and displays it in a data grid with specific settings and options.
 
@@ -48,7 +48,7 @@ class DataGrid(Dashboard.Item):
         with mui.Paper(key=self._key, sx={"display": "flex", "flexDirection": "column", "borderRadius": 3, "overflow": "hidden"}, elevation=1):
             with self.title_bar(padding="10px 15px 10px 15px", dark_switcher=False):
                 mui.icon.ViewCompact()
-                mui.Typography("Data grid")
+                mui.Typography(title)
 
             with mui.Box(sx={"flex": 1, "minHeight": 0}):
                 mui.DataGrid(

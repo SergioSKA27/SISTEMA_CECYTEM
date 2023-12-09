@@ -45,7 +45,7 @@ class Radar(Dashboard.Item):
             }
         }
 
-    def __call__(self, json_data):
+    def __call__(self, json_data,title='Radar chart'):
         """
         The function takes in JSON data, parses it, and then generates a radar chart using the Nivo library.
 
@@ -60,7 +60,7 @@ class Radar(Dashboard.Item):
         with mui.Paper(key=self._key, sx={"display": "flex", "flexDirection": "column", "borderRadius": 3, "overflow": "hidden"}, elevation=1):
             with self.title_bar():
                 mui.icon.Radar()
-                mui.Typography("Radar chart", sx={"flex": 1})
+                mui.Typography(title, sx={"flex": 1})
 
             with mui.Box(sx={"flex": 1, "minHeight": 0}):
                 nivo.Radar(

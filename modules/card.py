@@ -11,7 +11,7 @@ class Card(Dashboard.Item):
         "if you like."
     )
 
-    def __call__(self, content,img):
+    def __call__(self, content,img,title='Card',subheader='September 14, 2016',avatar=mui.Avatar("R", sx={"bgcolor": "red"})):
         """
         The function creates a card component with a title, subheader, image, content, and action buttons.
 
@@ -20,9 +20,9 @@ class Card(Dashboard.Item):
         """
         with mui.Card(key=self._key, sx={"display": "flex", "flexDirection": "column", "borderRadius": 3, "overflow": "hidden"}, elevation=1):
             mui.CardHeader(
-                title="Shrimp and Chorizo Paella",
-                subheader="September 14, 2016",
-                avatar=mui.Avatar("R", sx={"bgcolor": "red"}),
+                title=title,
+                subheader=subheader,
+                avatar=avatar,
                 action=mui.IconButton(mui.icon.MoreVert),
                 className=self._draggable_class,
             )

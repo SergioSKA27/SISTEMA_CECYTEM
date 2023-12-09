@@ -247,8 +247,8 @@ else:
             with elements("demo"):
                 event.Hotkey("ctrl+s", sync(), bindInputs=True, overrideDefault=True)
                 piedata = [
-                    { "id": "Activo", "label": "Estudiantes Activos", "value":len(df[df['estatus'] == True]), "color": "hsl(128, 70%, 50%)" },
-                    { "id": "Inactivo", "label": "Estudiantes Inactivos", "value": len(df[df['estatus'] == False]), "color": "hsl(322, 70%, 50%)"},
+                    { "id": "Estudiantes Activos", "label": "Activos", "value":len(df[df['estatus'] == True]), "color": "hsl(128, 70%, 50%)" },
+                    { "id": "Estudiantes Inactivos", "label": "Inactivos", "value": len(df[df['estatus'] == False]), "color": "hsl(322, 70%, 50%)"},
                     ]
                 radardata =[
                     { "taste": "fruity", "chardonay": 93, "carmenere": 61, "syrah": 114 },
@@ -270,5 +270,5 @@ else:
                     k.pie(json.dumps(piedata))
                     k.radar(json.dumps(radardata))
                     k.card('HI','https://www.certus.edu.pe/blog/wp-content/uploads/2020/09/que-es-data-analytics-importancia-1-1200x720.jpg')
-                    k.data_grid(json.dumps(stdudents),columnas)
+                    k.data_grid(json.dumps(stdudents),columnas,title='Alumnos')
 

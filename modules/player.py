@@ -21,11 +21,11 @@ class Player(Dashboard.Item):
         """
         self._url = event.target.value
 
-    def __call__(self, urlset=None,desc=None):
+    def __call__(self, urlset=None,desc=None,title='Media player'):
         with mui.Paper(key=self._key, sx={"display": "flex", "flexDirection": "column", "borderRadius": 3, "overflow": "hidden"}, elevation=1):
             with self.title_bar(padding="10px 15px 10px 15px", dark_switcher=False):
                 mui.icon.OndemandVideo()
-                mui.Typography("Media player")
+                mui.Typography(title)
             if urlset:
                 self._url = urlset
                 if desc and  desc != '':
