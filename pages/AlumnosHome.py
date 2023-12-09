@@ -13,7 +13,17 @@ from streamlit_lottie import st_lottie
 import datetime
 import pandas as pd
 import numpy as np
+from streamlit_elements import elements, mui, html
+from streamlit_elements import elements, sync, event
+import json
 
+from pathlib import Path
+from streamlit import session_state as state
+from streamlit_elements import elements, sync, event
+from types import SimpleNamespace
+
+
+from modules import Dashboard,Editor, Card, DataGrid, Radar, Pie, Player
 # License: BSD 3-Clause
 
 #Sistema de Gestión y Análisis CECYTEM
@@ -105,11 +115,13 @@ def get_all_students():
                 "carreraAlumno",
                 "plantelAlumno",
                 "idcontrol",
-                "curp.curp"
+                "curp.curp",
+                "estatus.current_status",
             ]
     })
     for i in data['records']:
         i['curp'] = i['curp']['curp']
+        i['estatus'] = i['estatus']['current_status']
     return data
 
 
@@ -213,5 +225,50 @@ else:
             stdudents = get_all_students()['records']
             df = pd.DataFrame(stdudents)
             del df['id'], df['xata']
-            st.dataframe(df,use_container_width=True)
+            #st.dataframe(df,use_container_width=True)
+            #stdudents
+
+            if "k" not in state:
+                board = Dashboard()
+                args = {}
+                args["board"] = board
+                k = SimpleNamespace(
+                    dashboard=board,
+                    pie=Pie(board, 8, 0, 4, 4, minW=3, minH=4),
+                    radar=Radar(board, 0, 4, 6, 4, minW=2, minH=4),
+                    card=Card(board, 6, 4, 4, 4, minW=2, minH=4),
+                    data_grid=DataGrid(board, 0, 0, 8, 7, minH=4),
+                )
+                state.k = k
+
+            else:
+                k = state.k
+
+            with elements("demo"):
+                event.Hotkey("ctrl+s", sync(), bindInputs=True, overrideDefault=True)
+                piedata = [
+                    { "id": "Activo", "label": "Estudiantes Activos", "value":len(df[df['estatus'] == True]), "color": "hsl(128, 70%, 50%)" },
+                    { "id": "Inactivo", "label": "Estudiantes Inactivos", "value": len(df[df['estatus'] == False]), "color": "hsl(322, 70%, 50%)"},
+                    ]
+                radardata =[
+                    { "taste": "fruity", "chardonay": 93, "carmenere": 61, "syrah": 114 },
+                    { "taste": "bitter", "chardonay": 91, "carmenere": 37, "syrah": 72 },
+                    { "taste": "heavy", "chardonay": 56, "carmenere": 95, "syrah": 99 },
+                    { "taste": "strong", "chardonay": 64, "carmenere": 90, "syrah": 30 },
+                    { "taste": "sunny", "chardonay": 119, "carmenere": 94, "syrah": 103 },
+                    ]
+
+                columnas = [
+                    { "field": 'idcontrol', "headerName": 'ID', "width": 90 },
+                    { "field": 'plantelAlumno', "headerName": 'PLANTEL', "width": 200, "editable": False, },
+                    { "field": 'carreraAlumno', "headerName": 'CARRERA', "width": 250, "editable": False, },
+                    { "field": 'curp', "headerName": 'CURP',  "width": 200, "editable": False, },
+                    { "field": 'estatus', "headerName": 'ESTATUS', "width": 90, "editable": False, "type": "boolean"},
+                    ]
+
+                with k.dashboard(rowHeight=57):
+                    k.pie(json.dumps(piedata))
+                    k.radar(json.dumps(radardata))
+                    k.card('HI','https://www.certus.edu.pe/blog/wp-content/uploads/2020/09/que-es-data-analytics-importancia-1-1200x720.jpg')
+                    k.data_grid(json.dumps(stdudents),columnas)
 
