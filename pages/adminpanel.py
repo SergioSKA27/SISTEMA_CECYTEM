@@ -166,7 +166,7 @@ else:
          # CSS style definitions
         selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación",st.session_state.username,"Cerrar Sesión"],
                icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart','door-open'],
-               menu_icon="cast", default_index=1, orientation="horizontal",
+               menu_icon="cast", default_index=5, orientation="horizontal",
                styles={
                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
                    "icon": {"color": "#1B7821", "font-size": "20px"},
@@ -176,8 +176,6 @@ else:
            )
         if selected3 == 'Inicio':
             switch_page('Inicio')
-        elif selected3 == st.session_state.username:
-            switch_page('Perfil')
         elif selected3 == 'Cerrar Sesión':
             st.session_state["authentication_status"] = False
             st.session_state["username"] = None
@@ -185,43 +183,48 @@ else:
             st.session_state["role"] = None
             st.session_state["record_id"] = None
             switch_page('Login')
+        elif selected3 == 'Alumnos':
+            switch_page('AlumnosHome')
 
+
+        logcols = st.columns([0.2,0.6,0.2])
+        with logcols[0]:
+            backpp = sac.buttons([sac.ButtonsItem(label='REGRESAR',icon='skip-backward-btn')],
+            position='left', format_func='upper', align='center', size='large',shape='round', return_index=True,index=1)
+
+            if backpp == 0:
+                switch_page('perfil')
         #-------------------------------------------------
 
         if st.session_state['role'] == 'admin':
-            data = asyncio.run(query_users_async())
-            #--------------------------------------------------
-            #Opciones de Administrador
-            st.divider()
-            st.subheader('Opciones de Administrador')
-            colsop = st.columns(5)
-            with colsop[0]:
-                if st.button('Registra un usuario'):
-                    switch_page('user_register')
+            data = pd.DataFrame(asyncio.run(query_users_async()))
+            del data['xata']
 
-            with colsop[1]:
-                if st.button('Elimina un usuario'):
-                    pass
-
-            with colsop[2]:
-                if st.button('Edita un usuario'):
-                    pass
-
-            with colsop[3]:
-                if st.button('Genera reporte'):
-                    pass
-            with colsop[4]:
-                if st.button('Opciones de la pagina'):
-                    pass
-            st.divider()
         #Cuerpo de la pagina
             st.title('Panel de Administrador')
-            st.divider()
+            sac.divider(label='',icon='house-gear-fill',align='center',)
             #--------------------------------------------------
             #Administrar Usuarios
             st.header('Administrar Usuarios')
-            st.dataframe(pd.DataFrame(data),use_container_width=True,
-            column_config={'avatar': st.column_config.ImageColumn( "Preview Image",
+            #--------------------------------------------------
+            #Opciones de Administrador
+            ind = 0
+            options = option_menu(None, ['',"Registrar Usuario","Eliminar Usuario","Editar Usuario",],
+                icons=['house-gear-fill','person-plus', 'person-dash', "person-gear"],
+                menu_icon="cast", default_index=ind, orientation="horizontal",
+                styles={
+                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
+                    "icon": {"color": "#2DDA75", "font-size": "25px"},
+                    "nav-link": {"font-size": "20px", "text-align": "center", "margin":"0px", "--hover-color": "#4F758C"},
+                    "nav-link-selected": {"background-color": "#0F4C59"},
+                },key='options'
+            )
+
+            if options == 'Registrar Usuario':
+                switch_page('user_register')
+
+            st.dataframe(data,use_container_width=True,
+            column_config={'avatar': st.column_config.ImageColumn( "Avatar",
             help="Streamlit app preview screenshots") },hide_index=True)
 
 
@@ -275,7 +278,8 @@ else:
             st.subheader('Contacta al administrador para obtener permisos')
             st.image('https://media.giphy.com/media/3o7aDczQq9MJ0R2MlO/giphy.gif',use_column_width=True)
             st.balloons()
-
+    else:
+        switch_page('Main')
 #Para ver estadisticas de la pagin usa '?analytics=on' en la url
 
 

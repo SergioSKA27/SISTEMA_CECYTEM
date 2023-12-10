@@ -48,7 +48,7 @@ st.set_page_config(page_title="Login", page_icon=":lock:", layout="wide", initia
 #Funciones
 
 
-@st.cache_data
+
 def verificar_contrasena(contrasena: str)->(bool, int):
     """
     The function `verificar_contrasena` checks the security level of a password based on various criteria and returns a
@@ -81,7 +81,6 @@ def verificar_contrasena(contrasena: str)->(bool, int):
 
     return es_valida, seguridad
 
-@st.cache_data
 def validar_correo(correo: str)->bool:
     """
     The function `validar_correo` uses regular expressions to validate an email address.
@@ -100,7 +99,7 @@ def validar_correo(correo: str)->bool:
     else:
         return False
 
-@st.cache_data
+
 def validar_nombre_usuario(nombre_usuario: str)->bool:
     """
     The function `validar_nombre_usuario` uses regular expressions to validate a username, ensuring it contains only letters
@@ -123,7 +122,6 @@ def validar_nombre_usuario(nombre_usuario: str)->bool:
     else:
         return False
 
-@st.cache_data
 def verifydata(data: dict)->bool:
     """
     The function `verifydata` checks if the given data dictionary contains valid values for username, password, email, and
@@ -150,24 +148,6 @@ def verifydata(data: dict)->bool:
 
     return flag
 
-
-def credentials_formating(credentials: list)->dict:
-  """
-  The function `credentials_formating` takes a list of dictionaries representing credentials and returns a formatted
-  dictionary with usernames as keys and corresponding password, email, and name as values.
-
-  :param credentials: The parameter "credentials" is a list of dictionaries. Each dictionary represents a set of
-  credentials and has the following keys: 'username', 'password', 'email', and 'name'
-  :return: a dictionary where the keys are the usernames from the input credentials list, and the values are dictionaries
-  containing the password, email, and name for each username.
-  """
-  c = {}
-  for credential in credentials:
-    c[credential['username']] = {'password': credential['password'], 'email': credential['email'],'name': credential['name']}
-
-  return c
-
-
 def check_availability(usrname: str)->bool:
     """
     The function `check_availability` checks if the username entered by the user is available.
@@ -180,19 +160,6 @@ def check_availability(usrname: str)->bool:
         return False
     else:
         return True
-
-def get_current_user_info(usrname: str)->dict:
-    """
-    The function `get_current_user_info` retrieves the information of the current user based on their username from a
-    database.
-
-    :param usrname: The `usrname` parameter is the username of the user whose information you want to retrieve
-    :return: The function `get_current_user_info` returns the information of the current user specified by the `usrname`
-    parameter.
-    """
-    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-    ch = xata.data().query("Credentials",{"filter": {"username": usrname}})
-    return ch['records'][0]
 
 def register_user(data: dict)->bool:
     """
@@ -210,7 +177,7 @@ def register_user(data: dict)->bool:
     data = xata.records().insert("Credentials", {
         "username": data['username'],
         "email": data['email'],
-        "password": bcrypt.hashpw(data['password'], bcrypt.gensalt()).decode(),
+        "password": bcrypt.hashpw(data['password'].encode(), bcrypt.gensalt()).decode(),
         "avatar": {
                     "base64Content":data['avatar'],
                     "enablePublicUrl": True,
@@ -221,75 +188,10 @@ def register_user(data: dict)->bool:
         "name": data['name'],
         "role": data['role']})
 
-    #verf = xata.data().query("Credentials",{"filter": {"username": data['username']}})
-
-
-    return True, data
-
-
-def get_credentials()->dict:
-  """
-  The function `get_credentials` retrieves credentials data from a database using an API key and database URL.
-  :return: The function `get_credentials` returns the data retrieved from the XataClient API.
-  """
-  xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-  data = xata.data().query("Credentials", {
-    "columns": [
-        "id",
-        "username",
-        "email",
-        "password",
-        "avatar",
-        "name",
-        "role"
-    ],
-  })
-  return data
 
 
 
-# Add on_change callback
-def on_change(key):
-    selection = st.session_state[key]
-    st.write(f"Selection changed to {selection}")
-
-#--------------------------------------------------
-#Variables de Session
-
-if 'usrname' not in st.session_state:
-    st.session_state.usrname = ''
-
-if 'correo' not in st.session_state:
-    st.session_state.correo = ''
-
-if 'name' not in st.session_state:
-    st.session_state.name = ''
-
-if 'password' not in st.session_state:
-    st.session_state.password = ''
-
-if 'reppas' not in st.session_state:
-    st.session_state.reppas = ''
-
-if 'avatar' not in st.session_state:
-    st.session_state.avatar = ''
-
-if 'datareg' not in st.session_state:
-    st.session_state.datareg = None
-
-if 'rol' not in st.session_state:
-    st.session_state.rol = 'basic_user'
-
-#--------------------------------------------------
-#Credenciales de la base de datos
-
-data = get_credentials()
-credentials = credentials_formating(data['records'])
-
-
-#--------------------------------------------------
-#Pagina
-
+    return data
 
 
 #--------------------------------------------------
@@ -299,92 +201,98 @@ if "authentication_status" not in st.session_state  :
 else:
 # el usuario debe estar autenticado para acceder a esta página
     if st.session_state["authentication_status"]:
-        usrdata = get_current_user_info(st.session_state['username'])
 
 
 
+#--------------------------------------------------
+        #Navbar
+         # CSS style definitions
+        selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación",st.session_state.username,"Cerrar Sesión"],
+               icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart','door-open'],
+               menu_icon="cast", default_index=5, orientation="horizontal",
+               styles={
+                   "container": {"padding": "0!important", "background-color": "#e6f2f0"},
+                   "icon": {"color": "#1B7821", "font-size": "20px"},
+                   "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "#4F758C"},
+                   "nav-link-selected": {"background-color": "#0F4C59"},
+               },key='menu'
+           )
+        if selected3 == 'Inicio':
+            switch_page('Inicio')
+        elif selected3 == 'Cerrar Sesión':
+            st.session_state["authentication_status"] = False
+            st.session_state["username"] = None
+            st.session_state["name"] = None
+            st.session_state["role"] = None
+            st.session_state["record_id"] = None
+            switch_page('Login')
+        elif selected3 == 'Alumnos':
+            switch_page('AlumnosHome')
 
-            # Menu de navegacion
-        selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores", 'Perfil'],
-            icons=['house', 'cloud-upload', "list-task", 'gear'],
-                menu_icon="cast", default_index=0, orientation="horizontal",
-                styles={
-                    "container": {"padding": "0!important", "background-color": "#fafafa"},
-                    "icon": {"color": "orange", "font-size": "25px"},
-                    "nav-link": {"font-size": "25px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
-                    "nav-link-selected": {"background-color": "green"},
-                },on_change=on_change,key='menu'
-            )
 
+        logcols = st.columns([0.2,0.6,0.2])
+        with logcols[0]:
+            backpp = sac.buttons([sac.ButtonsItem(label='REGRESAR',icon='skip-backward-btn')],
+            position='left', format_func='upper', align='center', size='large',shape='round', return_index=True,index=1)
 
+            if backpp == 0:
+                switch_page('adminpanel')
 
-
-            #usrdata
-        #--------------------------------------------------
-        with open('config.yaml') as file:
-            config = yaml.load(file, Loader=SafeLoader)
-
-        authenticator = stauth.Authenticate(
-                {'usernames':credentials},
-                config['cookie']['name'],
-                config['cookie']['key'],
-                config['cookie']['expiry_days'],
-                config['preauthorized']
-            )
-
-        authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
-
-        if usrdata['role'] == 'admin':
+        if st.session_state['role'] == 'admin':
 
             st.title('Registro de usuario')
-            st.divider()
+            sac.divider(label='',icon='person-plus',align='center')
+            flag_Reg = True
 
 
-
+            #--------------------------------------------------
             #Nombre de usuario
-            usern = st.text_input('Nombre de usuario*',
-help='Este nombre de usuario sera el que se utilizara para iniciar sesion, usa minuculas y no uses espacios ni caracteres especiales',
-placeholder='Ejemplo: usuario123',value=st.session_state.usrname)
+            usern = st.text_input('Nombre de usuario*',placeholder='Ejemplo: usuario123',value='',
+            help='Este nombre de usuario sera el que se utilizara para iniciar sesion, usa minuculas y no uses espacios ni caracteres especiales')
 
-            if usern != '':
-                st.session_state.usrname = usern.strip().lower()
 
             #Verificar disponibilidad del nombre de usuario
             if check_availability(usern.strip().lower()) == False and usern != '':
                 st.error('Este nombre de usuario ya esta en uso')
+                flag_Reg = False
 
             #Verificar que el nombre de usuario sea valido
             if not validar_nombre_usuario(usern.strip().lower()) and usern != '':
                 st.error('El nombre de usuario no es valido')
+                flag_Reg = False
 
+            #--------------------------------------------------
             #Correo electronico
-            email = st.text_input('Correo electronico*',placeholder="",value=st.session_state.correo)
+            email = st.text_input('Correo electronico*',placeholder='Ejemplo: alguien@example.com',value='',
+            help='Ingresa un correo electronico valido')
 
-            if email != '':
-                st.session_state.correo = email.strip()
 
             #Verificar que el correo electronico sea valido
-            if not validar_correo(email) and email != '':
+            if not validar_correo(email.strip()) and email != '':
                 st.error('El correo electronico no es valido')
+                flag_Reg = False
 
+            #--------------------------------------------------
             #Nombre completo
-            nombre = st.text_input('Nombre completo*',help='Escribe tu nombre completo',value=st.session_state.name)
+            nombre = st.text_input('Nombre completo*',help='Escribe tu nombre completo',value='',placeholder='Ejemplo: Juan Perez')
 
+            #--------------------------------------------------
             #Contraseña
-            password = st.text_input('Contraseña*',type='password',help='La contraseña debe tener al menos 8 caracteres y no debe contener espacios',value=st.session_state.password)
+            password = st.text_input('Contraseña*',type='password',value='',
+            help='La contraseña debe tener al menos 8 caracteres y no debe contener espacios')
 
-            if password != '':
-                st.session_state.password = password.strip()
 
-            reppas = st.text_input('Repite tu contraseña*',type='password',value=st.session_state.reppas)
+            #Verificar que la contraseña sea valida
+            reppas = st.text_input('Repite tu contraseña*',type='password',value='',
+            help='Repite la contraseña para verificar que sea correcta')
 
-            if reppas != '':
-                st.session_state.reppas = reppas.strip()
 
-            if (password != '' and reppas != '') and password == reppas:
-                val, score = verificar_contrasena(password)
+
+            if (password.strip() != '' and reppas.strip() != '') and password.strip() == reppas.strip():
+                val, score = verificar_contrasena(password.strip())
                 if val == False:
                     st.error('La contraseña no es valida')
+                    flag_Reg = False
                 else:
                     st.success('La contraseña es valida')
                     if score <= 2:
@@ -393,34 +301,39 @@ placeholder='Ejemplo: usuario123',value=st.session_state.usrname)
                         st.info('La contraseña es regular')
                     else:
                         st.success('La contraseña es fuerte')
+            elif password.strip() != reppas.strip() and password.strip() != '' and reppas.strip() != '':
+                st.error('Las contraseñas no coinciden')
+                flag_Reg = False
 
 
-
+            #--------------------------------------------------
             #Imagen de perfil
 
             avatar = st.file_uploader('Imagen de perfil',type=['png','jpg','jpeg'])
             #Verificar que la imagen de perfil sea valida
             if avatar is not None:
-                st.image(avatar,width=200)
-                avatar = base64.b64encode(avatar.read()).decode()
-                st.session_state.avatar = avatar
+                try:
+                    st.image(avatar,width=200)
+                    _avatar = base64.b64encode(avatar.read()).decode()
+                except:
+                    st.error('No se pudo cargar la imagen o el formato no es valido')
+                    flag_Reg = False
             else:
-                avatar = base64.b64encode(open('rsc/avatars/PG.png','rb').read()).decode()
+                _avatar = base64.b64encode(open('rsc/avatars/PG.png','rb').read()).decode()
                 st.image(open('rsc/avatars/PG.png','rb').read(),width=200)
-                st.session_state.avatar = avatar
+
 
 
 
             #Rol
             rol = st.selectbox('Rol',['basic_user','vinculacion','maestro','orientacion','admin'], placeholder='Rol del usuario',index=0)
 
-            st.session_state.rol = rol
 
 
             d = {'username': usern.strip().lower(),
                 'email': email.strip(),
                 'password': password.strip(),
-                'avatar': avatar,
+                'avatar': _avatar,
                 'name': nombre,
                 'role': rol}
 
@@ -429,33 +342,25 @@ placeholder='Ejemplo: usuario123',value=st.session_state.usrname)
 
             if st.button('Registrar'):
 
-                if usern == '' or email == '' or nombre == '' or password == '' or reppas == '':
-                    st.error('Por favor, llena todos los campos')
+                if flag_Reg == False:
+                    st.error('Verifica que los datos sean correctos')
                 else:
                     if verifydata(d):
                         with st.spinner('Registrando usuario...'):
                             reg = register_user(d)
-                        st.subheader('Informacion del registro')
                         st.json(reg)
-                        if reg[0]:
-                            st.success('Usuario registrado correctamente')
-                            st.session_state.datareg = d
-                            st.session_state.usrname = ''
-                            st.session_state.correo = ''
-                            st.session_state.name = ''
-                            st.session_state.password = ''
-                            st.session_state.reppas = ''
-                            st.session_state.avatar = ''
-                            st.session_state.rol = 'basic_user'
+                        if 'message' in reg:
+                            st.error('Ocurrio un error al registrar el usuario')
                         else:
-                            st.error('No se pudo registrar el usuario intentelo de nuevo')
+                            st.success('Usuario registrado correctamente')
+                            st.balloons()
 
         else:
             st.error('No tienes permisos para acceder a esta pagina')
             switch_page('Inicio')
 
+    else:
+        switch_page('Login')
 
 
 
-
-st.session_state
