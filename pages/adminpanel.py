@@ -11,6 +11,43 @@ import random
 import pandas as pd
 import streamlit_analytics
 from streamlit_option_menu import option_menu
+import asyncio
+import concurrent.futures
+import requests
+
+# License: BSD 3-Clause
+
+#Sistema de Gestión y Análisis CECYTEM
+
+#Copyright (c) 2023 Sergio Demis Lopez Martinez
+
+#Redistribution and use in source and binary forms, with or without
+#modification, are permitted provided that the following conditions are met:
+
+#1. Redistributions of source code must retain the above copyright notice,
+#   this list of conditions and the following disclaimer.
+
+#2. Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+
+#3. Neither the name of the copyright holder nor the names of its
+#   contributors may be used to endorse or promote products derived from
+#   this software without specific prior written permission.
+
+#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+#AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+#IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+#DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+#FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+#DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+#SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+#CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+#OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+#OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
 
 #Configuracion de la pagina
 st.set_page_config(page_title="Admin", page_icon=":shield:", layout="wide", initial_sidebar_state="collapsed")
@@ -19,37 +56,6 @@ st.set_page_config(page_title="Admin", page_icon=":shield:", layout="wide", init
 
 #--------------------------------------------------
 #Funciones
-def get_credentials()->dict:
-  """
-  The function `get_credentials` retrieves credentials data from a database using an API key and database URL.
-  :return: The function `get_credentials` returns the data retrieved from the XataClient API.
-  """
-  xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-  data = xata.data().query("Credentials", {
-    "columns": [
-        "id",
-        "username",
-        "email",
-        "password",
-        "avatar",
-        "name",
-        "role"
-    ],
-  })
-  return data
-
-def get_current_user_info(usrname: str)->dict:
-    """
-    The function `get_current_user_info` retrieves the information of the current user based on their username from a
-    database.
-
-    :param usrname: The `usrname` parameter is the username of the user whose information you want to retrieve
-    :return: The function `get_current_user_info` returns the information of the current user specified by the `usrname`
-    parameter.
-    """
-    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-    ch = xata.data().query("Credentials",{"filter": {"username": usrname}})
-    return ch['records'][0]
 
 def query_users()->dict:
     """
@@ -70,7 +76,10 @@ def query_users()->dict:
             "role"
         ]
     })
-    return data['records']
+    d = data['records']
+    for record in d:
+        record['avatar'] = record['avatar']['url']
+    return d
 
 def random_color()->str:
     """
@@ -124,39 +133,18 @@ def graph_agr():
     return_value = agraph(nodes=nodes, edges=edges, config=config)
     return return_value
 
-# Add on_change callback
-def on_change(key):
-    selection = st.session_state[key]
-    st.write(f"Selection changed to {selection}")
 
+async def query_users_async():
+    """
+    The function `query_users_async` uses asyncio to run the `query_users` function in a separate thread and returns the
+    result.
+    :return: The function `query_users_async` is returning the data returned by the `query_users` function.
+    """
+    loop = asyncio.get_event_loop()
 
-@st.cache_data
-def credentials_formating(credentials: list)->dict:
-  """
-  The function `credentials_formating` takes a list of dictionaries representing credentials and returns a formatted
-  dictionary with usernames as keys and corresponding password, email, and name as values.
-
-  :param credentials: The parameter "credentials" is a list of dictionaries. Each dictionary represents a set of
-  credentials and has the following keys: 'username', 'password', 'email', and 'name'
-  :return: a dictionary where the keys are the usernames from the input credentials list, and the values are dictionaries
-  containing the password, email, and name for each username.
-  """
-  c = {}
-  for credential in credentials:
-    c[credential['username']] = {'password': credential['password'], 'email': credential['email'],'name': credential['name']}
-
-  return c
-
-
-
-
-
-#--------------------------------------------------
-#Credenciales de la base de datos
-
-data = get_credentials()
-credentials = credentials_formating(data['records'])
-
+    with concurrent.futures.ThreadPoolExecutor() as pool:
+        data = await loop.run_in_executor(pool, query_users)
+        return data
 
 
 
@@ -169,44 +157,39 @@ if "authentication_status" not in st.session_state  :
 else:
 # el usuario debe estar autenticado para acceder a esta página
     if st.session_state["authentication_status"]:
-        usrdata = get_current_user_info(st.session_state['username'])
+        #st.session_state = get_current_user_info(st.session_state['username'])
 
 
 
-
-            # Menu de navegacion
-        selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores", 'Perfil'],
-            icons=['house', 'cloud-upload', "list-task", 'gear'],
-                menu_icon="cast", default_index=0, orientation="horizontal",
-                styles={
-                    "container": {"padding": "0!important", "background-color": "#fafafa"},
-                    "icon": {"color": "orange", "font-size": "25px"},
-                    "nav-link": {"font-size": "25px", "text-align": "left", "margin":"0px", "--hover-color": "#eee"},
-                    "nav-link-selected": {"background-color": "green"},
-                },on_change=on_change,key='menu'
-            )
-
-
-
-
-            #usrdata
         #--------------------------------------------------
-        with open('config.yaml') as file:
-            config = yaml.load(file, Loader=SafeLoader)
+        #Navbar
+         # CSS style definitions
+        selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación",st.session_state.username,"Cerrar Sesión"],
+               icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart','door-open'],
+               menu_icon="cast", default_index=1, orientation="horizontal",
+               styles={
+                   "container": {"padding": "0!important", "background-color": "#e6f2f0"},
+                   "icon": {"color": "#1B7821", "font-size": "20px"},
+                   "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "#4F758C"},
+                   "nav-link-selected": {"background-color": "#0F4C59"},
+               },key='menu'
+           )
+        if selected3 == 'Inicio':
+            switch_page('Inicio')
+        elif selected3 == st.session_state.username:
+            switch_page('Perfil')
+        elif selected3 == 'Cerrar Sesión':
+            st.session_state["authentication_status"] = False
+            st.session_state["username"] = None
+            st.session_state["name"] = None
+            st.session_state["role"] = None
+            st.session_state["record_id"] = None
+            switch_page('Login')
 
-        authenticator = stauth.Authenticate(
-                {'usernames':credentials},
-                config['cookie']['name'],
-                config['cookie']['key'],
-                config['cookie']['expiry_days'],
-                config['preauthorized']
-            )
+        #-------------------------------------------------
 
-        authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
-
-        if usrdata['role'] == 'admin':
-            data = query_users()
-            #data
+        if st.session_state['role'] == 'admin':
+            data = asyncio.run(query_users_async())
             #--------------------------------------------------
             #Opciones de Administrador
             st.divider()
@@ -237,7 +220,10 @@ else:
             #--------------------------------------------------
             #Administrar Usuarios
             st.header('Administrar Usuarios')
-            st.dataframe(pd.DataFrame(data))
+            st.dataframe(pd.DataFrame(data),use_container_width=True,
+            column_config={'avatar': st.column_config.ImageColumn( "Preview Image",
+            help="Streamlit app preview screenshots") },hide_index=True)
+
 
 
             #--------------------------------------------------
