@@ -80,54 +80,6 @@ st.markdown("""
 
 #--------------------------------------------------
 #Funciones
-def get_credentials():
-  """
-  The function `get_credentials` retrieves credentials data from a database using an API key and database URL.
-  :return: The function `get_credentials` returns the data retrieved from the XataClient API.
-  """
-  xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-  data = xata.data().query("Credentials", {
-    "columns": [
-        "id",
-        "username",
-        "email",
-        "password",
-        "avatar",
-        "name",
-        "role"
-    ],
-  })
-  return data,xata
-
-@st.cache_data
-def credentials_formating(credentials):
-  """
-  The function `credentials_formating` takes a list of dictionaries representing credentials and returns a formatted
-  dictionary with usernames as keys and corresponding password, email, and name as values.
-
-  :param credentials: The parameter "credentials" is a list of dictionaries. Each dictionary represents a set of
-  credentials and has the following keys: 'username', 'password', 'email', and 'name'
-  :return: a dictionary where the keys are the usernames from the input credentials list, and the values are dictionaries
-  containing the password, email, and name for each username.
-  """
-  c = {}
-  for credential in credentials:
-    c[credential['username']] = {'password': credential['password'], 'email': credential['email'],'name': credential['name']}
-
-  return c
-
-def get_current_user_info(usrname):
-    """
-    The function `get_current_user_info` retrieves the information of the current user based on their username from a
-    database.
-
-    :param usrname: The `usrname` parameter is the username of the user whose information you want to retrieve
-    :return: The function `get_current_user_info` returns the information of the current user specified by the `usrname`
-    parameter.
-    """
-    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-    ch = xata.data().query("Credentials",{"filter": {"username": usrname}})
-    return ch['records'][0]
 
 def get_manager():
     """
@@ -176,17 +128,9 @@ def reg_calificacion(id_alumno,calificacion,asignatura,grupo,semestre,evaluacion
     "num_control": id_alumno
     })
 
-# Add on_change callback
-def on_change(key):
-    st.session_state.Alumnos_options = key
-    selection = st.session_state['Alumnos_options']
-    st.write(f"Selection changed to {selection}")
-
 #--------------------------------------------------
 #credenciales de la base de datos
-data,xta = get_credentials()
-#data
-credentials = credentials_formating(data['records'])
+
 cookie_manager = get_manager()
 
 
@@ -201,21 +145,38 @@ else:
 # el usuario debe estar autenticado para acceder a esta página
     if st.session_state["authentication_status"]:
 
-            usrdata = get_current_user_info(st.session_state['username'])
+            #usrdata = get_current_user_info(st.session_state['username'])
 
-            #usrdata
-            #--------------------------------------------------
-            with open('config.yaml') as file:
-                config = yaml.load(file, Loader=SafeLoader)
 
-            authenticator = stauth.Authenticate(
-                {'usernames':credentials},
-                config['cookie']['name'],
-                config['cookie']['key'],
-                config['cookie']['expiry_days'],
-                config['preauthorized']
+
+
+
+           #--------------------------------------------------
+            #Navbar
+            # CSS style definitions
+            selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación",st.session_state.username,"Cerrar Sesión"],
+                icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart','door-open'],
+                menu_icon="cast", default_index=1, orientation="horizontal",
+                styles={
+                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
+                    "icon": {"color": "#1B7821", "font-size": "20px"},
+                    "nav-link": {"font-size": "15px", "text-align": "left", "margin":"0px", "--hover-color": "#4F758C"},
+                    "nav-link-selected": {"background-color": "#0F4C59"},
+                },key='menu'
             )
-            st_lottie("https://lottie.host/b7ef026c-555f-42ba-8c63-d34ab2c09d34/ZozkKz25so.json",width=300,height=200,speed=1)
+            if selected3 == 'Inicio':
+                switch_page('Inicio')
+            elif selected3 == st.session_state.username:
+                switch_page('Perfil')
+
+            elif selected3 == 'Cerrar Sesión':
+                st.session_state["authentication_status"] = False
+                st.session_state["username"] = None
+                st.session_state["name"] = None
+                st.session_state["role"] = None
+                st.session_state["record_id"] = None
+                switch_page('Login')
+
             logcols = st.columns([0.2,0.6,0.2])
             with logcols[0]:
                 backpp = sac.buttons([
@@ -225,24 +186,6 @@ else:
 
                 if backpp == 0:
                     switch_page('AlumnosHome')
-
-            with logcols[-1]:
-                authenticator.logout('Cerrar Sesión', 'main', key='unique_key')
-            # CSS style definitions
-            selected3 = option_menu(None, ["Inicio", "Alumnos",'Reportes DEO'],
-                icons=['house', 'mortarboard', 'file-earmark-bar-graph'],
-                menu_icon="cast", default_index=2, orientation="vertical",
-                styles={
-                    "container": {"padding": "0!important", "background-color": "#e6f2f0"},
-                    "icon": {"color": "#175947", "font-size": "25px"},
-                    "nav-link": {"font-size": "20px", "text-align": "left", "margin":"0px", "--hover-color": "#FBA1A1"},
-                    "nav-link-selected": {"background-color": "#FBC5C5"},
-                },key='menu'
-            )
-            if selected3 == 'Inicio':
-                switch_page('Inicio')
-            elif selected3 == 'Alumnos':
-                switch_page('AlumnosHome')
 
             #--------------------------------------------------
             #Student ID,student_name,gender,grade,school_name,reading_score,math_score
@@ -304,3 +247,5 @@ else:
                                 data = df.iloc[i]
                                 reg_calificacion(str(data['No de control']),int(data['Calificación']),data['Asignatura'],int(data['Grupo']),int(data['Semestre']),data['Evaluación'])
                             st.success('Calificaciones subidas con éxito :hugging_face:')
+
+            st_lottie("https://lottie.host/b7ef026c-555f-42ba-8c63-d34ab2c09d34/ZozkKz25so.json",width=300,height=200,speed=1)

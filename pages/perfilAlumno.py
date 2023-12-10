@@ -86,57 +86,6 @@ st.markdown("""
 
 #--------------------------------------------------
 #Funciones
-@st.cache_resource
-def get_credentials():
-  """
-  The function `get_credentials` retrieves credentials data from a database using an API key and database URL.
-  :return: The function `get_credentials` returns the data retrieved from the XataClient API.
-  """
-  xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-  data = xata.data().query("Credentials", {
-    "columns": [
-        "id",
-        "username",
-        "email",
-        "password",
-        "avatar",
-        "name",
-        "role"
-    ],
-  })
-  return data,xata
-
-@st.cache_data
-def credentials_formating(credentials):
-  """
-  The function `credentials_formating` takes a list of dictionaries representing credentials and returns a formatted
-  dictionary with usernames as keys and corresponding password, email, and name as values.
-
-  :param credentials: The parameter "credentials" is a list of dictionaries. Each dictionary represents a set of
-  credentials and has the following keys: 'username', 'password', 'email', and 'name'
-  :return: a dictionary where the keys are the usernames from the input credentials list, and the values are dictionaries
-  containing the password, email, and name for each username.
-  """
-  c = {}
-  for credential in credentials:
-    c[credential['username']] = {'password': credential['password'], 'email': credential['email'],'name': credential['name']}
-
-  return c
-
-@st.cache_data
-def get_current_user_info(usrname):
-    """
-    The function `get_current_user_info` retrieves the information of the current user based on their username from a
-    database.
-
-    :param usrname: The `usrname` parameter is the username of the user whose information you want to retrieve
-    :return: The function `get_current_user_info` returns the information of the current user specified by the `usrname`
-    parameter.
-    """
-    xata = XataClient(api_key=st.secrets['db']['apikey'],db_url=st.secrets['db']['dburl'])
-    ch = xata.data().query("Credentials",{"filter": {"username": usrname}})
-
-    return ch['records'][0]
 
 
 def get_manager():
@@ -251,8 +200,7 @@ else:
         st.session_state.last_registered['update'] = False
 #--------------------------------------------------
 #credenciales de la base de datos
-data,xta = get_credentials()
-credentials = credentials_formating(data['records'])
+
 cookie_manager = get_manager()
 query = query_Alumno(record=st.session_state['Alumnos_Search'])
 query = query['records'][0]
@@ -273,9 +221,9 @@ else:
 # el usuario debe estar autenticado para acceder a esta página
     if st.session_state["authentication_status"]:
 
-            usrdata = get_current_user_info(st.session_state['username'])
+            #st.session_state = get_current_user_info(st.session_state['username'])
 
-            #usrdata
+            #st.session_state
             #--------------------------------------------------
 
             #--------------------------------------------------
@@ -318,7 +266,7 @@ else:
             #--------------------------------------------------
             #Contenido de la pagina
 
-            if usrdata['role'] in ['vinculacion','maestro','orientacion','admin']:
+            if st.session_state['role'] in ['vinculacion','maestro','orientacion','admin']:
 
                 st.title('Perfil del Alumno')
                 st.divider()
@@ -334,7 +282,7 @@ else:
                 with cols0[1]:
                     st.write("**CURP:** ",dtaAlumno['curp'])
                     st.write("**Carrera:** ",query['carreraAlumno'])
-                    if usrdata['role'] in ['admin','orientacion']:
+                    if st.session_state['role'] in ['admin','orientacion']:
                         editst = 1
                         #Editar Informacion solo con permisos de administrador o orientacion
                         editarst = sac.buttons([
@@ -367,7 +315,7 @@ else:
                         st_lottie("https://lottie.host/b3da4593-d31b-4d9b-814d-e1986f879001/4ialEEEG8M.json")
                 with colssH[1]:
 
-                    if usrdata['role'] in ['admin','orientacion']:
+                    if st.session_state['role'] in ['admin','orientacion']:
                         edit0 = 1
                         #Editar Informacion solo con permisos de administrador o orientacion
                         editar2 = sac.buttons([
@@ -420,7 +368,7 @@ else:
                 direccion = domicilio['calle'] +" " + domicilio['localidad']  + " " + domicilio['codigoP'] + " " + domicilio['municipio'] + " " + domicilio['estado']
 
                 with colsdom[1]:
-                    if usrdata['role'] in ['admin','orientacion']:
+                    if st.session_state['role'] in ['admin','orientacion']:
                         edit1 = 1
                         #Editar Informacion solo con permisos de administrador o orientacion
                         editar3 = sac.buttons([
@@ -463,7 +411,7 @@ else:
                 st.divider()
                 st.subheader("Datos de Salud")
 
-                if usrdata['role'] in ['admin','orientacion']:
+                if st.session_state['role'] in ['admin','orientacion']:
                     edit2 = 1
                     #Editar Informacion solo con permisos de administrador o orientacion
                     editar4 = sac.buttons([
@@ -494,7 +442,7 @@ else:
                 #--------------------------------------------------
                 st.divider()
                 st.subheader("Datos de Procedencia")
-                if usrdata['role'] in ['admin','orientacion']:
+                if st.session_state['role'] in ['admin','orientacion']:
                     edit3 = 1
                     #Editar Informacion solo con permisos de administrador o orientacion
                     editar5 = sac.buttons([
@@ -522,7 +470,7 @@ else:
                 #--------------------------------------------------
                 st.divider()
                 st.subheader("Datos del Tutor")
-                if usrdata['role'] in ['admin','orientacion']:
+                if st.session_state['role'] in ['admin','orientacion']:
                     edit4 = 1
                     #Editar Informacion solo con permisos de administrador o orientacion
                     editar6 = sac.buttons([
@@ -547,7 +495,7 @@ else:
 
                 st.divider()
                 st.subheader("Datos del Seguro")
-                if usrdata['role'] in ['admin','orientacion']:
+                if st.session_state['role'] in ['admin','orientacion']:
                     editseg = 1
                     #Editar Informacion solo con permisos de administrador o orientacion
                     editarseg = sac.buttons([
@@ -585,7 +533,7 @@ else:
                     st.write(procencia)
                     st.write(tutor)
 
-                if usrdata['role'] in ['admin','orientacion']:
+                if st.session_state['role'] in ['admin','orientacion']:
 
                     with st.form(key='my_form'):
                         st.subheader(":red_circle:  :red[Eliminar Alumno]")

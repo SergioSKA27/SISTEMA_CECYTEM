@@ -245,9 +245,9 @@ else:
                 args["board"] = board
                 k = SimpleNamespace(
                     dashboard=board,
-                    pie=Pie(board, 8, 0, 4, 4, minW=3, minH=4),
+                    pie=Pie(board, 8, 0, 4, 7, minW=3, minH=4),
                     radar=Radar(board, 0, 4, 6, 7, minW=2, minH=4),
-                    card=Card(board, 6, 4, 4, 4, minW=2, minH=4),
+                    card=Card(board, 6, 4, 6, 7, minW=2, minH=4),
                     data_grid=DataGrid(board, 0, 0, 8, 7, minH=4),
                     barplot=Bar(board, 0, 12, 8, 7, minH=4),
                 )
@@ -274,8 +274,8 @@ else:
                     { "field": 'idcontrol', "headerName": 'ID', "width": 90 },
                     { "field": 'plantelAlumno', "headerName": 'PLANTEL', "width": 200, "editable": False, },
                     { "field": 'carreraAlumno', "headerName": 'CARRERA', "width": 250, "editable": False, },
-                    { "field": 'curp', "headerName": 'CURP',  "width": 200, "editable": False, },
-                    { "field": 'estatus', "headerName": 'ESTATUS', "width": 90, "editable": False, "type": "boolean"},
+                    { "field": 'curp', "headerName": 'CURP',  "width": 120, "editable": False, },
+                    { "field": 'estatus', "headerName": 'ESTATUS', "width": 110, "editable": False, "type": "boolean"},
                     ]
 
                 with k.dashboard(rowHeight=57):
