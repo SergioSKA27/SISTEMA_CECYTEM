@@ -10,6 +10,8 @@ import base64
 import re
 from streamlit_option_menu import option_menu
 import bcrypt
+import asyncio
+import concurrent.futures
 # License: BSD 3-Clause
 
 #Sistema de Gestión y Análisis CECYTEM
@@ -148,7 +150,10 @@ def verifydata(data: dict)->bool:
 
     return flag
 
-def check_availability(usrname: str)->bool:
+
+
+
+async def check_availability(usrname: str)->bool:
     """
     The function `check_availability` checks if the username entered by the user is available.
     :return: The function `check_availability` returns a boolean value indicating whether the username is available or not.
@@ -161,7 +166,7 @@ def check_availability(usrname: str)->bool:
     else:
         return True
 
-def register_user(data: dict)->bool:
+async def register_user(data: dict)->bool:
     """
     The `register_user` function registers a user by inserting their credentials into a database and returns `True` if the
     registration is successful, otherwise `False`.
@@ -194,9 +199,22 @@ def register_user(data: dict)->bool:
     return data
 
 
+async def verify_user(username: str):
+    task = asyncio.create_task(check_availability(username))
+
+    data = await task
+
+    return data
+
+async def reg_user_async(data: dict):
+    task = asyncio.create_task(register_user(data))
+    data = await task
+    return data
+
 #--------------------------------------------------
 #Authentication
-if "authentication_status" not in st.session_state  :
+
+if "authentication_status" not in st.session_state:
     switch_page('Main')
 else:
 # el usuario debe estar autenticado para acceder a esta página
@@ -252,7 +270,7 @@ else:
 
 
             #Verificar disponibilidad del nombre de usuario
-            if check_availability(usern.strip().lower()) == False and usern != '':
+            if asyncio.run(verify_user(usern.strip())) == False and usern != '':
                 st.error('Este nombre de usuario ya esta en uso')
                 flag_Reg = False
 
@@ -347,7 +365,7 @@ else:
                 else:
                     if verifydata(d):
                         with st.spinner('Registrando usuario...'):
-                            reg = register_user(d)
+                            reg = asyncio.run(reg_user_async(d))
                         st.json(reg)
                         if 'message' in reg:
                             st.error('Ocurrio un error al registrar el usuario')

@@ -200,7 +200,7 @@ else:
             data = pd.DataFrame(asyncio.run(query_users_async()))
             del data['xata']
 
-        #Cuerpo de la pagina
+            #Cuerpo de la pagina
             st.title('Panel de Administrador')
             sac.divider(label='',icon='house-gear-fill',align='center',)
             #--------------------------------------------------

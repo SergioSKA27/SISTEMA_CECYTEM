@@ -205,7 +205,7 @@ else:
 
 
             if options == "Buscar Alumno" :
-                if st.session_state['role'] in ['orientacion','admin','vinculacion','profesor']:
+                if st.session_state['role'] in ['orientacion','admin','vinculacion','maestro']:
                     switch_page('searchengineAlumnos')
                 else:
                     st.warning("No tienes permisos para acceder a esta sección")
