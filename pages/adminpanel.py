@@ -1,19 +1,14 @@
 import streamlit as st
-import streamlit_authenticator as stauth
-import yaml
-from yaml.loader import SafeLoader
 from streamlit_extras.switch_page_button import switch_page
 import streamlit_antd_components as sac
 from xata.client import XataClient
-from streamlit.components.v1 import iframe
 from streamlit_agraph import agraph, Node, Edge, Config
 import random
 import pandas as pd
-import streamlit_analytics
 from streamlit_option_menu import option_menu
 import asyncio
 import concurrent.futures
-import requests
+
 
 # License: BSD 3-Clause
 
@@ -48,14 +43,14 @@ import requests
 
 
 
-
+#--------------------------------------------------
 #Configuracion de la pagina
-st.set_page_config(page_title="Admin", page_icon=":shield:", layout="wide", initial_sidebar_state="collapsed")
-
-
+#--------------------------------------------------
+st.set_page_config(page_title="CECYTEM", page_icon="rsc/Logos/cecytem-logo.png", layout="wide", initial_sidebar_state="collapsed")
 
 #--------------------------------------------------
 #Funciones
+#--------------------------------------------------
 
 def query_users()->dict:
     """
@@ -89,7 +84,7 @@ def random_color()->str:
     # trunk-ignore(bandit/B311)
     return "#{:02x}{:02x}{:02x}".format(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
-def graph_agr():
+def graph_agr()->agraph:
     """
     The function `graph_agr` generates a graph visualization of a data structure in Python using the `agraph` library.
     :return: The function `graph_agr()` returns a graph visualization of a data structure.
@@ -133,8 +128,7 @@ def graph_agr():
     return_value = agraph(nodes=nodes, edges=edges, config=config)
     return return_value
 
-
-async def query_users_async():
+async def query_users_async()->dict:
     """
     The function `query_users_async` uses asyncio to run the `query_users` function in a separate thread and returns the
     result.
@@ -146,24 +140,19 @@ async def query_users_async():
         data = await loop.run_in_executor(pool, query_users)
         return data
 
-
-
-
 #--------------------------------------------------
-#Cuerpo de la pagina
-#Authentication
+#Autenticacion
+#--------------------------------------------------
 if "authentication_status" not in st.session_state  :
     switch_page('Main')
 else:
-# el usuario debe estar autenticado para acceder a esta página
+    #--------------------------------------------------
+    # el usuario debe estar autenticado para acceder a esta página
+    #--------------------------------------------------
     if st.session_state["authentication_status"]:
-        #st.session_state = get_current_user_info(st.session_state['username'])
-
-
-
         #--------------------------------------------------
         #Navbar
-         # CSS style definitions
+        #--------------------------------------------------
         selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación",st.session_state.username,"Cerrar Sesión"],
                icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart','door-open'],
                menu_icon="cast", default_index=5, orientation="horizontal",
@@ -195,7 +184,8 @@ else:
             if backpp == 0:
                 switch_page('perfil')
         #-------------------------------------------------
-
+        #Cuerpo de la pagina
+        #-------------------------------------------------
         if st.session_state['role'] == 'admin':
             data = pd.DataFrame(asyncio.run(query_users_async()))
             del data['xata']
@@ -205,9 +195,8 @@ else:
             sac.divider(label='',icon='house-gear-fill',align='center',)
             #--------------------------------------------------
             #Administrar Usuarios
-            st.header('Administrar Usuarios')
             #--------------------------------------------------
-            #Opciones de Administrador
+            st.header('Administrar Usuarios')
             ind = 0
             options = option_menu(None, ['',"Registrar Usuario","Eliminar Usuario","Editar Usuario",],
                 icons=['house-gear-fill','person-plus', 'person-dash', "person-gear"],
@@ -231,8 +220,9 @@ else:
 
             #--------------------------------------------------
             #Diagrama de la base de datos
+            #--------------------------------------------------
             st.header('Diagrama de la base de datos')
-            #Para Los desarrolladores y administradores en
+            #Para Los desarrolladores y administradores en dbdiagram.io
             st.markdown(r"""<iframe width="1000" height="315" src='https://dbdiagram.io/e/65597c3c3be149578745fdcf/6559b1063be1495787470237'> </iframe>""",unsafe_allow_html=True)
             if not st.checkbox('Grafo Interactivo'):
                 st.graphviz_chart('''

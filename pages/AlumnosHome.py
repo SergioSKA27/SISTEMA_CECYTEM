@@ -1,31 +1,23 @@
 import streamlit as st
-import streamlit_authenticator as stauth
-import yaml
-from yaml.loader import SafeLoader
 from streamlit_extras.switch_page_button import switch_page
 import streamlit_antd_components as sac
 from xata.client import XataClient
-import yaml
-from yaml.loader import SafeLoader
 from streamlit_option_menu import option_menu
 import extra_streamlit_components as stx
-from streamlit_lottie import st_lottie
 import datetime
 import pandas as pd
 import numpy as np
 from streamlit_elements import elements, mui, html
 from streamlit_elements import elements, sync, event
 import json
-
 from pathlib import Path
 from streamlit import session_state as state
 from streamlit_elements import elements, sync, event
 from types import SimpleNamespace
-
-
 from modules import Dashboard,Editor, Card, DataGrid, Radar, Pie, Player,Bar
 import asyncio
 import concurrent.futures
+
 # License: BSD 3-Clause
 
 #Sistema de Gestión y Análisis CECYTEM
@@ -62,10 +54,10 @@ import concurrent.futures
 
 
 
-#Esta es la pagina de inicio, donde se muestra el contenido de la pagina visible para todos los usuarios
 
-
+#--------------------------------------------------
 #Configuracion de la pagina
+#--------------------------------------------------
 st.set_page_config(page_title="Alumnos", page_icon="rsc/Logos/cecytem-logo.png", layout="wide", initial_sidebar_state="collapsed")
 
 st.markdown("""
@@ -94,18 +86,19 @@ st.markdown("""
     }
 </style>
 """,unsafe_allow_html=True)
+
 #--------------------------------------------------
 #Funciones
+#--------------------------------------------------
 
-def get_manager():
+def get_manager()->stx.CookieManager:
     """
     The function `get_manager` returns a `CookieManager` object with the key 'MyCookieManager'.
     :return: an instance of the `CookieManager` class with the key set to 'MyCookieManager'.
     """
     return stx.CookieManager(key='MyCookieManager')
 
-
-def get_all_students():
+def get_all_students()->list:
     """
     The function `get_all_students` retrieves all the students from a database.
     :return: The function `get_all_students` returns a list of dictionaries representing the students in the database.
@@ -126,7 +119,11 @@ def get_all_students():
         i['estatus'] = i['estatus']['current_status']
     return data
 
-async def get_all_students_async():
+async def get_all_students_async()->list:
+    """
+    The function `get_all_students_async` uses asyncio and a thread pool executor to asynchronously retrieve all students.
+    :return: The function `get_all_students_async` returns a list of all students.
+    """
     loop = asyncio.get_event_loop()
 
     with concurrent.futures.ThreadPoolExecutor() as pool:
@@ -134,30 +131,24 @@ async def get_all_students_async():
 
         return data
 
-
-
 #--------------------------------------------------
-
+#Cookies
+#--------------------------------------------------
 cookie_manager = get_manager()
 
-
-#st.session_state
-if "Alumnos_options" not in st.session_state or st.session_state.Alumnos_options != None:
-    st.session_state.Alumnos_options = None
-
 #--------------------------------------------------
-#Authentication
+#Autenticación
+#--------------------------------------------------
 if "authentication_status" not in st.session_state  :
     switch_page('Main')
 else:
-# el usuario debe estar autenticado para acceder a esta página
+    #--------------------------------------------------
+    # el usuario debe estar autenticado para acceder a esta página
+    #--------------------------------------------------
     if st.session_state["authentication_status"]:
-
-
-
-           #--------------------------------------------------
+            #--------------------------------------------------
             #Navbar
-            # CSS style definitions
+            #--------------------------------------------------
             selected3 = option_menu(None, ["Inicio", "Alumnos",  "Profesores","Vinculación", "Orientación",st.session_state.username,"Cerrar Sesión"],
                 icons=['house', 'mortarboard', "easel2", 'link', 'compass', 'person-heart','door-open'],
                 menu_icon="cast", default_index=1, orientation="horizontal",
@@ -183,9 +174,15 @@ else:
 
 
             #-------------------------------------------------
+            #Cuerpo de la pagina
+            #-------------------------------------------------
             st.title("Alumnos")
             st.markdown("En esta sección se pueden registrar alumnos, buscarlos y buscar grupos")
 
+
+            #-------------------------------------------------
+            #Barra de opciones
+            #-------------------------------------------------
             options = option_menu(None, ['',"Registrar Alumno","Buscar Alumno","Buscar grupo","Estadísticas","Reportes DEO"],
                 icons=['house-gear-fill','person-plus', 'search', "ui-checks-grid","graph-up-arrow","file-earmark-bar-graph"],
                 menu_icon="cast", default_index=0, orientation="horizontal",
@@ -216,16 +213,22 @@ else:
                     switch_page('reportesDEO')
                 else:
                     st.warning("No tienes permisos para acceder a esta sección")
+
+
             #-------------------------------------------------
-            #Obtener datos de la base de datos
+            #Obtener estudiantes de la base de datos
+            #-------------------------------------------------
             stdudents =asyncio.run(get_all_students_async())['records']
             df = pd.DataFrame(stdudents)
             del df['id'], df['xata']
 
             active = len(df[df['estatus'] == True])
             inactive = len(df[df['estatus'] == False])
+
+
             #-------------------------------------------------
             #Metricas
+            #-------------------------------------------------
             metriccols = st.columns(3)
             with metriccols[0]:
                 st.metric(label="Alumnos registrados", value=len(get_all_students()['records']), delta=1)
@@ -235,10 +238,9 @@ else:
                 st.metric(label="Alumnos inactivos", value=inactive)
 
 
-            #st.dataframe(df,use_container_width=True)
-            #stdudents
             #-------------------------------------------------
             #Dashboard
+            #-------------------------------------------------
             if "k" not in state:
                 board = Dashboard()
                 args = {}
@@ -283,4 +285,5 @@ else:
                     k.radar(json.dumps(radardata))
                     k.card('HI','https://www.certus.edu.pe/blog/wp-content/uploads/2020/09/que-es-data-analytics-importancia-1-1200x720.jpg')
                     k.data_grid(json.dumps(stdudents),columnas,title='Alumnos')
-
+    else:
+        switch_page('Login')
