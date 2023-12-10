@@ -65,7 +65,7 @@ class Radar(Dashboard.Item):
             with mui.Box(sx={"flex": 1, "minHeight": 0}):
                 nivo.Radar(
                     data=data,
-                    theme=self._theme["dark" if self._dark_mode else "light"],
+                    theme=self._theme["light" if self._dark_mode else "dark"],
                     keys=[ "chardonay", "carmenere", "syrah" ],
                     indexBy="taste",
                     valueFormat=">-.2f",

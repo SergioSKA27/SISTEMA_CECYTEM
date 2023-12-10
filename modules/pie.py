@@ -65,7 +65,7 @@ class Pie(Dashboard.Item):
             with mui.Box(sx={"flex": 1, "minHeight": 0}):
                 nivo.Pie(
                     data=data,
-                    theme=self._theme["dark" if self._dark_mode else "light"],
+                    theme=self._theme["light" if self._dark_mode else "dark"],
                     margin={ "top": 40, "right": 80, "bottom": 80, "left": 80 },
                     innerRadius=0.5,
                     padAngle=0.7,
