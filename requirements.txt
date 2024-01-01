@@ -1,5 +1,5 @@
 sympy==1.11.1
-matplotlib==3.3.4
+matplotlib==3.8.2
 matplotlib-inline==0.1.6
 plotly==5.14.1
 streamlit-extras==0.2.7
