@@ -9,7 +9,7 @@ streamlit-authenticator==0.2.2
 streamlit-card==0.0.5
 streamlit-elements==0.1.0
 streamlit-wordcloud==0.1.0
-streamlit-antd-components==0.2.1
+streamlit-antd-components==0.2.5
 streamlit-on-Hover-tabs==1.0.1
 streamlit-pandas-profiling==0.1.3
 mitosheet==0.1.524
